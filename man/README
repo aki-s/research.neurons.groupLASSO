@@ -1,0 +1,29 @@
+== ABOUT DIRECTORY ==
+/-.
+ /conf		: configuration files.
+ /dal_mod	: Third party library.
+ /man		: manual.
+ /misc		: If you run files located this directory, it's easy to understand main program.
+ /myest.m	: main program.
+ /mylib		: library to run 'myest.m'.
+ /outdir	: output directory where data is saved.
+ /tools		: some nifty tools to analyze output data.
+
+== HOW TO RUN ==
+*RUN
+1. Just change your working directory to where 'myest.m' is.
+2. 'clear all' variables and, if you want, set INIT PARAMETERS.
+3. Just run 'myest.m'.
+
+*OUTPUT
+Data generated are to be saved in 'outdir'.
+
+== ABOUT PARAMETERS ==
+*DEFAULT PARAMETERS
+You can freely edit files describing parameters in directorhy 'conf'.
+
+*INIT PARAMETERS
+If envirinmental struct variable 'env' for myest.m is exist, the value is used.
+If some of field of it don't exist, you would be asked the value to fill in.
+If you don't want to be annoyed about what you have to set, just do like the following.
+'cean all; env = struct(); myest.m'

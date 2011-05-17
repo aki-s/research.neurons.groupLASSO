@@ -1,0 +1,192 @@
+
+conf/setpaths.m,32
+function setpaths(setpaths1,0
+
+tools/plot_lambda_video.m,50
+function plot_lambda_video(plot_lambda_video1,0
+
+tools/plot_loglambda.m,44
+function plot_loglambda(plot_loglambda1,0
+
+misc/plot_ggsimBaseFunc.m,52
+function plot_ggsimBaseFunc(plot_ggsimBaseFunc1,0
+
+mylib/make_basis.m,59
+function [iht, ihbas, ihbasis] = make_basismake_basis1,0
+
+mylib/makeSimStruct_glm.m,53
+function S = makeSimStruct_glmmakeSimStruct_glm1,0
+
+mylib/plot/plot_alpha.m,36
+function plot_alpha(plot_alpha1,0
+
+mylib/plot/plot_I.m,28
+function plot_I(plot_I1,0
+
+mylib/plot/plot_lambda.m,38
+function plot_lambda(plot_lambda1,0
+
+mylib/plot/plot_Ealpha.m,50
+function [ Ealpha ] = plot_Ealphaplot_Ealpha1,0
+
+mylib/gen/gen_designMat.m,55
+function [D penalty] = gen_designMatgen_designMat1,0
+
+dallrl1.m,50
+function [ww,bias,status]=dallrl1dallrl135,1227
+
+dal_mod/archive.m,33
+function S=archivearchive5,147
+
+dal_mod/dal.m,181
+function [xx, uu, status]=daldal69,3261
+function [fval,gg]=evallossevalloss253,8024
+function [fval,spec] = evalprimevalprim266,8211
+function dval = evaldualevaldual275,8420
+
+dal_mod/dallrds.m,50
+function [ww,bias,status]=dallrdsdallrds33,1203
+
+dal_mod/dalprl1.m,50
+function [ww,bias,status]=dalprl1dalprl135,1251
+
+dal_mod/dallrgl.m,50
+function [ww,bias,status]=dallrgldallrgl45,1859
+
+dal_mod/dallrl1.m,50
+function [ww,bias,status]=dallrl1dallrl135,1227
+
+dal_mod/loss_prp.m,47
+function [floss, gloss]=loss_prploss_prp6,60
+
+dal_mod/dalsqgl.m,45
+function [ww,status]=dalsqgldalsqgl40,1461
+
+dal_mod/loss_prd.m,45
+function varargout = loss_prdloss_prd8,129
+
+dal_mod/dalsql1.m,45
+function [ww,status]=dalsql1dalsql136,1276
+
+dal_mod/ds_dnorm.m,45
+function [nm,ishard]=ds_dnormds_dnorm5,167
+
+dal_mod/ds_softth.m,48
+function [vv,ss,info]=ds_softthds_softth6,167
+
+dal_mod/ds_spec.m,32
+function nm=ds_specds_spec1,0
+
+dal_mod/evalgap.m,120
+function gap = evalgapevalgap1,0
+function [fval,gg]=evallossevalloss10,201
+function dval = evaldualevaldual21,340
+
+dal_mod/gl_dnorm.m,45
+function [nm,ishard]=gl_dnormgl_dnorm5,159
+
+dal_mod/gl_softth.m,43
+function [vv,ss]=gl_softthgl_softth6,176
+
+dal_mod/gl_spec.m,34
+function nm=gl_specgl_spec6,169
+
+dal_mod/hessMultdalds.m,48
+function bb = hessMultdaldshessMultdalds7,234
+
+dal_mod/hessMultdalgl.m,48
+function yy = hessMultdalglhessMultdalgl7,209
+
+dal_mod/hessMultdall1.m,48
+function yy = hessMultdall1hessMultdall17,201
+
+dal_mod/l1_softth.m,38
+function vv=l1_softthl1_softth6,167
+
+dal_mod/lbfgs.m,43
+function [xx, status] = lbfgslbfgs26,713
+
+dal_mod/loss_lrd.m,45
+function varargout = loss_lrdloss_lrd8,212
+
+dal_mod/loss_lrp.m,48
+function [floss, gloss]=loss_lrploss_lrp5,142
+
+dal_mod/loss_sqd.m,45
+function varargout = loss_sqdloss_sqd8,211
+
+dal_mod/loss_sqp.m,48
+function [floss, gloss]=loss_sqploss_sqp5,141
+
+dal_mod/newton.m,186
+function [xx,fval,gg,status]=newtonnewton9,271
+function dd = dir_choldir_chol83,1566
+function dd = dir_pcgdir_pcg89,1667
+function [step,fval, info] = linesearchlinesearch96,1944
+
+dal_mod/objdalds.m,43
+function varargout=objdaldsobjdalds7,215
+
+dal_mod/objdalgl.m,43
+function varargout=objdalglobjdalgl6,177
+
+dal_mod/objdall1.m,43
+function varargout=objdall1objdall16,169
+
+dal_mod/propertylist2struct.m,59
+function opt = propertylist2structpropertylist2struct1,0
+
+dal_mod/randsparse.m,43
+function ww = randsparserandsparse10,273
+
+dal_mod/set_defaults.m,113
+function [opt, isdefault]= set_defaultsset_defaults1,0
+function t = ispropertystructispropertystruct100,3308
+
+dal_mod/shrink2para.m,55
+function [sigma,shrinkage]=shrink2parashrink2para1,0
+
+dal_mod/shrinkDiag.m,53
+function [sigma,shrinkage]=shrinkDiagshrinkDiag1,0
+
+dal_mod/shrinkMarket.m,57
+function [sigma,shrinkage]=shrinkMarketshrinkMarket1,0
+
+dal_mod/spdiag.m,33
+function D = spdiagspdiag6,146
+
+dal_mod/svdmaj.m,35
+function [U,S,V]=svdmajsvdmaj1,0
+
+dal_mod/l1n_softth.m,40
+function vv=l1n_softthl1n_softth6,167
+
+dal_mod/objdall1n.m,45
+function varargout=objdall1nobjdall1n7,237
+
+dal_mod/dalsql1n.m,47
+function [ww,status]=dalsql1ndalsql1n37,1338
+
+dal_mod/job050_TestPoissonReg.m,0
+
+mylib/clean.m,0
+
+mylib/gen/gen_TrueValue.m,0
+
+misc/plot_poisson_loss.m,0
+
+tools/plot_graphviz.m,0
+
+tools/plot_loglambda_video.m,0
+
+conf/conf_rand.m,0
+
+conf/conf_DAL.m,0
+
+conf/conf_gen_TrueValue.m,0
+
+conf/conf_makeSimStruct_glm.m,0
+
+conf/conf_graph.m,0
+
+myest.m,0
