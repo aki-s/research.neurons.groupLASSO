@@ -47,17 +47,19 @@ end
 %cputime
 %
 if strcmp('allI','allI_')
-  %% use all available firing history.
+  %%% use all available firing history.
+  %% Drow: length of total frames used at loss function.
   Drow = env.genLoop - size(ggsim.iht,1) +1; 
 else
   Drow = floor(env.genLoop/2);
 end
 
+%% dimension reduction to be estimated.
 [D penalty] = gen_designMat(env,ggsim,I,Drow);
-DAL.lambda = 30;
-for ii1 = 1:5
+DAL.lambda = 30; % DAL.lambda: group LASSO parameter.
+for ii1 = 1:5 % search appropriate parameter.
   DAL.lambda = DAL.lambda/(1.5);
-  for i1 = 1:env.cnum
+  for i1 = 1:env.cnum % ++parallelization 
     %% logistic regression group lasso
     [EKerWeight{i1}, Ebias{i1}, Estatus{i1}] = ...
         dallrgl( ones(ggsim.ihbasprs.nbase,env.cnum), -1,...

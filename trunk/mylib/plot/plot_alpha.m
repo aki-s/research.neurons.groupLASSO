@@ -11,7 +11,7 @@ function plot_alpha(cnum,hnum,alpha0,alpha,title);
 %%
 
 global env
-
+env
 %%% ===== PLOT alpha ===== START =====
 if isfield(env,'SELF_DEPRESS_BASE') && isempty(getfield(env,'SELF_DEPRESS_BASE'))
   SELF_DEPRESS_BASE = 2;

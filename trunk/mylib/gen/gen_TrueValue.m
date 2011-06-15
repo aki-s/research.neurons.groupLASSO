@@ -82,6 +82,7 @@ if strcmp('prepareTrueValues','prepareTrueValues')
     alpha0 = repmat(Hz.fn,1,cnum);
   end
   %%% ===== PLOT alpha ===== START =====
+env
   if ( 1 == graph.PLOT_T )
     plot_alpha(cnum,hnum,alpha0,alpha,'\alpha: Spatio-temporal Kernels');
   end

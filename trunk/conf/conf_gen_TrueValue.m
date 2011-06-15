@@ -29,7 +29,7 @@ if strcmp('doTuning','doTuning')
               'fn',[]);    % Hz of firing per frame: [rate/frame]
 
   SELF_DEPRESS_BASE = 2;
-
+%{
   spar.from = randperm(cnum); % spar.from: connenction from
   spar.from = spar.from(1:floor(spar.level.from*cnum));
   spar.to = randperm(cnum); % spar.to: connection to
@@ -37,10 +37,11 @@ if strcmp('doTuning','doTuning')
   % Don't make sparse about self-depression.
   % Actual sparsity level is reduced by spar.level.dup.
   spar.level.dup = sum(spar.from == spar.to);
-
+%}
   %% </ default values >
 
   %% Use user pre-defined variable 'env' if exist.
+  %% Override program default values.
   if exist('env')
 
     if isfield(env,'Hz') && isfield(env.Hz,'video')
@@ -100,6 +101,13 @@ if strcmp('doTuning','doTuning')
     %    env.spar = spar;
   end
 end
+  spar.from = randperm(cnum); % spar.from: connenction from
+  spar.from = spar.from(1:floor(spar.level.from*cnum));
+  spar.to = randperm(cnum); % spar.to: connection to
+  spar.to = spar.to(1:floor(spar.level.from*cnum));
+  % Don't make sparse about self-depression.
+  % Actual sparsity level is reduced by spar.level.dup.
+  spar.level.dup = sum(spar.from == spar.to);
 
   %% ==< clean variables >==
   env.Hz   = Hz;   clear Hz;

@@ -1,7 +1,7 @@
 == ABOUT DIRECTORY ==
 /-.
  /conf		: configuration files.
- /dal_mod	: Third party library.
+ /dal_mod	: Third party numerical calculus library.
  /man		: manual.
  /misc		: If you run files located this directory, it's easy to understand main program.
  /myest.m	: main program.
@@ -26,4 +26,4 @@ You can freely edit files describing parameters in directorhy 'conf'.
 If envirinmental struct variable 'env' for myest.m is exist, the value is used.
 If some of field of it don't exist, you would be asked the value to fill in.
 If you don't want to be annoyed about what you have to set, just do like the following.
-'cean all; env = struct(); myest.m'
+'clear all; global env; env = struct(); myest.m'
