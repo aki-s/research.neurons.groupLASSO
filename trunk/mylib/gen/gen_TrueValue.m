@@ -5,7 +5,7 @@
 % SimSec: sec during which 'TrueValues' are prepared.
 % 	: Simsec = 1/Hz.video * genLoop [sec]
 % [[return]]
-% r{HistSec,Simsec}: real{History sec, simulation sec}
+% {HistSec,Simsec}: real{History sec, simulation sec}
 
 
 if strcmp('clear','clear_')

@@ -1,3 +1,8 @@
+/* *** TODO ***
+- read away line prefixed with #.
+- read away [::space::].
+ */
+
 #include <iostream>
 #include <cstdio>
 #include <fstream>
