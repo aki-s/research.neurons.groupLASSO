@@ -13,7 +13,7 @@ if strcmp('configure', 'configure') %++conf
   run([rootdir_ '/conf/conf_graph.m']);
   run([rootdir_ '/conf/conf_rand.m']);
   if strcmp('readTrueValue','readTrueValue')
-    run([rootdir_ '/conf/']);
+    run([rootdir_ '/indir/']);
   else
     run([rootdir_ '/conf/conf_gen_TrueValue.m']);
   end
