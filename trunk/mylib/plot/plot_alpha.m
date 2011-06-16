@@ -10,8 +10,6 @@ function plot_alpha(cnum,hnum,alpha0,alpha,title);
 %  plot_alpha(env.cnum,env.hnum,alpha0,alpha,'\alpha: Spatio-temporal Kernels');
 %%
 
-global env
-env
 %%% ===== PLOT alpha ===== START =====
 if isfield(env,'SELF_DEPRESS_BASE') && isempty(getfield(env,'SELF_DEPRESS_BASE'))
   SELF_DEPRESS_BASE = 2;

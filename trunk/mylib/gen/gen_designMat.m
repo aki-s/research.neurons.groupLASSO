@@ -30,14 +30,17 @@ end
 
 %% histSize: presume this number of frames is valid history length.
 histSize = size(ggsim.ih,1); % default histSize.
-if ( env.gen_Loop < ( histSize + Drow ))
+if ( env.genLoop < ( histSize + Drow ))
   warning('The number of history windows is too large.');
   error('choose appropriate number of basis.');
-elseif ( ( env.gen_Loop  / pars.gen_designMat ) < ( histSize + Drow )) ...
-  % ++bug.1
+elseif ( ( env.genLoop  / pars.gen_designMat ) < ( histSize + Drow )) ...
+  % ++debug.1
+  %{
   disp(['Number of basis used to estimate, and number of frames ' ...
-        'applyed to penalty function may be relatively too large for ' ...
-        'generated frames.']
+        'applied to penalty function may be relatively too large for ' ...
+        'generated frames.'])
+  %}
+warning('Number of basis used to estimate, and number of frames applied to penalty function\n may be relatively too large for generated frames.');
   %% ++improve: automated preparation for number of basis.
   %  histSize = ;
 end
@@ -56,7 +59,7 @@ for i1cellIndex = 1: env.cnum % i1cellIndex: for cell index.
       %% demension reduction with basis function 'ggsim.ihbasis'.
 % $$$       tmp1D = [ dot( ggsim.ihbasis(1:histSize,i2basisIndex), I(end +1 -(1:histSize) -i3,i1cellIndex) ) ; tmp1D ];
       tmp1D = [ dot( ggsim.ihbasis(1:histSize,i2basisIndex), I(end +1 -(1:histSize) -i3, i1cellIndex) ) ; tmp1D ];
-    end %++bug.1
+    end %++debug.1
     D = [ D, tmp1D ];
   end
 end

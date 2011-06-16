@@ -1,23 +1,32 @@
 % 110401
 %clear all; close all;
 %% ==< configure >==
-  if strcmp('configure', 'configure')
-    global rootdir_;
-    rootdir_ = pwd;
-    %    global env;
-    %env = struct();
-    run([rootdir_ '/conf/setpaths.m'])
-    %< gen_TrueValue
-    run([rootdir_ '/conf/conf_graph.m'])
-    run([rootdir_ '/conf/conf_rand.m']);
-    run([rootdir_ '/conf/conf_gen_TrueValue.m'])
-    %> gen_TrueValue
-    %< DAL
-    run([rootdir_ '/conf/conf_DAL.m'])
-    %> DAL
-  end
+global rootdir_;   rootdir_ = pwd;
+global env;
+%% read user custom configuration.
+%% This overrides all configurations below.
+run([rootdir_ '/conf/conf_user.m']);
 
-  %% ==</ configure >==
+if strcmp('configure', 'configure') %++conf
+  run([rootdir_ '/conf/setpaths.m']);
+  %< gen_TrueValue
+  run([rootdir_ '/conf/conf_graph.m']);
+  run([rootdir_ '/conf/conf_rand.m']);
+  if strcmp('readTrueValue','readTrueValue')
+    run([rootdir_ '/conf/']);
+  else
+    run([rootdir_ '/conf/conf_gen_TrueValue.m']);
+  end
+  %> gen_TrueValue
+  %< DAL
+  run([rootdir_ '/conf/conf_DAL.m']);
+  %> DAL
+end
+
+%% ==</ configure >==
+
+% check configuration
+run([rootdir_ '/mylib/check_conf.m']);
 
 if exist('status') && ( 0 == getfield(status,'GEN'))
   warning('Generating true value is skipped.');
@@ -27,12 +36,8 @@ end
 
 if status.GEN == 1
   %% 1.  Set parameters and display for GLM % =============================
-  if strcmp('tmp','tmp_')
-    gg = makeSimStruct_glm(1/100);
-  end
-
-  if strcmp('genTrueVale','genTrueVale')
-    % measure cpu cost
+  if strcmp('genTrueVale','genTrueVale') %++conf
+                                         % measure cpu cost
     %% prepare 'TrueValues'.
     tmp1Cpu = cputime();
     run([rootdir_ '/mylib/gen/gen_TrueValue.m']);
@@ -45,8 +50,9 @@ end
 %% Start estimation with DAL.
 % measure cpu cost
 %cputime
-%
-if strcmp('allI','allI_')
+tmp1Cpu = cputime();
+
+if strcmp('allI','allI_')  %++conf
   %%% use all available firing history.
   %% Drow: length of total frames used at loss function.
   Drow = env.genLoop - size(ggsim.iht,1) +1; 
@@ -76,11 +82,13 @@ for ii1 = 1:5 % search appropriate parameter.
 end
 %[ Ealpha ] = plot_Ealpha(EKerWeight,Ebias,env,ggsim,'Estimated_alpha');
 
-if strcmp('clean','clean')
+status.time.estimate_TrueValue = cputime() - tmp1Cpu;
+
+if strcmp('clean','clean')  %++conf
   run([rootdir_ '/mylib/clean.m'])
 end
 
-if strcmp('saveInterActive','saveInterActive')
+if strcmp('saveInterActive','saveInterActive')  %++conf
   uisave(who,strcat(rootdir_ , 'outdir/mat/', 'frame', num2str(sprintf('%05d',env.genLoop)), 'hwind', num2str(sprintf('%04d',env.hwind)), 'hnum' , num2str(sprintf('%02d',env.hnum))));
 
   % uisave(who,strcat(rootdir_ , 'outdir/mat/', '...
