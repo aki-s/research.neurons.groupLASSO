@@ -337,6 +337,8 @@ tools/plot_graphviz.m,0
 
 tools/plot_loglambda_video.m,0
 
+mylib/readTrueConnection.m,0
+
 mylib/clean.m,0
 
 mylib/check_conf.m,0
