@@ -14,9 +14,15 @@ if exist('gain') == 0
   gain = 1;
 end
 
+% $$$ run('../../conf/setpaths.m');
+% $$$ run('../../conf/conf_graph.m');
 global rootdir_
 run([rootdir_ '/conf/setpaths.m']);
 run([rootdir_ '/conf/conf_graph.m']);
+
+% $$$ if exist('OUTPUT_EPS') == 0
+% $$$   OUTPUT_EPS = 0;
+% $$$ end
 
 if exist('graph') == 0
   graph.TIGHT = 1
@@ -29,7 +35,14 @@ nbase = ggsim.ihbasprs.nbase;
 M = hnum*hwind; % M: total history frame.
 for i1to = 1:cnum
   for i2from = 1:cnum
-    Ealpha{i1to}{i2from} = (ggsim.ihbasis* EKerWeight{i1to}(:,i2from))';
+    %    Ealpha{i1to}{i2from} = 0;
+    %    for i3 = 1:nbase
+      %      Ealpha{i1to}{i2from}= Ealpha{i1to}{i2from} +
+      %      EKerWeight{i1to}((i2from-1)*nbase +
+      %      i3).*ggsim.ihbasis(:,i2from);
+      Ealpha{i1to}{i2from} = (ggsim.ihbasis* EKerWeight{i1to}(:,i2from))';
+      %          EKerWeight{i1to}( (i2from-1)*nbase + (1:nbase) );      
+      %    end
   end
 end
 
@@ -42,16 +55,20 @@ if  graph.TIGHT == 1;
 end
   grid on;
   subplot(cnum,cnum,i1);
+  %  tmp1 = Ealpha{i2to}( ( (i3from-1) - (i2to-1)*cnum )*hnum + 1:hnum );
   tmp1 = Ealpha{i2to}{i3from};
   if i2to == i3from
     tmp1 = tmp1 + Ebias{i2to};
   end
   if tmp1 > 0
+    %    plot(1:M,tmp1(1::,'r');
     plot(tmp1,'r');
   elseif tmp1 < 0
+    %    plot(1:M,tmp1,'b');
     plot(tmp1,'b');
   else 
     plot(tmp1,'k');
+    %    plot(1:M,tmp1,'k');
   end
   %% </ chage color ploted according to cell type >
   xlim([0,env.hnum*2]);

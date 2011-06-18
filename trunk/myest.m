@@ -1,9 +1,8 @@
-%% Main program.
-
-global env;
-global status;
-global rootdir_;   rootdir_ = pwd;
+% 110401
+%clear all; close all;
 %% ==< configure >==
+global rootdir_;   rootdir_ = pwd;
+global env;
 %% read user custom configuration.
 %% This overrides all configurations below.
 run([rootdir_ '/conf/conf_user.m']);
@@ -13,7 +12,7 @@ if strcmp('configure', 'configure') %++conf
   %< gen_TrueValue
   run([rootdir_ '/conf/conf_graph.m']);
   run([rootdir_ '/conf/conf_rand.m']);
-  if strcmp('readTrueConnection','readTrueConnection_')
+  if strcmp('readTrueConnection','readTrueConnection')
     run([rootdir_ '/mylib/readTrueConnection.m']);
   else
     run([rootdir_ '/conf/conf_gen_TrueValue.m']);
@@ -30,9 +29,9 @@ end
 run([rootdir_ '/mylib/check_conf.m']);
 
 if exist('status') && ( 0 == getfield(status,'GEN'))
-  warning('Generating [ FiringIntensity, Firing ] was skipped.');
+  warning('Generating true value is skipped.');
 else
-  status.GEN = 1; % default.
+  status.GEN = 1;
 end
 
 if status.GEN == 1

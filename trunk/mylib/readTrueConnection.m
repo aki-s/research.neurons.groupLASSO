@@ -27,20 +27,11 @@ tmp.fid = fopen(tmp.in,'rt');
 %[mat , matNum] = fscanf(tmp.fid,'%[+0-]');
 %[mat , matNum] = fscanf(tmp.fid,'%[+0-]*\r*\n');
 
-%% Need exception hundler: if (#column ~= #row )  %%++improve
 [alpha_hash, env.cnum ] = fscanf(tmp.fid,'%s'); % don't read LF.
 alpha_hash = strrep(alpha_hash, '+','+1 ');
 alpha_hash = strrep(alpha_hash, '0','0 ');
 alpha_hash = strrep(alpha_hash, '-','-1 ');
 alpha_hash = str2num(alpha_hash);
-
-%                =>[to #neuron]
-%      ---------------
-%  ||  |  alpha_hash |
-%  \/  ---------------
-% [from #neuron]
-
-alpha_fig = transpose(reshape(alpha_hash, env.cnum , env.cnum));
 
 %alpha_hash = reshape( alpha_hash , env.cnum , [] ); %worked well
 %++bug : next line would fail if input has other than '[+0-\n]'
@@ -48,5 +39,3 @@ alpha_fig = transpose(reshape(alpha_hash, env.cnum , env.cnum));
 
 fclose(tmp.fid);
 % LocalWords:  excitatory
-
-status.READ_NEURO_CONNECTION =1; % flag

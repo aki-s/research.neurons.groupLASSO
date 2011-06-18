@@ -22,10 +22,6 @@ Data generated are to be saved in 'outdir'.
 *DEFAULT PARAMETERS
 You can freely edit files describing parameters in directorhy 'conf'.
 
-**more professional configuration
-If you want to toggle process like 'Ture neuronal connection', directory
-a toggle flag in source code. 
-
 *INIT PARAMETERS
 If envirinmental struct variable 'env' for myest.m is exist, the value is used.
 If some of field of it don't exist, you would be asked the value to fill in.

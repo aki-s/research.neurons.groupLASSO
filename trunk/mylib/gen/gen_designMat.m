@@ -40,7 +40,7 @@ elseif ( ( env.genLoop  / pars.gen_designMat ) < ( histSize + Drow )) ...
         'applied to penalty function may be relatively too large for ' ...
         'generated frames.'])
   %}
-warning('WarnTests:convertTest', 'Number of basis used to estimate, and number of frames applied to penalty function\n\t may be relatively too large for generated frames.');
+warning('Number of basis used to estimate, and number of frames applied to penalty function\n may be relatively too large for generated frames.');
   %% ++improve: automated preparation for number of basis.
   %  histSize = ;
 end
