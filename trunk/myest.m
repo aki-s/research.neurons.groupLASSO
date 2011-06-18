@@ -12,7 +12,7 @@ if strcmp('configure', 'configure') %++conf
   %< gen_TrueValue
   run([rootdir_ '/conf/conf_graph.m']);
   run([rootdir_ '/conf/conf_rand.m']);
-  if strcmp('readTrueConnection','readTrueConnection')
+  if strcmp('readTrueConnection','readTrueConnection_')
     run([rootdir_ '/mylib/readTrueConnection.m']);
   else
     run([rootdir_ '/conf/conf_gen_TrueValue.m']);
