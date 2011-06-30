@@ -47,14 +47,14 @@ function [ww,bias,status]=dallrl1dallrl135,1227
 dal_ver1.05/ds_softth.m,48
 function [vv,ss,info]=ds_softthds_softth6,167
 
+dal_ver1.05/hessMultdalds.m,48
+function bb = hessMultdaldshessMultdalds7,234
+
 dal_ver1.05/en_dnorm.m,45
 function [nm,ishard]=en_dnormen_dnorm5,160
 
 dal_ver1.05/l1_softth.m,43
 function [vv,ss]=l1_softthl1_softth6,167
-
-dal_ver1.05/hessMultdalds.m,48
-function bb = hessMultdaldshessMultdalds7,234
 
 dal_ver1.05/randmvar.m,35
 function H = randmvarrandmvar1,0
@@ -120,6 +120,9 @@ function [fval,gg]=evallossevalloss320,10101
 function fval = evalprimevalprim333,10300
 function dval = evaldualevaldual342,10502
 
+dal_ver1.05/hessMultdall1.m,48
+function yy = hessMultdall1hessMultdall17,201
+
 dal_ver1.05/randsparse.m,43
 function ww = randsparserandsparse10,273
 
@@ -131,9 +134,6 @@ function [U,S,V] = pcapca1,0
 
 dal_ver1.05/l1n_spec.m,36
 function ss=l1n_specl1n_spec7,219
-
-dal_ver1.05/hessMultdall1.m,48
-function yy = hessMultdall1hessMultdall17,201
 
 dal_ver1.05/objdall1n.m,45
 function varargout=objdall1nobjdall1n7,227
@@ -147,11 +147,11 @@ function [step,fval, info] = linesearchlinesearch98,2010
 dal_ver1.05/mvarfilter.m,40
 function Y=mvarfiltermvarfilter10,235
 
-dal_ver1.05/propertylist2struct.m,59
-function opt = propertylist2structpropertylist2struct1,0
-
 dal_ver1.05/gl_spec.m,34
 function nm=gl_specgl_spec6,169
+
+dal_ver1.05/propertylist2struct.m,59
+function opt = propertylist2structpropertylist2struct1,0
 
 dal_ver1.05/objdalgl.m,43
 function varargout=objdalglobjdalgl6,177
@@ -267,11 +267,11 @@ function [step,fval, info] = linesearchlinesearch96,1944
 dal_mod/gl_spec.m,34
 function nm=gl_specgl_spec6,169
 
-dal_mod/propertylist2struct.m,59
-function opt = propertylist2structpropertylist2struct1,0
-
 dal_mod/hessMultdalds.m,48
 function bb = hessMultdaldshessMultdalds7,234
+
+dal_mod/propertylist2struct.m,59
+function opt = propertylist2structpropertylist2struct1,0
 
 dal_mod/objdalgl.m,43
 function varargout=objdalglobjdalgl6,177
@@ -300,15 +300,15 @@ function plot_ggsimBaseFunc(plot_ggsimBaseFunc1,0
 mylib/gen/gen_designMat.m,55
 function [D penalty] = gen_designMatgen_designMat1,0
 
+mylib/plot/plot_Ealpha.m,82
+function [ Ealpha ] = plot_Ealphaplot_Ealpha1,0
+global rootdir_rootdir_17,332
+
 mylib/plot/plot_alpha.m,36
 function plot_alpha(plot_alpha1,0
 
 mylib/plot/plot_I.m,28
 function plot_I(plot_I1,0
-
-mylib/plot/plot_Ealpha.m,82
-function [ Ealpha ] = plot_Ealphaplot_Ealpha1,0
-global rootdir_rootdir_19,406
 
 mylib/plot/plot_lambda.m,38
 function plot_lambda(plot_lambda1,0
@@ -326,12 +326,13 @@ function plot_lambda_video(plot_lambda_video1,0
 tools/plot_loglambda.m,44
 function plot_loglambda(plot_loglambda1,0
 
-myest.m,178
-global rootdir_;   rootdir_ = pwd;pwd;4,56
-global rootdir_;   rootdir_ ==4,56
-global rootdir_;   rootdir_rootdir_4,56
-global rootdir_;rootdir_;4,56
-global env;env;5,92
+myest.m,206
+global env;env;3,20
+global status;status;4,33
+global rootdir_;   rootdir_ = pwd;pwd;5,49
+global rootdir_;   rootdir_ ==5,49
+global rootdir_;   rootdir_rootdir_5,49
+global rootdir_;rootdir_;5,49
 
 tools/plot_graphviz.m,0
 
@@ -365,23 +366,19 @@ dal_ver1.05/._loss_sqd.m,0
 
 dal_ver1.05/._en_softth.m,0
 
-dal_ver1.05/._hessMultdalds.m,0
-
 dal_ver1.05/._dallren.m,0
 
 dal_ver1.05/._gl_spec.m,0
 
 dal_ver1.05/._set_defaults.m,0
 
-dal_ver1.05/._spdiag.m,0
-
 dal_ver1.05/._l1_softth.m,0
+
+dal_ver1.05/._hessMultdalds.m,0
 
 dal_ver1.05/._pca.m,0
 
-dal_ver1.05/._dal.m,0
-
-dal_ver1.05/._ds_softth.m,0
+dal_ver1.05/._spdiag.m,0
 
 dal_ver1.05/._loss_lrp.m,0
 
@@ -389,7 +386,7 @@ dal_ver1.05/._dalsqen.m,0
 
 dal_ver1.05/._dallrds.m,0
 
-dal_ver1.05/._l1n_softth.m,0
+dal_ver1.05/._ds_softth.m,0
 
 dal_ver1.05/._loss_lrd.m,0
 
@@ -397,19 +394,21 @@ dal_ver1.05/._dalsql1n.m,0
 
 dal_ver1.05/._objdalen.m,0
 
-dal_ver1.05/._mvarfilter.m,0
+dal_ver1.05/._l1n_softth.m,0
 
 dal_ver1.05/._newton.m,0
-
-dal_ver1.05/._randmvar.m,0
 
 dal_ver1.05/._hessMultdalgl.m,0
 
 dal_ver1.05/._propertylist2struct.m,0
 
-dal_ver1.05/._en_dnorm.m,0
+dal_ver1.05/._dal.m,0
 
-dal_ver1.05/._randsparse.m,0
+dal_ver1.05/._randmvar.m,0
+
+dal_ver1.05/._mvarfilter.m,0
+
+dal_ver1.05/._en_dnorm.m,0
 
 dal_ver1.05/._lbfgs.m,0
 
@@ -417,7 +416,7 @@ dal_ver1.05/._dalsqds.m,0
 
 dal_ver1.05/._loss_hsp.m,0
 
-dal_ver1.05/._hessMultdall1.m,0
+dal_ver1.05/._randsparse.m,0
 
 dal_ver1.05/._svdmaj.m,0
 
@@ -455,11 +454,13 @@ dal_ver1.05/._objdalgl.m,0
 
 dal_ver1.05/._s_test_hsgl.m,0
 
+dal_ver1.05/._hessMultdall1.m,0
+
 conf/conf_makeSimStruct_glm.m,0
 
-conf/conf_user.m,0
-
 conf/conf_gen_TrueValue.m,0
+
+conf/conf_user.m,0
 
 conf/conf_rand.m,0
 

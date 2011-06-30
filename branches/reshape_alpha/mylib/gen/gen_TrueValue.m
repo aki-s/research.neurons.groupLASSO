@@ -12,28 +12,27 @@ if strcmp('clear','clear_')
   clear all; close all;
 end
 %% ==< set local variables >==
-%global env
 Hz      = env.Hz     ;      
 hwind   = env.hwind  ;   
 genLoop = env.genLoop; 
 cnum    = env.cnum   ;    
 hnum    = env.hnum   ;    
-spar    = env.spar   ;
 SELF_DEPRESS_BASE = env.SELF_DEPRESS_BASE;
 %% ==</ set local variables >==
 
 if ( status.READ_NEURO_CONNECTION == 1 )
   %% ==< get neuron type >==
-  alpha_tmp = alpha_fig;
-  alpha_tmp( logical( eye( env.cnum))) = 0;
+  tmp_alpha_fig = alpha_fig;
+  tmp_alpha_fig( logical( eye( env.cnum))) = 0; % ignore property
+                                                % of diagonal elements.
 
   inhibitory = 0; % number of inhibitory neurons.
   excitatory = 0; % number of excitatory neurons
   hybrid =     0; % number of hybrid (excitatory,inhibitory) neurons
-  zeroConnection =     0; number of zero connection neurons
+  zeroConnection =     0; % number of zero connection neurons
   for i1 = 1:env.cnum %++parallel
-    logicP = isempty(find(alpha_tmp(:,i1)<0));
-    loticN = isempty(find(alpha_tmp(:,i1)>0));
+    logicP = isempty(find(tmp_alpha_fig(:,i1)<0));
+    logicN = isempty(find(tmp_alpha_fig(:,i1)>0));
     logicZ = logicP & logicN ;
     switch( logicZ )
       case 0
@@ -47,13 +46,52 @@ if ( status.READ_NEURO_CONNECTION == 1 )
         zeroConnection = zeroConnection +1;
     end
   end
-  Tout.ctypesum.inhibitory = inhibitory; clean inhibitory;
-  Tout.ctypesum.excitatory = excitatory; clean excitatory;
-  Tout.ctypesum.hybrid     =     hybrid; clean hybrid;
-  Tout.ctypesum.zeroConnection = zeroConnection; clean zeroConnection;
-  %% ==< get neuron type >==
+  Tout.ctypesum.inhibitory = inhibitory;	 %clean inhibitory;
+  Tout.ctypesum.excitatory = excitatory;	 %clean excitatory;
+  Tout.ctypesum.hybrid     =     hybrid;	 %clean hybrid;
+  Tout.ctypesum.zeroConnection = zeroConnection; % clean zeroConnection;
+  %% ==</ get neuron type >==
+
+  if ( Tout.ctypesum.hybrid > 0 )
+    warning('some neuron is hybrid.')
+  end
+  %% ==< generate alpha>==
+  %% --< init >--
+  tmp_alpha_weight = [];
+  for i1 = 1:hnum
+    %    tmp_alpha_weight = sin( iniPhase + ctype + i1/hnum ) -
+    %    SELF_DEPRESS_BASE )*exp(-(i1-1)/hnum*3);
+    %++improve: generate characteristic of neuron.
+    tmp_alpha_weight = [tmp_alpha_weight cos( i1/hnum )*exp(-(i1-1)/hnum*3)];
+  end
+  alpha = zeros(hnum*cnum,cnum);
+  i3 = 0;
+  %% --</init >--
+  for i1 = 1:cnum %%++parallel
+    for i2 = 1:cnum
+      i3 = i3 + 1;
+      flag = alpha_hash(i3);
+      ptr = (i2-1)*hnum;
+
+      if i1 == i2
+        alpha(ptr+1:ptr+hnum,i1) = flag*(tmp_alpha_weight);
+      else
+        switch ( flag ) 
+          case +1
+            alpha(ptr+1:ptr+hnum,i1) = flag*(tmp_alpha_weight);
+          case -1                 
+            alpha(ptr+1:ptr+hnum,i1) = flag*(tmp_alpha_weight);
+          case 0                  
+            alpha(ptr+1:ptr+hnum,i1) = zeros(1,hnum);
+        end
+      end
+    end
+  end
+  %% ==</ generate alpha>==
+
   %%% ===== prepare True Values ===== START ===== 
 elseif strcmp('prepareTrueValues','prepareTrueValues')
+  spar    = env.spar   ;
 
   %  ctype = floor(randn(1,cnum)/100); % tweek SD by deviding with
   %  100
@@ -67,40 +105,39 @@ elseif strcmp('prepareTrueValues','prepareTrueValues')
   alpha_hash(spar.from,spar.to) = 1; % connection 'true'.
   alpha_hash(logical(eye(cnum))) = 1; % diagonal element: connection 'true'.
 
-  phase = rand([cnum cnum])/2;
+  iniPhase = rand([cnum cnum])/2;
   %% ctype: ctype of neuron. 0 == excitatory, -1 == inhibitory
-  ctype = repmat(ctype*pi,cnum,1);
+  ctype = repmat(ctype*(pi/2),cnum,1);
   ctype(logical(eye(cnum))) = -pi;  % All neuron must have self-depression.
-end
 
-if 1 == 1
   for i1 = 1:hnum
-    alpha(:,:,i1) = ( cos( phase + ctype + i1/hnum ) - ones(cnum)*SELF_DEPRESS_BASE )*exp(-(i1-1)/hnum*3 );
+    alpha(:,:,i1) = ( sin( iniPhase + ctype + i1/hnum ) - ones(cnum)*SELF_DEPRESS_BASE )*exp(-(i1-1)/hnum*3 );
     %    alpha(:,:,) = sin(log(1:hnum*pi/hnum/20));
     %% use more trigonometric funcions with variety of angular frequency.
   end
-elseif strcmp('tmp','tmp_')
-  for i1 = 1:cnum
-    for i2 = 1:cnum
-      alpha(i1,i2,:) = gg.ihbasis(1:hnum,4)/3;
-    end
-  end
+
+  alpha = alpha.*repmat(alpha_hash,[1 1 hnum]); % make connection sparse.
+                                                %  I = zeros(hnum*hwind,cnum);
+  %% nI:  Empty array: 0-by-6-by-10. (time,number of cells, number of history)
+  nIt = zeros([],cnum,hnum);
+  Tout.ctype = sprintf('%4d',ctype_hash);
+  clear ctype ctype_hash
 end
-alpha = alpha.*repmat(alpha_hash,[1 1 hnum]); % make connection sparse.
-                                              %  I = zeros(hnum*hwind,cnum);
 I = zeros(hnum*hwind,cnum);
 
-%% nI:  Empty array: 0-by-6-by-10. (time,number of cells, number of history)
-nIt = zeros([],cnum,hnum);
 
 %%% ===== SET AUTO FIRING RATE ===== START =====                                          
 fprintf(1,'Total history width %f[sec]\n',hnum*hwind/Hz.video);
 
-Hz.fn = Hz.neuro/Hz.video; % Hz of firing per frame: [rate/frame]
 %% alpha0: (1,cnum) matrix. correspond to auto firing of each cell.
-if strcmp('gen_individuality','gen_individuality')
+if 1
+  alpha0 = repmat(SELF_DEPRESS_BASE,[1 cnum]);
+elseif   strcmp('gen_individuality','gen_individuality')
+  %++bug: Hz.neuro <-> SELF_DEPRESS_BASE
+  Hz.fn = Hz.neuro/Hz.video; % Hz of firing per frame: [rate/frame]
   alpha0 = Hz.fn*(1 + rand(1,cnum) ); % alpha0: self firing-depress weight.
 else
+  Hz.fn = Hz.neuro/Hz.video; % Hz of firing per frame: [rate/frame]
   alpha0 = repmat(Hz.fn,1,cnum);
 end
 %%% ===== PLOT alpha ===== START =====
@@ -124,37 +161,74 @@ loglambda = []; % loglambda: log( lambda )
 
 %%%% GENERATE LAMBDA (FIRING RATES OF NERURONS) == START ==
 %% def: I, nI, loglambda, lambda
-for i2 = 1:genLoop
-  %% ( genLoop -1 [frame] ) * dt [time/frame] == T [time]
-  %%%% ===== renew number of spikes fired by cell c at lag m ===== 
-  %%%% ===== START =====
-  for i1 = 1:hnum
-    %% nIt(t,c,m): number of firing in cell c at lag m.
-    %% correspond to I_{c,m}(t).                                   
-    nIt(i2,:,i1) = sum(I(end - i1*hwind +1 : end - (i1-1)*hwind,:),1);
+
+if ( status.READ_NEURO_CONNECTION == 1 )
+  nIs = zeros(hnum,cnum); % nIs: number of I stack.
+  for i1 = 1:genLoop
+    Tptr = 0; %Tptr: Tail Pointer
+    %% ( genLoop -1 [frame] ) * dt [time/frame] == T [time]
+    %%%% ===== renew number of spikes fired by cell c at lag m ===== 
+    %%%% ===== START =====
+    for i2 =1:hnum
+      nIs(i2,:) = sum(I( (i1-1+Tptr+1):(i1-1+Tptr+hwind),: ),1);
+      Tptr = Tptr+hwind;
+    end
+    %%%% ===== renew number of spikes fired by cell c at lag m ===== 
+    %%%% ===== END =====
+    tmp1 = alpha0 + sum( alpha.*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
+    %% I don't know dot() is more faster than sum().
+    loglambda = [ loglambda; tmp1 ];
+    tmp2_lambda = exp( tmp1 ); 
+    lambda = [ lambda; tmp2_lambda ]; % store time series of lambda
+
+    %{
+    %% old
+    tmp3 = exp(-tmp2_lambda/Hz.video).*(tmp2_lambda/Hz.video); 
+    tmp3 = rand(1,cnum) < tmp3;
+    %}
+    tmp3 = exp(-tmp2_lambda/Hz.video);
+    tmp3 = rand(1,cnum) > tmp3;
+    %    I = uint(1);
+    I = [I;tmp3];
   end
-  %%%% ===== renew number of spikes fired by cell c at lag m ===== 
-  %%%% ===== END =====
-  %% nItrep: [ time cnum cnum hnum ] matrix.
-  nItrep(i2,:,:,:) = repmat( nIt(i2,:,:),[cnum 1 1]);
-  %% tmp1: equation (1)
-  tmp1 = alpha0 + transpose(sum(sum(alpha.*shiftdim(nItrep(i2,:,:,:)),3),2));
-  %% I don't know dot() is more faster than sum().
-  %    tmp1 = alpha0 + transpose(sum(dot(alpha, shiftdim(nItrep(i2,:,:,:)),3)),2);
-  loglambda = [ loglambda; tmp1 ];
-  tmp2 = exp( tmp1 ); 
-  lambda = [ lambda; tmp2 ]; % store time series of lambda
-                             %    rand('seed',randIndex);
-                             %    randIndex = randIndex +1;
-  %% poisson process. 
-  %%    tmp3 = poissrnd(tmp2,1,cnum);
-  tmp3 = exp(-tmp2/Hz.video).*(tmp2/Hz.video); 
-  tmp3 = rand(1,cnum) < tmp3;
-  I = [I;tmp3];
+else
+
+  for i2 = 1:genLoop
+    %% ( genLoop -1 [frame] ) * dt [time/frame] == T [time]
+    %%%% ===== renew number of spikes fired by cell c at lag m ===== 
+    %%%% ===== START =====
+    for i1 = 1:hnum
+      %% nIt(t,c,m): number of firing in cell c at lag m.
+      %% correspond to I_{c,m}(t).                                   
+      nIt(i2,:,i1) = sum(I(end - i1*hwind +1 : end - (i1-1)*hwind,:),1);
+    end
+    %%%% ===== renew number of spikes fired by cell c at lag m ===== 
+    %%%% ===== END =====
+    %% nItrep: [ time cnum cnum hnum ] matrix.
+    nItrep(i2,:,:,:) = repmat( nIt(i2,:,:),[cnum 1 1]);
+    %% tmp1: equation (1)
+    tmp1 = alpha0 + transpose(sum(sum(alpha.*shiftdim(nItrep(i2,:,:,:)),3),2));
+    %% I don't know dot() is more faster than sum().
+    %    tmp1 = alpha0 + transpose(sum(dot(alpha, shiftdim(nItrep(i2,:,:,:)),3)),2);
+    loglambda = [ loglambda; tmp1 ];
+    tmp2_lambda = exp( tmp1 ); 
+    lambda = [ lambda; tmp2_lambda ]; % store time series of lambda
+                                      %    rand('seed',randIndex);
+                                      %    randIndex = randIndex +1;
+    %% poisson process. 
+    %%    tmp3 = poissrnd(tmp2_lambda,1,cnum);
+
+    %{
+    %% old
+    tmp3 = exp(-tmp2_lambda/Hz.video).*(tmp2_lambda/Hz.video); 
+    tmp3 = rand(1,cnum) < tmp3;
+    %}
+    tmp3 = exp(-tmp2_lambda/Hz.video)/Hz.video;
+    tmp3 = rand(1,cnum) < tmp3;
+    I = [I;tmp3];
+  end
 end
-end
-Tout.ctype = sprintf('%4d',ctype_hash);
-Tout.I = sprintf('%4d',sum(I,1));
+Tout.I = sprintf('%6d',sum(I,1));
 I = logical(sparse(I)); %<->full(), logical()
 %%% ===== PLOT LAMBDA ===== START =====
 if 1 == graph.PLOT_T
@@ -186,5 +260,4 @@ clear cnum
 clear hnum       
 clear spar   
 clear SELF_DEPRESS_BASE 
-clear ctype ctype_hash
 %% ==</ clean variables >==

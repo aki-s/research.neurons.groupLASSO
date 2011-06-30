@@ -7,7 +7,7 @@ graph.PLOT_T = 0;
 %%env.spar.level.from
 %%env.spar.level.to  
 
-env.genLoop=2000;
+env.genLoop=20000;
 env.hnum=50;
 env.hwind=2;
 env.Hz.video=100;
@@ -16,4 +16,6 @@ env.Hz.neuro=;
 env.Hz.fn=;
 %}
 env.SELF_DEPRESS_BASE=2;
-
+% log(2) == 0.7
+status.READ_NEURO_CONNECTION =0;
+status.GEN=0;

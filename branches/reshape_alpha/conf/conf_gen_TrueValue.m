@@ -25,12 +25,12 @@ if strcmp('doTuning','doTuning')
   hwind = 2; % hwind: the number of frames in a history window
 
   Hz = struct('video',100, ... % video Hz: [frame/sec]
-              'neuro',30, ...  % Hz of neuronal firing: [rate/sec]
+              'neuro',30, ...  % Hz of neuronal firing: [rate/sec] %++bug: impossible to set.
               'fn',[]);    % Hz of firing per frame: [rate/frame]
 
   SELF_DEPRESS_BASE = 2;
 
-%{
+  %{
   spar.from = randperm(cnum); % spar.from: connenction from
   spar.from = spar.from(1:floor(spar.level.from*cnum));
   spar.to = randperm(cnum); % spar.to: connection to
@@ -38,34 +38,45 @@ if strcmp('doTuning','doTuning')
   % Don't make sparse about self-depression.
   % Actual sparsity level is reduced by spar.level.dup.
   spar.level.dup = sum(spar.from == spar.to);
-%}
+  %}
   %% </ default values >
 
   %% Use user pre-defined variable 'env' if exist.
   %% Override program default values.
-  %  if exist('env') 
-  if exist('env') && isempty('env')
+  if exist('env') 
+    %  if exist('env') && isempty('env')
     %% possible 1. user may prepared 'env' to configure program.
     %% possible 2. reuse previously prepared 'env'.
 
-    if isfield(env,'spar') && isfield(env.spar,'level') && isfield(env.spar.level,'from')
-      spar.level.from = env.spar.level.from; % don't overwrite user defined env.spar.level.from
-    else
-      spar.level.from = str2num(input('env.spar.level.from (0< <1):= ','s'));
-    end
+    if exist('status') && ( status.READ_NEURO_CONNECTION ~= 1 )
+      if isfield(env,'spar') && isfield(env.spar,'level') && isfield(env.spar.level,'from')
+        spar.level.from = env.spar.level.from; % don't overwrite user defined env.spar.level.from
+      else
+        spar.level.from = str2num(input('env.spar.level.from (0< <1):= ','s'));
+      end
 
-    if isfield(env,'spar') && isfield(env.spar,'level') && isfield(env.spar.level,'to')
-      spar.level.to = env.spar.level.to; % don't overwrite user defined env.spar.level.to
-    else
-      spar.level.to = str2num(input('env.spar.level.to (0< <1):= ','s'));
-    end
+      if isfield(env,'spar') && isfield(env.spar,'level') && isfield(env.spar.level,'to')
+        spar.level.to = env.spar.level.to; % don't overwrite user defined env.spar.level.to
+      else
+        spar.level.to = str2num(input('env.spar.level.to (0< <1):= ','s'));
+      end
+      spar.from = randperm(cnum); % spar.from: connenction from
+      spar.from = spar.from(1:floor(spar.level.from*cnum));
+      spar.to = randperm(cnum); % spar.to: connection to
+      spar.to = spar.to(1:floor(spar.level.from*cnum));
+      % Don't make sparse about self-depression.
+      % Actual sparsity level is reduced by spar.level.dup.
+      spar.level.dup = sum(spar.from == spar.to); %++bug: incorrect value.
 
+      env.spar = spar; clear spar;
+
+    end
     if isfield(env,'cnum')
       cnum = env.cnum; % don't overwrite user defined env.cnum.
     else
       cnum = str2num(input('env.cnum:= ','s'));
     end
-
+    
     if isfield(env,'genLoop')
       genLoop = env.genLoop; % don't overwrite user defined env.genLoop.
     else
@@ -97,24 +108,16 @@ if strcmp('doTuning','doTuning')
     end
   end
 end
-  spar.from = randperm(cnum); % spar.from: connenction from
-  spar.from = spar.from(1:floor(spar.level.from*cnum));
-  spar.to = randperm(cnum); % spar.to: connection to
-  spar.to = spar.to(1:floor(spar.level.from*cnum));
-  % Don't make sparse about self-depression.
-  % Actual sparsity level is reduced by spar.level.dup.
-  spar.level.dup = sum(spar.from == spar.to);
 
-  %% ==< clean variables >==
-  %  clear env; global env;
+%% ==< clean variables >==
+%  clear env; global env;
 
-  env.Hz   = Hz;   clear Hz;
-  env.hwind = hwind; clear hwind;
-  env.genLoop = genLoop; clear genLoop;
-  env.cnum = cnum; clear cnum;
-  env.hnum = hnum; clear hnum;
+env.Hz   = Hz;   clear Hz;
+env.hwind = hwind; clear hwind;
+env.genLoop = genLoop; clear genLoop;
+env.cnum = cnum; clear cnum;
+env.hnum = hnum; clear hnum;
 
-  env.spar = spar; clear spar;
-  env.SELF_DEPRESS_BASE = SELF_DEPRESS_BASE; clear SELF_DEPRESS_BASE;
-  %% ==</ clean variables >==
+env.SELF_DEPRESS_BASE = SELF_DEPRESS_BASE; clear SELF_DEPRESS_BASE;
+%% ==</ clean variables >==
 %% ==</ CUSTOMIZE:gen_TrueValue.m >==

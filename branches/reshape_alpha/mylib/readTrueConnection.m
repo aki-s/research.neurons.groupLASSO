@@ -34,6 +34,7 @@ alpha_hash = strrep(alpha_hash, '0','0 ');
 alpha_hash = strrep(alpha_hash, '-','-1 ');
 alpha_hash = str2num(alpha_hash);
 
+%% The shape of alpha_has is 
 %                =>[to #neuron]
 %      ---------------
 %  ||  |  alpha_hash |
@@ -48,5 +49,9 @@ alpha_fig = transpose(reshape(alpha_hash, env.cnum , env.cnum));
 
 fclose(tmp.fid);
 % LocalWords:  excitatory
+
+
+%% calculate env.spar
+%++todo
 
 status.READ_NEURO_CONNECTION =1; % flag

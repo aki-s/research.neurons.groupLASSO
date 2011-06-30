@@ -13,11 +13,12 @@ if strcmp('configure', 'configure') %++conf
   %< gen_TrueValue
   run([rootdir_ '/conf/conf_graph.m']);
   run([rootdir_ '/conf/conf_rand.m']);
-  if strcmp('readTrueConnection','readTrueConnection_')
+  if status.READ_NEURO_CONNECTION == 1
     run([rootdir_ '/mylib/readTrueConnection.m']);
-  else
-    run([rootdir_ '/conf/conf_gen_TrueValue.m']);
   end
+
+  run([rootdir_ '/conf/conf_gen_TrueValue.m']);
+env
   %> gen_TrueValue
   %< DAL
   run([rootdir_ '/conf/conf_DAL.m']);
@@ -29,8 +30,11 @@ end
 % check configuration
 run([rootdir_ '/mylib/check_conf.m']);
 
-if exist('status') && ( 0 == getfield(status,'GEN'))
-  warning('Generating [ FiringIntensity, Firing ] was skipped.');
+if exist('status') && isfield(status,'GEN')
+  if ( 0 == getfield(status,'GEN') )
+    warning('WarnTests:convertTest', ...
+            'Generating [ FiringIntensity, Firing ] was skipped.\n Warning#1');
+  end
 else
   status.GEN = 1; % default.
 end
@@ -61,11 +65,16 @@ else
   Drow = floor(env.genLoop/2);
 end
 
+tmp2Cpu = cputime();
 %% dimension reduction to be estimated.
 [D penalty] = gen_designMat(env,ggsim,I,Drow);
-DAL.lambda = 30; % DAL.lambda: group LASSO parameter.
-for ii1 = 1:5 % search appropriate parameter.
-  DAL.lambda = DAL.lambda/(1.5);
+if strcmp('setLambda_auto','setLambda_auto')
+  DAL.lambda = sqrt(ggsim.ihbasprs.nbase)*100; % DAL.lambda: group LASSO parameter.
+else
+  DAL.lambda = 100; % DAL.lambda: group LASSO parameter.
+end
+for ii1 = 1:3 % search appropriate parameter.
+  DAL.lambda = DAL.lambda/5;
   for i1 = 1:env.cnum % ++parallelization 
     %% logistic regression group lasso
     [EKerWeight{i1}, Ebias{i1}, Estatus{i1}] = ...
@@ -79,11 +88,13 @@ for ii1 = 1:5 % search appropriate parameter.
     %}
   end
 
-  [ Ealpha ] = plot_Ealpha(EKerWeight,Ebias,env,ggsim,strcat('DAL\lambda',num2str(DAL.lambda)));
+  if graph.PLOT_T == 1
+  [ Ealpha ] = plot_Ealpha(EKerWeight,Ebias,env,ggsim,strcat(['DAL lambda'],num2str(DAL.lambda)));
+  end
 end
 %[ Ealpha ] = plot_Ealpha(EKerWeight,Ebias,env,ggsim,'Estimated_alpha');
 
-status.time.estimate_TrueValue = cputime() - tmp1Cpu;
+status.time.estimate_TrueValue = cputime() - tmp2Cpu;
 
 if strcmp('clean','clean')  %++conf
   run([rootdir_ '/mylib/clean.m'])
