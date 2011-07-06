@@ -15,14 +15,15 @@ if strcmp('show_basis','show_basis')
   grid on;
   %  plot(ggsim.iht, ggsim.ih);
   %  plot(ggsim.iht*env.Hz.video, ggsim.ih);
-  plot( ggsim.ih);
+  %plot( ggsim.ih);
   hold on;
   %  plot(ggsim.iht, ggsim.ihbasis);
   %  plot(ggsim.iht*env.Hz.video, ggsim.ihbasis);
   plot(ggsim.ihbasis);
   axis tight;
-  xlabel('history index (frames) ');
-  title('basis');
+  %xlabel('history index (frames) ');
+  xlabel('fOLD ');
+  title('cosine basis function');
 
   figure;
   %  plot(ggsim.iht*env.Hz.video, ggsim.ihbas);

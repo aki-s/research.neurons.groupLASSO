@@ -2,16 +2,16 @@
 %
 % Overview:
 %  Solves the optimization problem:
-%   [xx, bias] = argmin sum( zz - yy.* log(zz) ) + lambda*||x||_1
-%      where  zz = A * x + bias
+%   [xx, bias] = argmin sum( zz - yy.* log(zz) ) + lambda*||xx||_1
+%      where  zz = A * xx + bias
 % Syntax:
-%  [ww,bias,status]=dalprl1(ww0, bias0, A, yy, lambda, <opt>)
+%  [xx,bias,status]=dalprl1(xx0, bias0, A, yy, lambda, <opt>)
 %
 % Inputs:
-%  ww0    : initial solution ([nn,1])
+%  xx0    : initial solution ([nn,1])
 %  bias0  : initial bias (set [] if bias term is unnecessary)
 %  A      : the design matrix A ([mm,nn])
-%  yy     : the target label vector (-1 or +1) ([mm,1]) %?
+%  yy     : the target label vector ( 0 or +1) ([mm,1])
 %  lambda : the regularization constant
 %  <opt>  : list of 'fieldname1', value1, 'filedname2', value2, ...
 %   stopcond : stopping condition, which can be
@@ -34,19 +34,14 @@
 
 function [ww,bias,status]=dalprl1(ww,bias, A, yy, lambda, varargin)
 
-if 1 == 1
 opt=propertylist2struct(varargin{:});
 opt=set_defaults(opt,'solver','cg',...
                      'stopcond','pdg');
 %--
-else
-opt=set_defaults(opt,'solver','cg',...
-                     'stopcond','fval');
+%opt=set_defaults(opt,'solver','cg',...
+%                     'stopcond','fval');
 
 %--
-end
-%opt=set_defaults(opt,'maxiter',2000);
-opt=set_defaults(opt,'maxiter',30);
 
 
 prob.floss    = struct('p',@loss_prp,'d',@loss_prd,'args',{{yy}});
@@ -55,11 +50,8 @@ prob.dnorm    = @(vv)max(abs(vv));
 prob.obj      = @objdall1;
 prob.softth   = @l1_softth;
 prob.stopcond = opt.stopcond;
- prob.ll = yy*0-1e5;
+prob.ll = yy*0-1e5;
 prob.uu = yy; % <-- y_i - alpha_1 > 0
-%prob.ll       = min(0,yy); % <-- Need I change these two lines? OBA 04/15
-%prob.uu       = max(0,yy); % <-- upper and lower constraints for
-                           % the Lagrangian multipliers ([mm,1])
 prob.Ac       =[];
 prob.bc       =[];
 prob.info     =[];
@@ -70,22 +62,23 @@ end
 
 if isequal(opt.stopcond,'fval')
   opt.feval = 1;
-  %%
-  %%
 end
 
 if isnumeric(A)
   A = A(:,:);
   [mm,nn]=size(A);
   At=A';
-  fAT = @(x)At*x;
-  fA  = @(x)A*x;
+  fA = struct('times',@(x)A*x,...
+              'Ttimes',@(x)At*x,...
+              'slice', @(I)A(:,I));
   clear At;
 elseif iscell(A)
-  fA  = A{1};
-  fAT = A{2};
   mm = A{3};
   nn = A{4};
+  fAslice = @(I)fA(sparse(I,1:length(I),ones(length(I),1), nn, length(I)));
+  fA = struct('times',A{1},...
+              'Ttimes',A{2},...
+              'slice',fAslice);
 else
   error('A must be either numeric or cell {@(x)A*x, @(y)(A''*y), mm, nn}');
 end
@@ -100,5 +93,5 @@ else
 end
 
 
-[ww,bias,status]=dal(prob,ww,bias,fA,fAT,B,lambda,opt);
+[ww,bias,status]=dal(prob,ww,bias,fA,B,lambda,opt); % changed for fitting to dal ver1.05
 

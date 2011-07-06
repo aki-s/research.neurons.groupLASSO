@@ -18,9 +18,17 @@ if exist('env') && isfield(env,'spar')
                      ];
   end
 
+  if env.spar.self == 1
+    for i1 = 1:env.cnum
+     tmp1connection = [tmp1connection; ...
+                       [num2str( i1 ),' -> ', ...
+                       num2str( i1 ),';'] ...
+                      ];
+    end
+  end
   %>set output file name.
   filename = 'graphviz.dot'; % default output file name
-  if exist('graph') && isfield(graph, 'outGraphviz')
+  if exist('graph') && isfield(graph, 'GRAPHVIZ_NAME_DOT')
     filename = input(['Enter output file name\n (adding extension ' ...
                       '''.dot'' is recommaneded): '],'s');
   end
@@ -43,10 +51,18 @@ if exist('env') && isfield(env,'spar')
 
   disp(sprintf('%s was wrote.\n',filename));
 
+
   if strcmp('clean','clean')
     run([rootdir_ '/mylib/clean.m']);
   end
+
+  if graph.GRAPHVIZ_OUT_FIG == 1
+    filename1 = regexprep(filename,'.dot','');
+    command =    ['dot -Tpng ' filename ' -o ' filename1 '.eps' ];
+
+    system(command);
+  end
 else
-  warning('set variable ''env.sparse'' ')
+  warning('set variable ''env.spar'' ')
   warning('graphviz file wasn''t generated')
 end

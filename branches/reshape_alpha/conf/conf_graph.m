@@ -1,6 +1,14 @@
 %%% default graph options apply to all function
 %%> gen_TrueBalue.m plot_alpha.m
 if exist('graph')
+  if ~isfield(graph,'GRAPHVIZ_NAME_DOT')
+    %% 0: name output dot file as 'graphviz.dot'.
+    graph.GRAPHVIZ_NAME_DOT=0;
+  end
+  if ~isfield(graph,'GRAPHVIZ_OUT_FIG')
+    %% 0: output eps file from graphviz dot file.
+    graph.GRAPHVIZ_OUT_FIG=0;
+  end
   if ~isfield(graph,'PLOT_T') % precede user defined value.
     graph.PLOT_T = 1; % graph.PLOT_T: if (graph.PLOT_T == 1)
                       % then plot artificial (True) data.

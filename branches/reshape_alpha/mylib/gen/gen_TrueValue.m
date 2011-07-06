@@ -143,7 +143,7 @@ end
 %%% ===== PLOT alpha ===== START =====
 if ( 1 == graph.PLOT_T )
   %% ++bug: func plot_alpha must be given 'env'.
-  plot_alpha(cnum,hnum,alpha0,alpha,'\alpha: Spatio-temporal Kernels');
+  plot_alpha(graph,env,alpha0,alpha,'\alpha: Spatio-temporal Kernels');
 end
 if graph.SAVE_EPS == 1
   print('-depsc','-tiff',[rootdir_ '/outdir/true_alpha.eps'])

@@ -14,6 +14,7 @@ if strcmp('doTuning','doTuning')
   spar = struct('from',[],'to',[],'level',[]);
   spar.level.from = .5;
   spar.level.to = .5;
+  spar.self = 1; % 1:self-connect all neuron.
 
   %< genLoop: number of frames of 'lambda'(neuronal firing
   %> rate per flame) to be generated. [frame]

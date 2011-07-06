@@ -29,7 +29,9 @@ if ~( Drow < env.genLoop)
 end
 
 %% histSize: presume this number of frames is valid history length.
+if strcmp('debug','debug')
 histSize = size(ggsim.ih,1); % default histSize.
+end
 if ( env.genLoop < ( histSize + Drow ))
   warning('The number of history windows is too large.');
   error('choose appropriate number of basis.');

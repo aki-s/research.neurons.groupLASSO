@@ -8,6 +8,7 @@ end
 
 addpath([rundir '/conf/']);
 addpath([rundir '/dal_mod/']);
+addpath([rundir '/dal_ver1.05/']);
 addpath([rundir '/mylib/']);
 addpath([rundir '/mylib/gen']);
 addpath([rundir '/mylib/plot']);
