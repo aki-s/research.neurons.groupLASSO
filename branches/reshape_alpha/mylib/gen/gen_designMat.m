@@ -15,7 +15,7 @@ function [D penalty] = gen_designMat(env,ggsim,I,Drow);
 %% D	: matrix having info about argument of discriminant function.
 %%	: D(i,(#neuron -1)*B + j), j=1:B
 %% 	: Suppose each variable is set as following.
-%% 	: B:= ggsim.ihbasprs.nabase (Number of basis)
+%% 	: B:= ggsim.ihbasprs.nbase (Number of basis)
 %% 	: env.cnum:=5
 %% 	: ^   |-----------------------------|    |  ~ old time
 %% 	: |   |  #  |  #  |  #  |  #  |  #  |    |
@@ -79,6 +79,6 @@ for i1cellIndex = 1: env.cnum % i1cellIndex: for cell index.
       %% demension reduction with basis function 'ggsim.ihbasis'.
       tmp1D = [ dot( ggsim.ihbasis(1:histSize,i2basisIndex), I(end +1 -(1:histSize) -i3, i1cellIndex) ) ; tmp1D ];
     end %++debug.1
-    D(:,i2basisIndex) = tmp1D ;
+    D(:,i1cellIndex*(ggsim.ihbasprs.nbase-1) +i2basisIndex ) = tmp1D ;
   end
 end
