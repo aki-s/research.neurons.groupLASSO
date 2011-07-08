@@ -1,5 +1,6 @@
 %% Main program.
-
+%++debug
+profile on -history
 global env;
 global status;
 global rootdir_;   rootdir_ = pwd;
@@ -44,19 +45,17 @@ if status.GEN == 1
   if strcmp('genTrueVale','genTrueVale') %++conf
                                          % measure cpu cost
     %% prepare 'TrueValues'.
-    tmp1Cpu = cputime();
+    tic;
     run([rootdir_ '/mylib/gen/gen_TrueValue.m']);
-    status.time.gen_TrueValue = cputime() - tmp1Cpu;
+    status.time.gen_TrueValue = toc;
 
     ggsim = makeSimStruct_glm(1/env.Hz.video); % Create GLM structure with default params
   end
 end
 
 %% Start estimation with DAL.
-% measure cpu cost
-%cputime
-tmp1Cpu = cputime();
 
+tic;
 if strcmp('allI','allI_')  %++conf
   %%% use all available firing history.
   %% Drow: length of total frames used at loss function.
@@ -65,7 +64,6 @@ else
   Drow = floor(env.genLoop/4);
 end
 
-tmp2Cpu = cputime();
 %% dimension reduction to be estimated.
 [D penalty] = gen_designMat(env,ggsim,I,Drow);
 if strcmp('setLambda_auto','setLambda_auto_')
@@ -80,7 +78,7 @@ end
 status.speedup.DAL =0;
 method = 2;
 for ii1 = 1:3 % search appropriate parameter.
-  DAL.lambda = DAL.lambda*2;
+  DAL.lambda = DAL.lambda*4;
   for i1 = 1:env.cnum % ++parallelization 
     switch  method
       case 1
@@ -117,7 +115,7 @@ for ii1 = 1:3 % search appropriate parameter.
 end
 %[ Ealpha ] = plot_Ealpha(EKerWeight,Ebias,env,ggsim,'Estimated_alpha');
 
-status.time.estimate_TrueValue = cputime() - tmp2Cpu;
+status.time.estimate_TrueValue = toc;
 
 matlabpool close
 
@@ -173,3 +171,5 @@ if strcmp('saveInterActive','saveInterActive')  %++conf
 else
   save( [ rootdir_ '/outdir/myestOut.mat']);
 end
+
+status.profile=profile('info');
