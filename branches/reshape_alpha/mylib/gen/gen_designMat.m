@@ -74,11 +74,11 @@ penalty = 2*I(end - Drow +1: end,:) -1;
 for i1cellIndex = 1: env.cnum % i1cellIndex: for cell index.
   %% Time axis is in descending order.
   for i2basisIndex = 1:ggsim.ihbasprs.nbase % i2basisIndex: for ggsim.ihbasis( ,i2basisIndex).
-    tmp1D = []; % reset at new bottom right part in matrix D.
+    tmp1D = zeros(Drow,1); % reset at new bottom right part in matrix D.
      for i3 = 0:Drow-1 % i3: ascending time point.
       %% demension reduction with basis function 'ggsim.ihbasis'.
-      tmp1D = [ dot( ggsim.ihbasis(1:histSize,i2basisIndex), I(end +1 -(1:histSize) -i3, i1cellIndex) ) ; tmp1D ];
+      tmp1D(Drow -i3) = dot( ggsim.ihbasis(1:histSize,i2basisIndex), I(end +1 -(1:histSize) -i3, i1cellIndex) ) ; 
     end %++debug.1
-    D(:,i1cellIndex*(ggsim.ihbasprs.nbase-1) +i2basisIndex ) = tmp1D ;
+    D(:,(i1cellIndex-1)*ggsim.ihbasprs.nbase +i2basisIndex ) = tmp1D ;
   end
 end

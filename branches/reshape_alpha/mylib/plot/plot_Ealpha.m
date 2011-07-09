@@ -41,21 +41,26 @@ if  graph.TIGHT == 1;
   axis tight;
 end
   grid on;
+set(gca,'Xlim',[0,env.hnum*2]);
+set(gca,'Ylim',[-SELF_DEPRESS_BASE*gain-2,2]);
   subplot(cnum,cnum,i1);
   tmp1 = Ealpha{i2to}{i3from};
   if i2to == i3from
     tmp1 = tmp1 + Ebias{i2to};
   end
   if tmp1 > 0
-    plot(tmp1,'r');
+    plot(tmp1,'r','LineWidth',3);
   elseif tmp1 < 0
-    plot(tmp1,'b');
-  else 
-    plot(tmp1,'k');
+    plot(tmp1,'b','LineWidth',3);
+  else           
+    plot(tmp1,'k','LineWidth',3);
   end
   %% </ chage color ploted according to cell type >
+  %{
+  %% no use in setting xlim and ylim if not before subplot.
   xlim([0,env.hnum*2]);
   ylim([-SELF_DEPRESS_BASE*gain-2,2]);
+  %}
   set(gca,'XAxisLocation','top');
 
   %% < from-to cell label >
@@ -91,7 +96,7 @@ ylabel(h,'Target')
 %% write out eps file
 %if graph.PLOT_T == 1
 if 1 == 1
-  print -depsc -tiff Estimated_alpha.eps
+  print('-depsc','-tiff', [rootdir_ 'Estimated_alpha.eps'])
 end
 
 %% == CLEAN var ==

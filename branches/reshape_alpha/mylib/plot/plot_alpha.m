@@ -11,6 +11,7 @@ function plot_alpha(graph,env,alpha0,alpha,title);
 %  plot_alpha(graph,env,alpha0,alpha,'\alpha: Spatio-temporal Kernels');
 %%
 
+global rootdir_
 cnum = env.cnum;
 hnum = env.hnum;
 SELF_DEPRESS_BASE = env.SELF_DEPRESS_BASE;
@@ -69,7 +70,7 @@ if cnum < MAX
   %%% ===== PLOT alpha ===== END =====
   %% write out eps file
   if graph.SAVE_EPS == 1
-    print -depsc -tiff artificial_alpha.eps
+    print('-depsc', '-tiff' ,[rootdir_ 'artificial_alpha.eps'])
   end
 else
   warning('Too large number of cells to plot.\n Plot aborted.')

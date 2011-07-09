@@ -24,6 +24,7 @@ if strcmp('configure', 'configure') %++conf
   %< DAL
   run([rootdir_ '/conf/conf_DAL.m']);
   %> DAL
+  run([rootdir_ '/conf/conf_mail.m']);
 end
 
 %% ==</ configure >==
@@ -65,22 +66,24 @@ else
 end
 
 %% dimension reduction to be estimated.
+fprintf('\nGenerating Matrix for DAL\n');
 [D penalty] = gen_designMat(env,ggsim,I,Drow);
+
 if strcmp('setLambda_auto','setLambda_auto_')
   DAL.lambda = sqrt(ggsim.ihbasprs.nbase)*100; % DAL.lambda: group LASSO parameter.
 else
-  DAL.lambda = 2; % DAL.lambda: group LASSO parameter.
+  DAL.lambda = 0.2; % DAL.lambda: group LASSO parameter.
 end
 matlabpool(4);
 if strcmp('debug','debug')
   pI= I(end - Drow +1: end,:);
 end
 status.speedup.DAL =0;
-method = 2;
-for ii1 = 1:3 % search appropriate parameter.
-  DAL.lambda = DAL.lambda*4;
+tmp.method = 3;
+for ii1 = 1:5 % search appropriate parameter.
+  DAL.lambda = DAL.lambda*3;
   for i1 = 1:env.cnum % ++parallelization 
-    switch  method
+    switch  tmp.method
       case 1
         %% logistic regression group lasso
         [EKerWeight{i1}, Ebias{i1}, Estatus{i1}] = ...
@@ -102,13 +105,13 @@ for ii1 = 1:3 % search appropriate parameter.
     end
   end
   if graph.PLOT_T == 1
-    switch method
+    switch tmp.method
       case 1
-    [ Ealpha ] = plot_Ealpha(EKerWeight,Ebias,env,ggsim,strcat(['dallrgl:DAL ' ...
-                        'lambda'],num2str(DAL.lambda)));
-      case 2
-    [ Ealpha ] = plot_Ealpha(pEKerWeight,pEbias,env,ggsim, ...
-                             strcat(['dalprgl:DAL lambda'],num2str(DAL.lambda)));
+        [ Ealpha ] = plot_Ealpha(EKerWeight,Ebias,env,ggsim,strcat(['dallrgl:DAL ' ...
+                            'lambda'],num2str(DAL.lambda)));
+      case {2,3}
+        [ Ealpha ] = plot_Ealpha(pEKerWeight,pEbias,env,ggsim, ...
+                                 strcat(['dalprgl:DAL lambda'],num2str(DAL.lambda)));
     end
   end
   status.speedup.DAL =1;
@@ -126,30 +129,49 @@ end
 
 
 %%% ==< Kim >==
-if 1 == 0
-  load([rootdir_ 'indir/Simulation/data_sim_9neuron.mat'])
-  [L,N] = size(X)
+if 1 == 1
+  load([rootdir_ '/indir/Simulation/data_sim_9neuron.mat'])
+  [L,N] = size(X);
   KDrow = floor(N/4);
   Kenv =struct('cnum',N,'genLoop',L);
+  disp('Generating Matrix for DAL');
   [KD Kpenalty] = gen_designMat(Kenv,ggsim,X,KDrow);
-  KDAL.lambda = 0.05; % DAL.lambda: group LASSO parameter.
-  for ii1 = 1:1 % search appropriate parameter.
-    KDAL.lambda = DAL.lambda/5;
+  %  kDAL.lambda = 3; % DAL.lambda: group LASSO parameter.
+  kDAL.lambda = DAL.lambda;
+  for ii1 = 1:3 % search appropriate parameter.
+    kDAL.lambda = kDAL.lambda*3;
     for i1 = 1:N % ++parallelization 
-      %% logistic regression group lasso
-      [KEKerWeight{i1}, KEbias{i1}, KEstatus{i1}] = ...
-          dallrgl( zeros(ggsim.ihbasprs.nbase,N), -1,...
-                   KD, Kpenalty(:,i1), DAL.lambda,...
-                   opt);
-
-      %{
-      %% poisson regression group lasso
-      [Ealpha, Ebias, Estatus] = dalprgl( alpha, alpha0, , ,DAL.lambda);
-      %}
+      switch  tmp.method
+        case 1
+          %% logistic regression group lasso
+          [kEKerWeight{i1}, kEbias{i1}, kEstatus{i1}] = ...
+              dallrgl( zeros(ggsim.ihbasprs.nbase,env.cnum), 0,...
+                       D, penalty(:,i1), kDAL.lambda,...
+                       opt);
+        case 2
+          %% poisson regression group lasso
+          [kpEKerWeight{i1}, kpEbias{i1}, kpEstatus{i1}] = ...
+              dalprgl( zeros(ggsim.ihbasprs.nbase*env.cnum,1), 0,...
+                       D, pI(:,i1), kDAL.lambda,...
+                       'blks',repmat([ggsim.ihbasprs.nbase],[1 env.cnum]));
+        case 3
+          %% poisson regression group lasso: error? Can't be run.
+          [kpEKerWeight{i1}, kpEbias{i1}, kpEstatus{i1}] = ...
+              dalprgl( zeros(ggsim.ihbasprs.nbase,env.cnum), 0,...
+                       D, pI(:,i1), kDAL.lambda,...
+                       opt);
+      end
     end
 
     if graph.PLOT_T == 1
-      [ Ealpha ] = plot_Ealpha(EKerWeight,Ebias,env,ggsim,strcat(['DAL lambda'],num2str(DAL.lambda)));
+      switch tmp.method
+        case 1
+          [ kEalpha ] = plot_Ealpha(kEKerWeight,kEbias,env,ggsim,strcat(['Kim:dallrgl:kDAL ' ...
+                              'lambda'],num2str(kDAL.lambda)));
+        case {2,3}
+          [ kEalpha ] = plot_Ealpha(kpEKerWeight,kpEbias,env,ggsim, ...
+                                    strcat(['Kim:dalprgl:kDAL lambda'],num2str(kDAL.lambda)));
+      end
     end
   end
 
@@ -173,3 +195,6 @@ else
 end
 
 status.profile=profile('info');
+
+setpref('Internet','SMTPServer',mail.smtp);
+sendmail(mail.to,'Finished myest.m');

@@ -7,10 +7,6 @@
 % [[return]]
 % {rHistSec,rSimsec}: real{History sec, simulation sec}
 
-
-if strcmp('clear','clear_')
-  clear all; close all;
-end
 %% ==< set local variables >==
 Hz      = env.Hz     ;      
 hwind   = env.hwind  ;   
@@ -123,8 +119,9 @@ elseif strcmp('prepareTrueValues','prepareTrueValues')
   Tout.ctype = sprintf('%4d',ctype_hash);
   clear ctype ctype_hash
 end
-I = zeros(hnum*hwind,cnum);
-
+%I = zeros(hnum*hwind,cnum); % I: initial time series of firing.
+%% I: zeros(hnum*hwind,cnum), initial time series of firing.
+I = zeros(hnum*hwind+genLoop,cnum); % mallloc
 
 %%% ===== SET AUTO FIRING RATE ===== START =====                                          
 fprintf(1,'Total history width %f[sec]\n',hnum*hwind/Hz.video);
@@ -162,9 +159,16 @@ loglambda = []; % loglambda: log( lambda )
 %%%% GENERATE LAMBDA (FIRING RATES OF NERURONS) == START ==
 %% def: I, nI, loglambda, lambda
 
+tmp0.showProg=floor(genLoop/10);
+tmp0.count = 0;
+fprintf('progress(%): ');
 if ( status.READ_NEURO_CONNECTION == 1 )
   nIs = zeros(hnum,cnum); % nIs: number of I stack.
   for i1 = 1:genLoop
+    if ~mod(i1,tmp0.showProg)
+      fprintf('%d ',tmp0.count*10)
+      tmp0.count = tmp0.count +1;
+    end
     Tptr = 0; %Tptr: Tail Pointer
     %% ( genLoop -1 [frame] ) * dt [time/frame] == T [time]
     %%%% ===== renew number of spikes fired by cell c at lag m ===== 
@@ -188,8 +192,8 @@ if ( status.READ_NEURO_CONNECTION == 1 )
     %}
     tmp3 = exp(-tmp2_lambda/Hz.video);
     tmp3 = rand(1,cnum) > tmp3;
-    %    I = uint(1);
-    I = [I;tmp3];
+
+    I(i1,:) = tmp3;
   end
 else
 
@@ -243,7 +247,7 @@ end
 
 %%% ===== PLOT I(t) ===== START =====
 if 1 == graph.PLOT_T
-  plot_I(cnum,genLoop,hnum,hwind,I,'I(t): Spikes [per frame]')
+  plot_I(env,genLoop,I,'I(t): Spikes [per frame]')
   %%% ===== PLOT I(t) ===== END =====
   %% write out eps file
   if graph.SAVE_EPS == 1

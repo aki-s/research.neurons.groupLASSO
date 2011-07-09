@@ -1,0 +1,19 @@
+if ~( exist('rootdir_') && exist('ggsim') )
+  run([rootdir_ '/myest.m'])
+end
+if ~exist('env')
+  if ~isfield(env,'Hz.video') || isempty('env.Hz.video')
+    env.Hz.video = input('What''s the value of video frame?','s');
+  end
+end
+% === Make Fig: model params =======================
+if strcmp('show_basis','show_basis')
+  figure;
+  grid on;
+  plot(ggsim.iht*env.Hz.video, ggsim.ih);
+  hold on;
+  plot(ggsim.iht*env.Hz.video, ggsim.ihbasis);
+  axis tight;
+  xlabel('history index (frames) ');
+  title('basis');
+end

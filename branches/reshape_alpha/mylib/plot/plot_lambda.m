@@ -14,6 +14,8 @@ function plot_lambda(cnum,gen_lambda_loop,lambda,title);
 figure; 
 %     title('\lambda: Firing Rates');
 set(gca,'XAxisLocation','top');
+ylim( [0,mean(median(lambda))]);
+%ylim( [0,4]);
 for i1 = 1:cnum
   subplot(cnum,1,i1)
   plot( 1:gen_lambda_loop, lambda(:,i1))
