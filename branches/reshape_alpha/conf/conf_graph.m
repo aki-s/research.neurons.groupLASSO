@@ -28,3 +28,4 @@ end
 % name output 'dot' file by yourself.
 % Default outputfile name is graphviz.dot.
 graph.Graphviz = 0; %++undone
+graph.xrange=2000; %x range of graph.

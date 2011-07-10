@@ -1,4 +1,4 @@
-function plot_lambda(cnum,gen_lambda_loop,lambda,title);
+function plot_lambda(graph,env,lambda,title);
 %%
 %% input)
 %% cnum: number of cells
@@ -7,19 +7,25 @@ function plot_lambda(cnum,gen_lambda_loop,lambda,title);
 %% title: title of the window
 %%
 %% usage)
-% plot_lambda(env.cnum,env.gen_lambda_loop,lambda,'\lambda: Firing Rates
+% plot_lambda(graph,env,lambda,'\lambda: Firing Rates
 % [per frame]');
 %%
 
+gen_lambda_loop = env.genLoop;
+cnum = env.cnum;
+
 figure; 
-%     title('\lambda: Firing Rates');
 set(gca,'XAxisLocation','top');
 ylim( [0,mean(median(lambda))]);
 %ylim( [0,4]);
+%xlim([0,graph.xrange]);
+%set(gca,'Xlim',[0,graph.xrange]);
 for i1 = 1:cnum
   subplot(cnum,1,i1)
+  set(gca,'Xlim',[0,graph.xrange]);
   plot( 1:gen_lambda_loop, lambda(:,i1))
-  grid on; ylim([0,max(max(lambda))]);
+  grid on;
+  ylim([0,max(max(lambda))]);
   ylabel(sprintf('%d',i1));
 end
 

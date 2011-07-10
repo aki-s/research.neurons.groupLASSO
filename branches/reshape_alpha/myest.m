@@ -26,6 +26,7 @@ if strcmp('configure', 'configure') %++conf
   %> DAL
   run([rootdir_ '/conf/conf_mail.m']);
 end
+%run([rootdir_ '/conf/conf_user.m']);
 
 %% ==</ configure >==
 
@@ -66,13 +67,13 @@ else
 end
 
 %% dimension reduction to be estimated.
-fprintf('\nGenerating Matrix for DAL\n');
+fprintf('\tGenerating Matrix for DAL\n');
 [D penalty] = gen_designMat(env,ggsim,I,Drow);
 
 if strcmp('setLambda_auto','setLambda_auto_')
   DAL.lambda = sqrt(ggsim.ihbasprs.nbase)*100; % DAL.lambda: group LASSO parameter.
 else
-  DAL.lambda = 0.2; % DAL.lambda: group LASSO parameter.
+  DAL.lambda = 0.001; % DAL.lambda: group LASSO parameter.
 end
 matlabpool(4);
 if strcmp('debug','debug')
@@ -129,12 +130,12 @@ end
 
 
 %%% ==< Kim >==
-if 1 == 1
+if 1 == 0
   load([rootdir_ '/indir/Simulation/data_sim_9neuron.mat'])
   [L,N] = size(X);
   KDrow = floor(N/4);
   Kenv =struct('cnum',N,'genLoop',L);
-  disp('Generating Matrix for DAL');
+  fprintf('\tGenerating Matrix for DAL\n');
   [KD Kpenalty] = gen_designMat(Kenv,ggsim,X,KDrow);
   %  kDAL.lambda = 3; % DAL.lambda: group LASSO parameter.
   kDAL.lambda = DAL.lambda;
@@ -196,5 +197,7 @@ end
 
 status.profile=profile('info');
 
-setpref('Internet','SMTPServer',mail.smtp);
-sendmail(mail.to,'Finished myest.m');
+if status.mail == 1
+  setpref('Internet','SMTPServer',mail.smtp);
+  sendmail(mail.to,'Finished myest.m');
+end

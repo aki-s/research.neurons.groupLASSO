@@ -151,21 +151,16 @@ Tout.simtime = genLoop/Hz.video;
 fprintf(1,'Time of simulation %f[sec]\n',Tout.simtime);
 Tout.simtime = sprintf('%f[sec]',Tout.simtime);
 %% lambda: (genLoop,cnum) matrix. Firing rate per frame. [rate/frame]
-lambda = [];
-loglambda = []; % loglambda: log( lambda )
-                %nI = zeros(1+genLoop,cnum,hnum);
-%% i2: correspond to 'time' t.
+lambda    = zeros(genLoop,env.cnum);
+loglambda = zeros(genLoop,env.cnum);
 
-%%%% GENERATE LAMBDA (FIRING RATES OF NERURONS) == START ==
-%% def: I, nI, loglambda, lambda
-
-tmp0.showProg=floor(genLoop/10);
-tmp0.count = 0;
-fprintf('progress(%): ');
 if ( status.READ_NEURO_CONNECTION == 1 )
   nIs = zeros(hnum,cnum); % nIs: number of I stack.
+  tmp0.showProg=floor(genLoop/10);
+  tmp0.count = 0;
+  fprintf('\tprogress(%%): ');
   for i1 = 1:genLoop
-    if ~mod(i1,tmp0.showProg)
+    if ~mod(i1,tmp0.showProg) %% show progress.
       fprintf('%d ',tmp0.count*10)
       tmp0.count = tmp0.count +1;
     end
@@ -181,10 +176,9 @@ if ( status.READ_NEURO_CONNECTION == 1 )
     %%%% ===== END =====
     tmp1 = alpha0 + sum( alpha.*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
     %% I don't know dot() is more faster than sum().
-    loglambda = [ loglambda; tmp1 ];
+    loglambda(i1,:) = tmp1;
     tmp2_lambda = exp( tmp1 ); 
-    lambda = [ lambda; tmp2_lambda ]; % store time series of lambda
-
+    lambda(i1,:) = tmp2_lambda;
     %{
     %% old
     tmp3 = exp(-tmp2_lambda/Hz.video).*(tmp2_lambda/Hz.video); 
@@ -193,8 +187,9 @@ if ( status.READ_NEURO_CONNECTION == 1 )
     tmp3 = exp(-tmp2_lambda/Hz.video);
     tmp3 = rand(1,cnum) > tmp3;
 
-    I(i1,:) = tmp3;
+    I(hnum*hwind+ i1,:) = tmp3;
   end
+  fprintf('\n');
 else
 
   for i2 = 1:genLoop
@@ -236,7 +231,7 @@ Tout.I = sprintf('%6d',sum(I,1));
 I = logical(sparse(I)); %<->full(), logical()
 %%% ===== PLOT LAMBDA ===== START =====
 if 1 == graph.PLOT_T
-  plot_lambda(cnum,genLoop,lambda,'\lambda: Firing Rates [per frame]');
+  plot_lambda(graph,env,lambda,'\lambda: Firing Rates [per frame]');
   %%% ===== PLOT LAMBDA ===== END =====
   %% write out eps file
   if graph.SAVE_EPS == 1
@@ -247,7 +242,7 @@ end
 
 %%% ===== PLOT I(t) ===== START =====
 if 1 == graph.PLOT_T
-  plot_I(env,genLoop,I,'I(t): Spikes [per frame]')
+  plot_I(graph,env,I,'I(t): Spikes [per frame]')
   %%% ===== PLOT I(t) ===== END =====
   %% write out eps file
   if graph.SAVE_EPS == 1
