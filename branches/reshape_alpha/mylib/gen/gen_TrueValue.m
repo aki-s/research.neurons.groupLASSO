@@ -16,6 +16,7 @@ hnum    = env.hnum   ;
 SELF_DEPRESS_BASE = env.SELF_DEPRESS_BASE;
 %% ==</ set local variables >==
 
+alpha = zeros(hnum*cnum,cnum);
 if ( status.READ_NEURO_CONNECTION == 1 )
   %% ==< get neuron type >==
   tmp_alpha_fig = alpha_fig;
@@ -53,14 +54,11 @@ if ( status.READ_NEURO_CONNECTION == 1 )
   end
   %% ==< generate alpha>==
   %% --< init >--
-  tmp_alpha_weight = [];
+  tmp_alpha_weight = zeros(1,hnum);
   for i1 = 1:hnum
-    %    tmp_alpha_weight = sin( iniPhase + ctype + i1/hnum ) -
-    %    SELF_DEPRESS_BASE )*exp(-(i1-1)/hnum*3);
     %++improve: generate characteristic of neuron.
-    tmp_alpha_weight = [tmp_alpha_weight cos( i1/hnum )*exp(-(i1-1)/hnum*3)];
+    tmp_alpha_weight(i1) = cos( i1/hnum )*exp(-(i1-1)/hnum*3);
   end
-  alpha = zeros(hnum*cnum,cnum);
   i3 = 0;
   %% --</init >--
   for i1 = 1:cnum %%++parallel
@@ -83,20 +81,17 @@ if ( status.READ_NEURO_CONNECTION == 1 )
       end
     end
   end
+  clear ptr flag tmp_alpha_weight;
   %% ==</ generate alpha>==
 
   %%% ===== prepare True Values ===== START ===== 
 elseif strcmp('prepareTrueValues','prepareTrueValues')
   spar    = env.spar   ;
-
-  %  ctype = floor(randn(1,cnum)/100); % tweek SD by deviding with
-  %  100
   ctype = 2*(randn(1,cnum)>0) - 1; 
   ctype_hash = ctype;
   Tout.ctypesum.inhibitory = length(find(ctype == -1)); % number of inhibitory neurons.
   Tout.ctypesum.excitatory = length(find(ctype == +1)); % number of excitatory neurons.
 
-  alpha = zeros(cnum,cnum,hnum); % connection 'false' at all elements.
   alpha_hash = zeros(cnum,cnum);
   alpha_hash(spar.from,spar.to) = 1; % connection 'true'.
   alpha_hash(logical(eye(cnum))) = 1; % diagonal element: connection 'true'.
@@ -106,20 +101,15 @@ elseif strcmp('prepareTrueValues','prepareTrueValues')
   ctype = repmat(ctype*(pi/2),cnum,1);
   ctype(logical(eye(cnum))) = -pi;  % All neuron must have self-depression.
 
-  for i1 = 1:hnum
-    alpha(:,:,i1) = ( sin( iniPhase + ctype + i1/hnum ) - ones(cnum)*SELF_DEPRESS_BASE )*exp(-(i1-1)/hnum*3 );
-    %    alpha(:,:,) = sin(log(1:hnum*pi/hnum/20));
-    %% use more trigonometric funcions with variety of angular frequency.
+  for i1 = 1:cnum
+    error('temporary this functionality is disabled');
+    %   alpha=;
   end
-
-  alpha = alpha.*repmat(alpha_hash,[1 1 hnum]); % make connection sparse.
-                                                %  I = zeros(hnum*hwind,cnum);
-  %% nI:  Empty array: 0-by-6-by-10. (time,number of cells, number of history)
   nIt = zeros([],cnum,hnum);
   Tout.ctype = sprintf('%4d',ctype_hash);
   clear ctype ctype_hash
 end
-%I = zeros(hnum*hwind,cnum); % I: initial time series of firing.
+
 %% I: zeros(hnum*hwind,cnum), initial time series of firing.
 I = zeros(hnum*hwind+genLoop,cnum); % mallloc
 

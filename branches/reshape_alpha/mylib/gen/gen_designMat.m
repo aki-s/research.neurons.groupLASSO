@@ -47,16 +47,16 @@ prs.gen_designMat = 2; % prs: parameters
 %%< check size
 if ~( Drow < env.genLoop)
   warning('4th arg ''Drow'' must be smaller than env.genLoop')
-  %error();
 end
 
 %% histSize: presume this number of frames is valid history length.
 if strcmp('debug','debug')
-histSize = size(ggsim.ih,1); % default histSize.
+  histSize = size(ggsim.ih,1); % default histSize.
 end
 if ( env.genLoop < ( histSize + Drow ))
   warning('The number of history windows is too large.');
   error('choose appropriate number of basis.');
+  %%+improve: auto select appropriate number of  basis used.
 elseif ( ( env.genLoop  / prs.gen_designMat ) < ( histSize + Drow )) ...
   % ++debug.1
   %{
@@ -64,21 +64,55 @@ elseif ( ( env.genLoop  / prs.gen_designMat ) < ( histSize + Drow )) ...
         'applied to penalty function may be relatively too large for ' ...
         'generated frames.'])
   %}
-warning('WarnTests:convertTest', 'Number of basis used to estimate, and number of frames applied to penalty function\n\t may be relatively too large for generated frames.');
+  warning('WarnTests:convertTest', 'Number of basis used to estimate, and number of frames applied to penalty function\n\t may be relatively too large for generated frames.');
   %% ++improve: automated preparation for number of basis.
   %  histSize = ;
 end
-D = zeros(Drow,env.cnum*ggsim.ihbasprs.nbase); 
-penalty = 2*I(end - Drow +1: end,:) -1;
-% ++parallelization
-for i1cellIndex = 1: env.cnum % i1cellIndex: for cell index.
-  %% Time axis is in descending order.
-  for i2basisIndex = 1:ggsim.ihbasprs.nbase % i2basisIndex: for ggsim.ihbasis( ,i2basisIndex).
-    tmp1D = zeros(Drow,1); % reset at new bottom right part in matrix D.
-     for i3 = 0:Drow-1 % i3: ascending time point.
-      %% demension reduction with basis function 'ggsim.ihbasis'.
-      tmp1D(Drow -i3) = dot( ggsim.ihbasis(1:histSize,i2basisIndex), I(end +1 -(1:histSize) -i3, i1cellIndex) ) ; 
-    end %++debug.1
-    D(:,(i1cellIndex-1)*ggsim.ihbasprs.nbase +i2basisIndex ) = tmp1D ;
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+if strcmp('me','me_')
+  D = zeros(Drow,env.cnum*ggsim.ihbasprs.nbase); 
+  penalty = 2*I(end - Drow +1: end,:) -1;
+  tmp0.showProg=floor(env.cnum/10);
+  tmp0.count = 0;
+  fprintf(1,'\tprogress(%%): ');
+
+  % ++parallelization
+  for i1cellIndex = 1: env.cnum % i1cellIndex: for cell index.
+    if ~mod(i1,tmp0.showProg) %% show progress.
+      fprintf(1,'%d ',tmp0.count*10)
+      tmp0.count = tmp0.count +1;
+    end
+
+    %% Time axis is in descending order.
+    for i2basisIndex = 1:ggsim.ihbasprs.nbase % i2basisIndex: for ggsim.ihbasis( ,i2basisIndex).
+      tmp1D = zeros(Drow,1); % reset at new bottom right part in matrix D.
+      for i3 = 0:Drow-1 % i3: ascending time point.
+        %% demension reduction with basis function 'ggsim.ihbasis'.
+        tmp1D(Drow -i3) = dot( ggsim.ihbasis(1:histSize,i2basisIndex), I(end +1 -(1:histSize) -i3, i1cellIndex) ) ; 
+      end %++debug.1
+      D(:,(i1cellIndex-1)*ggsim.ihbasprs.nbase +i2basisIndex ) = tmp1D ;
+    end
+  end
+
+else
+  C = env.cnum; % # of cells
+  K = ggsim.ihbasprs.nbase; % # of bases per a cell
+  N = histSize; % length of each single basis
+  D = zeros( Drow, C*K ); % design matrix
+  T = size( I, 1 ); % length of the time-sequence
+  idx = (T-Drow+1):T; % time index to be estimated
+  y = I( idx, : );
+  penalty = 2*y-1;
+  for c = 1:C
+    for k = 1:K
+      tmp1D = zeros( Drow, 1 );
+      for t = 1:Drow
+        tmp1D( t ) = dot( ggsim.ihbasis( 1:N, k ), ...
+                          I( idx(t)-(1:N), c ) );
+      end
+      D( :, (c-1)*K + k ) = tmp1D;
+    end
   end
 end

@@ -175,7 +175,7 @@ dal_mod/loss_prd.m,45
 function varargout = loss_prdloss_prd8,129
 
 dal_mod/loss_prp.m,47
-function [floss, gloss]=loss_prploss_prp6,60
+function [floss, gloss]=loss_prploss_prp4,58
 
 dal_mod/loss_lrd.m,45
 function varargout = loss_lrdloss_lrd8,212
@@ -199,8 +199,9 @@ mylib/plot/plot_Ealpha.m,82
 function [ Ealpha ] = plot_Ealphaplot_Ealpha1,0
 global rootdir_rootdir_17,332
 
-mylib/plot/plot_alpha.m,36
+mylib/plot/plot_alpha.m,68
 function plot_alpha(plot_alpha1,0
+global rootdir_rootdir_14,306
 
 mylib/plot/plot_I.m,28
 function plot_I(plot_I1,0
@@ -236,13 +237,37 @@ function [loglike] = log_likelihood_causallog_likelihood_causal1,0
 indir/Simulation/log_likelihood_win.m,63
 function [loglike] = log_likelihood_winlog_likelihood_win1,0
 
+indir/Real_data/FDR.m,31
+function [GCMAP] = FDRFDR1,0
+
+indir/Real_data/glmtrial.m,44
+function [beta_new] = glmtrialglmtrial1,0
+
+indir/Real_data/glmtrialcausal.m,69
+function [beta_new,devnew,stats] = glmtrialcausalglmtrialcausal1,0
+
+indir/Real_data/ksplot_trial.m,61
+function [z_sorted,b,bp,bn] = ksplot_trialksplot_trial3,44
+
+indir/Real_data/log_likelihood_trial.m,59
+function [loglike] = likelihood_triallikelihood_trial1,0
+
+indir/Real_data/log_likelihood_trialcausal.m,79
+function [loglike] = log_likelihood_trialcausallog_likelihood_trialcausal1,0
+
 myest.m,206
-global env;env;3,20
-global status;status;4,33
-global rootdir_;   rootdir_ = pwd;pwd;5,49
-global rootdir_;   rootdir_ ==5,49
-global rootdir_;   rootdir_rootdir_5,49
-global rootdir_;rootdir_;5,49
+global env;env;4,49
+global status;status;5,62
+global rootdir_;   rootdir_ = pwd;pwd;6,78
+global rootdir_;   rootdir_ ==6,78
+global rootdir_;   rootdir_rootdir_6,78
+global rootdir_;rootdir_;6,78
+
+indir/Real_data/ksplotting.m,0
+
+indir/Real_data/demo_real.m,0
+
+indir/Real_data/CausalTest.m,0
 
 indir/Simulation/demo_sim.m,0
 
@@ -382,10 +407,12 @@ conf/conf_makeSimStruct_glm.m,0
 
 conf/conf_gen_TrueValue.m,0
 
-conf/conf_user.m,0
+conf/conf_mail.m,0
 
 conf/conf_rand.m,0
 
 conf/conf_graph.m,0
 
 conf/conf_DAL.m,0
+
+conf/conf_user.m,0

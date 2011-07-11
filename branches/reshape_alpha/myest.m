@@ -1,9 +1,14 @@
 %% Main program.
 %++debug
 profile on -history
+
+
 global env;
 global status;
 global rootdir_;   rootdir_ = pwd;
+
+status.time.start = clock;
+
 %% ==< configure >==
 %% read user custom configuration.
 %% This overrides all configurations below.
@@ -70,18 +75,29 @@ end
 fprintf('\tGenerating Matrix for DAL\n');
 [D penalty] = gen_designMat(env,ggsim,I,Drow);
 
-if strcmp('setLambda_auto','setLambda_auto_')
-  DAL.lambda = sqrt(ggsim.ihbasprs.nbase)*100; % DAL.lambda: group LASSO parameter.
-else
-  DAL.lambda = 0.001; % DAL.lambda: group LASSO parameter.
-end
-matlabpool(4);
+
 if strcmp('debug','debug')
   pI= I(end - Drow +1: end,:);
 end
-status.speedup.DAL =0;
+
+%% ==< init variables >==
 tmp.method = 3;
-for ii1 = 1:5 % search appropriate parameter.
+
+pEKerWeight{1} = zeros(ggsim.ihbasprs.nbase,env.cnum);
+pEbias{1} = 0;
+
+DAL.speedup =0;
+DAL.loop = 5;
+DAL.lambda = zeros(1,DAL.loop +1);
+if strcmp('setLambda_auto','setLambda_auto')
+  DAL.lambda(1) = sqrt(ggsim.ihbasprs.nbase)*10; % DAL.lambda: group LASSO parameter.
+else
+  DAL.lambda(1) = 1; % DAL.lambda: group LASSO parameter.
+end
+%% ==</init variables >==
+
+matlabpool(4);
+for ii1 = 1:DAL.loop % search appropriate parameter.
   for i1 = 1:env.cnum % ++parallelization 
     switch  tmp.method
       %%+improve: save all data for various tmp.method
@@ -89,36 +105,43 @@ for ii1 = 1:5 % search appropriate parameter.
         %% logistic regression group lasso
         [EKerWeight{i1}, Ebias{i1}, Estatus{i1}] = ...
             dallrgl( zeros(ggsim.ihbasprs.nbase,env.cnum), 0,...
-                     D, penalty(:,i1), DAL.lambda,...
+                     D, penalty(:,i1), DAL.lambda(ii1),...
                      opt);
       case 2
         %% poisson regression group lasso
+if DAL.speedup == 0
+         [pEKerWeight{i1}, pEbias{i1}, pEstatus{i1}] = ...
+             dalprgl( zeros(ggsim.ihbasprs.nbase*env.cnum,1), 0,...
+                      D, pI(:,i1), DAL.lambda(ii1),...
+                      'blks',repmat([ggsim.ihbasprs.nbase],[1 env.cnum]));
+else
         [pEKerWeight{i1}, pEbias{i1}, pEstatus{i1}] = ...
-            dalprgl( zeros(ggsim.ihbasprs.nbase*env.cnum,1), 0,...
-                     D, pI(:,i1), DAL.lambda,...
+            dalprgl( pEKerWeight{i1}, pEbias{i1}, ...
+                     D, pI(:,i1), DAL.lambda(ii1),...
                      'blks',repmat([ggsim.ihbasprs.nbase],[1 env.cnum]));
+end
       case 3
         %% poisson regression group lasso: error? Can't be run.
         [pEKerWeight{i1}, pEbias{i1}, pEstatus{i1}] = ...
             dalprgl( zeros(ggsim.ihbasprs.nbase,env.cnum), 0,...
-                     D, pI(:,i1), DAL.lambda,...
+                     D, pI(:,i1), DAL.lambda(ii1),...
                      opt);
     end
   end
-  DAL.lambda = DAL.lambda*3;
+  DAL.lambda(ii1+1) = DAL.lambda(ii1)/5;
   %  DAL.lambda{} = DAL.lambda*3;
   %++improve: plot lambda [title.a]={};
   if graph.PLOT_T == 1
     switch tmp.method
       case 1
         [ Ealpha ] = plot_Ealpha(EKerWeight,Ebias,env,ggsim,strcat(['dallrgl:DAL ' ...
-                            'lambda'],num2str(DAL.lambda)));
+                            'lambda'],num2str(DAL.lambda(ii1))));
       case {2,3}
         [ Ealpha ] = plot_Ealpha(pEKerWeight,pEbias,env,ggsim, ...
-                                 strcat(['dalprgl:DAL lambda'],num2str(DAL.lambda)));
+                                 strcat(['dalprgl:DAL lambda'],num2str(DAL.lambda(ii1))));
     end
   end
-  status.speedup.DAL =1;
+  DAL.speedup = 1;
 end
 %[ Ealpha ] = plot_Ealpha(EKerWeight,Ebias,env,ggsim,'Estimated_alpha');
 
@@ -189,8 +212,9 @@ end
 
 if status.mail == 1
   setpref('Internet','SMTPServer',mail.smtp);
-  sendmail(mail.to,'Finished myest.m');
+  sendmail(mail.to,'Finished myest.m',status.time.start);
 end
+status.time.end = clock;
 
 if strcmp('saveInterActive','saveInterActive')  %++conf
   uisave(who,strcat(rootdir_ , 'outdir/mat/', 'frame', num2str(sprintf('%05d',env.genLoop)), 'hwind', num2str(sprintf('%04d',env.hwind)), 'hnum' , num2str(sprintf('%02d',env.hnum))));
