@@ -82,9 +82,9 @@ end
 status.speedup.DAL =0;
 tmp.method = 3;
 for ii1 = 1:5 % search appropriate parameter.
-  DAL.lambda = DAL.lambda*3;
   for i1 = 1:env.cnum % ++parallelization 
     switch  tmp.method
+      %%+improve: save all data for various tmp.method
       case 1
         %% logistic regression group lasso
         [EKerWeight{i1}, Ebias{i1}, Estatus{i1}] = ...
@@ -105,6 +105,9 @@ for ii1 = 1:5 % search appropriate parameter.
                      opt);
     end
   end
+  DAL.lambda = DAL.lambda*3;
+  %  DAL.lambda{} = DAL.lambda*3;
+  %++improve: plot lambda [title.a]={};
   if graph.PLOT_T == 1
     switch tmp.method
       case 1
@@ -183,6 +186,12 @@ if strcmp('clean','clean')  %++conf
   run([rootdir_ '/mylib/clean.m'])
 end
 
+
+if status.mail == 1
+  setpref('Internet','SMTPServer',mail.smtp);
+  sendmail(mail.to,'Finished myest.m');
+end
+
 if strcmp('saveInterActive','saveInterActive')  %++conf
   uisave(who,strcat(rootdir_ , 'outdir/mat/', 'frame', num2str(sprintf('%05d',env.genLoop)), 'hwind', num2str(sprintf('%04d',env.hwind)), 'hnum' , num2str(sprintf('%02d',env.hnum))));
 
@@ -196,8 +205,3 @@ else
 end
 
 status.profile=profile('info');
-
-if status.mail == 1
-  setpref('Internet','SMTPServer',mail.smtp);
-  sendmail(mail.to,'Finished myest.m');
-end

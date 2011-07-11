@@ -22,7 +22,7 @@ ylim( [0,mean(median(lambda))]);
 %set(gca,'Xlim',[0,graph.xrange]);
 for i1 = 1:cnum
   subplot(cnum,1,i1)
-  set(gca,'Xlim',[0,graph.xrange]);
+  set(gca,'Xlim',[0,graph.xrange]); %++bug:'don't work well.
   plot( 1:gen_lambda_loop, lambda(:,i1))
   grid on;
   ylim([0,max(max(lambda))]);
