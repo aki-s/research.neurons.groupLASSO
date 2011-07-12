@@ -50,7 +50,11 @@ prob.dnorm    = @(vv)max(abs(vv));
 prob.obj      = @objdall1;
 prob.softth   = @l1_softth;
 prob.stopcond = opt.stopcond;
-prob.ll = -inf*ones(size(yy)); %prob.ll = yy*0-1e5;
+if 1 == 1
+  prob.ll = yy*0-1e5;
+else
+  prob.ll = -inf*ones(size(yy));
+end
 prob.uu = yy; % <-- y_i - alpha_1 > 0
 prob.Ac       =[];
 prob.bc       =[];
