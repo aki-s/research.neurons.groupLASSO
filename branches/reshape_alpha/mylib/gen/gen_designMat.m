@@ -70,12 +70,16 @@ elseif ( ( env.genLoop  / prs.gen_designMat ) < ( histSize + Drow )) ...
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-  tmp0.showProg=floor(env.cnum/10);
-  tmp0.count = 0;
-  fprintf(1,'\tprogress(%%): ');
+reportEvery = 10;
+tmp0.showProg=floor(env.cnum/reportEvery);
+if tmp0.showProg == 0
+  tmp0.showProg = 1;
+end
+tmp0.count = 0;
+fprintf(1,'\tprogress(%%): ');
 
-
-if strcmp('me','me_')
+tic;
+if strcmp('me','me')
   D = zeros(Drow,env.cnum*ggsim.ihbasprs.nbase); 
   penalty = 2*I(end - Drow +1: end,:) -1;
 
@@ -96,28 +100,44 @@ if strcmp('me','me_')
       D(:,(i1cellIndex-1)*ggsim.ihbasprs.nbase +i2basisIndex ) = tmp1D ;
     end
   end
+fprintf(1,'%d',toc);
+end
 
-else
-  C = env.cnum; % # of cells
-  K = ggsim.ihbasprs.nbase; % # of bases per a cell
-  N = histSize; % length of each single basis
-  D = zeros( Drow, C*K ); % design matrix
-  T = size( I, 1 ); % length of the time-sequence
-  idx = (T-Drow+1):T; % time index to be estimated
-  y = I( idx, : );
-  penalty = 2*y-1;
-  for c = 1:C
+if strcmp('oba','oba')
+tic
+  tmp0.count = 0;
+
+  ooC = env.cnum; % # of cells
+  ooK = ggsim.ihbasprs.nbase; % # of bases per a cell
+  ooN = histSize; % length of each single basis
+  ooD = zeros( Drow, ooC*ooK ); % design matrix
+  ooT = size( I, 1 ); % length of the time-sequence
+  ooidx = (ooT-Drow+1):ooT; % time index to be estimated
+  ooy = I( ooidx, : );
+  penalty = 2*ooy-1;
+  for c = 1:ooC
     if ~mod(c,tmp0.showProg) %% show progress.
       fprintf(1,'%d ',tmp0.count*10)
       tmp0.count = tmp0.count +1;
     end
-    for k = 1:K
+    for k = 1:ooK
       tmp1D = zeros( Drow, 1 );
       for t = 1:Drow
-        tmp1D( t ) = dot( ggsim.ihbasis( 1:N, k ), ...
-                          I( idx(t)-(1:N), c ) );
+        tmp1D( t ) = dot( ggsim.ihbasis( 1:ooN, k ), ...
+                          I( ooidx(t)-(1:ooN), c ) );
       end
-      D( :, (c-1)*K + k ) = tmp1D;
+      ooD( :, (c-1)*ooK + k ) = tmp1D;
     end
   end
+fprintf(1,'%d',toc);
 end
+
+fprintf(1,'\n gen_designMat:: diff D:  %f\n',sum( (ooD(:) - D(:) ...
+                                                  ).^2 ) );
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% RETURN %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+D = ooD;
+

@@ -43,10 +43,14 @@ if ( status.READ_NEURO_CONNECTION == 1 )
         zeroConnection = zeroConnection +1;
     end
   end
+  clear logicP logicN logicZ ;
+
   Tout.ctypesum.inhibitory = inhibitory;	 %clean inhibitory;
   Tout.ctypesum.excitatory = excitatory;	 %clean excitatory;
   Tout.ctypesum.hybrid     =     hybrid;	 %clean hybrid;
   Tout.ctypesum.zeroConnection = zeroConnection; % clean zeroConnection;
+
+  clear inhibitory excitatory hybrid zeroConnection;
   %% ==</ get neuron type >==
 
   if ( Tout.ctypesum.hybrid > 0 )
@@ -180,6 +184,7 @@ if ( status.READ_NEURO_CONNECTION == 1 )
     I(hnum*hwind+ i1,:) = tmp3;
   end
   fprintf('\n');
+  clear Tptr nIs;
 else
 
   for i2 = 1:genLoop

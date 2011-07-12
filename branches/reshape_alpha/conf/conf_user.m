@@ -9,7 +9,8 @@ graph.GRAPHVIZ_OUT_FIG=1; % default: 0
 %%env.spar.level.from
 %%env.spar.level.to  
 
-env.genLoop=40000;
+%env.genLoop=80000;
+env.genLoop=2000;
 env.hnum=50;
 env.hwind=2;
 env.Hz.video=100;
@@ -19,8 +20,8 @@ env.Hz.fn=;
 %}
 env.SELF_DEPRESS_BASE=2;
 % log(2) == 0.7
-status.READ_NEURO_CONNECTION =1;
-status.GEN=1
+env.mail.to='aki-s@sys.i.kyoto-u.ac.jp';
+env.mail.smtp='hawaii.sys.i.kyoto-u.ac.jp';
 
-mail.to='aki-s@sys.i.kyoto-u.ac.jp';
-mail.smtp='hawaii.sys.i.kyoto-u.ac.jp';
+status.READ_NEURO_CONNECTION =1;
+status.GEN=1;

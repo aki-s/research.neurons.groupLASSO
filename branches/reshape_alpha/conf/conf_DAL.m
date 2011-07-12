@@ -1,6 +1,8 @@
-tmp.switch=1;
+tmp.switch = 1;
 
   switch tmp.switch
+    case 0
+      ;
     case 1
       opt.display = 1;
     case 2

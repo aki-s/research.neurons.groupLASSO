@@ -70,7 +70,7 @@ if cnum < MAX
   %%% ===== PLOT alpha ===== END =====
   %% write out eps file
   if graph.SAVE_EPS == 1
-    print('-depsc', '-tiff' ,[rootdir_ 'artificial_alpha.eps'])
+    print('-depsc', '-tiff' ,[rootdir_ '/outdir/artificial_alpha.eps'])
   end
 else
   warning('Too large number of cells to plot.\n Plot aborted.')

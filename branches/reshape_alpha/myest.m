@@ -24,7 +24,6 @@ if strcmp('configure', 'configure') %++conf
   end
 
   run([rootdir_ '/conf/conf_gen_TrueValue.m']);
-  env
   %> gen_TrueValue
   %< DAL
   run([rootdir_ '/conf/conf_DAL.m']);
@@ -32,6 +31,8 @@ if strcmp('configure', 'configure') %++conf
   run([rootdir_ '/conf/conf_mail.m']);
 end
 %run([rootdir_ '/conf/conf_user.m']);
+
+env
 
 %% ==</ configure >==
 
@@ -41,7 +42,8 @@ run([rootdir_ '/mylib/check_conf.m']);
 if exist('status') && isfield(status,'GEN')
   if ( 0 == getfield(status,'GEN') )
     warning('WarnTests:convertTest', ...
-            'Generating [ FiringIntensity, Firing ] was skipped.\n Warning#1');
+            ['Generating [ FiringIntensity ''lambda'', Firing ''I'', ''ggsim'' ' ...
+            '] was skipped.\n Warning#1']);
   end
 else
   status.GEN = 1; % default.
@@ -50,7 +52,6 @@ end
 if status.GEN == 1
   %% 1.  Set parameters and display for GLM % =============================
   if strcmp('genTrueVale','genTrueVale') %++conf
-                                         % measure cpu cost
     %% prepare 'TrueValues'.
     tic;
     run([rootdir_ '/mylib/gen/gen_TrueValue.m']);
@@ -76,12 +77,12 @@ fprintf('\tGenerating Matrix for DAL\n');
 [D penalty] = gen_designMat(env,ggsim,I,Drow);
 
 
-if strcmp('debug','debug')
+if strcmp('dalprgl','dalprgl')
   pI= I(end - Drow +1: end,:);
 end
 
 %% ==< init variables >==
-tmp.method = 3;
+tmp.method = 2;
 
 pEKerWeight{1} = zeros(ggsim.ihbasprs.nbase,env.cnum);
 pEbias{1} = 0;
@@ -96,7 +97,9 @@ else
   DAL.lambda(1) = 1; % DAL.lambda: group LASSO parameter.
 end
 %% ==</init variables >==
+%opt.blks = repmat( [ggsim.ihbasprs.nbase], [1 env.cnum] );%++bug:don't work
 
+%% matlabpool close force local
 matlabpool(4);
 for ii1 = 1:DAL.loop % search appropriate parameter.
   for i1 = 1:env.cnum % ++parallelization 
@@ -110,27 +113,41 @@ for ii1 = 1:DAL.loop % search appropriate parameter.
                      opt);
       case 2
         %% poisson regression group lasso
-if DAL.speedup == 0
-         [pEKerWeight{i1}, pEbias{i1}, pEstatus{i1}] = ...
-             dalprgl( zeros(ggsim.ihbasprs.nbase*env.cnum,1), 0,...
-                      D, pI(:,i1), DAL.lambda(ii1),...
-                      'blks',repmat([ggsim.ihbasprs.nbase],[1 env.cnum]));
-else
-        [pEKerWeight{i1}, pEbias{i1}, pEstatus{i1}] = ...
-            dalprgl( pEKerWeight{i1}, pEbias{i1}, ...
-                     D, pI(:,i1), DAL.lambda(ii1),...
-                     'blks',repmat([ggsim.ihbasprs.nbase],[1 env.cnum]));
-end
+        if DAL.speedup == 0
+          [pEKerWeight{i1}, pEbias{i1}, pEstatus{i1}] = ...
+              dalprgl( zeros(ggsim.ihbasprs.nbase*env.cnum,1), 0,...
+                       D, pI(:,i1), DAL.lambda(ii1),...
+                       'blks',repmat([ggsim.ihbasprs.nbase],[1 env.cnum]));
+        else
+          [pEKerWeight{i1}, pEbias{i1}, pEstatus{i1}] = ...
+              dalprgl( pEKerWeight{i1}, pEbias{i1}, ...
+                       D, pI(:,i1), DAL.lambda(ii1),...
+                       'blks',repmat([ggsim.ihbasprs.nbase],[1 env.cnum]));
+        end
       case 3
         %% poisson regression group lasso: error? Can't be run.
-        [pEKerWeight{i1}, pEbias{i1}, pEstatus{i1}] = ...
-            dalprgl( zeros(ggsim.ihbasprs.nbase,env.cnum), 0,...
-                     D, pI(:,i1), DAL.lambda(ii1),...
-                     opt);
+% $$$         [pEKerWeight{i1}, pEbias{i1}, pEstatus{i1}] = ...
+% $$$             dalprgl( zeros(ggsim.ihbasprs.nbase,env.cnum), 0,...
+% $$$                      D, pI(:,i1), DAL.lambda(ii1),...
+% $$$                      opt);
+
+        %% Returned pEKerWeight must be [10x9], not be [90x1] %++bug
+        if DAL.speedup == 0
+          [pEKerWeight{i1}, pEbias{i1}, pEstatus{i1}] = ...
+              dalprgl( zeros(ggsim.ihbasprs.nbase*env.cnum,1), 0,...
+                       D, pI(:,i1), DAL.lambda(ii1)...
+                                ,opt);
+          %                       );
+        else
+          [pEKerWeight{i1}, pEbias{i1}, pEstatus{i1}] = ...
+              dalprgl( pEKerWeight{i1}, pEbias{i1}, ...
+                       D, pI(:,i1), DAL.lambda(ii1)...
+                       ,opt);
+          %             );
+        end
     end
   end
   DAL.lambda(ii1+1) = DAL.lambda(ii1)/5;
-  %  DAL.lambda{} = DAL.lambda*3;
   %++improve: plot lambda [title.a]={};
   if graph.PLOT_T == 1
     switch tmp.method
@@ -212,8 +229,8 @@ end
 
 
 if status.mail == 1
-  setpref('Internet','SMTPServer',mail.smtp);
-  sendmail(mail.to,'Finished myest.m',status.time.start);
+  setpref('Internet','SMTPServer',env.mail.smtp);
+  sendmail(env.mail.to,'Finished myest.m',status.time.start);
 end
 status.time.end = clock;
 

@@ -96,7 +96,7 @@ ylabel(h,'Target')
 %% write out eps file
 %if graph.PLOT_T == 1
 if 1 == 1
-  print('-depsc','-tiff', [rootdir_ 'Estimated_alpha.eps'])
+  print('-depsc','-tiff', [rootdir_ '/outdir/Estimated_alpha.eps'])
 end
 
 %% == CLEAN var ==

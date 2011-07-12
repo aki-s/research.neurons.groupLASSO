@@ -34,7 +34,7 @@ alpha_hash = strrep(alpha_hash, '0','0 ');
 alpha_hash = strrep(alpha_hash, '-','-1 ');
 alpha_hash = str2num(alpha_hash);
 
-%% The shape of alpha_has is 
+%% The shape of alpha_hash is 
 %                =>[to #neuron]
 %      ---------------
 %  ||  |  alpha_hash |
@@ -43,13 +43,8 @@ alpha_hash = str2num(alpha_hash);
 
 alpha_fig = transpose(reshape(alpha_hash, env.cnum , env.cnum));
 
-%alpha_hash = reshape( alpha_hash , env.cnum , [] ); %worked well
-%++bug : next line would fail if input has other than '[+0-\n]'
-%env.cnum = sqrt(matNum);
 
 fclose(tmp.fid);
-% LocalWords:  excitatory
-
 
 %% calculate env.spar
 %++todo
