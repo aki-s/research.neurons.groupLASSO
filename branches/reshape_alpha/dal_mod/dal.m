@@ -30,8 +30,10 @@
 %   .softth : function handle to the "soft threshold" function
 %  ww0    : initial solution ([nn,1)
 %  uu0    : initial unregularized component ([nu,1])
-%  A      : function handle to the function A*x.
-%  AT     : function handle to the function A'*y
+%  A          : struct with fields times, Ttimes, & slice.
+%   .times    : function handle to the function A*x.
+%   .Ttimes   : function handle to the function A'*y.
+%   .slice    : function handle to the function A(:,I).
 %  B      : design matrix for the unregularized component ([mm,nu])
 %  lambda : regularization constant (scalar)
 %  <opt>  : list of 'fieldname1', value1, 'filedname2', value2, ...
@@ -57,16 +59,19 @@
 %  status : various status values
 %
 % Reference:
+% "Super-Linear Convergence of Dual Augmented Lagrangian Algorithm
+% for Sparse Learning."
+% Ryota Tomioka, Taiji Suzuki, and Masashi Sugiyama. JMLR, 2011. 
 % "Dual Augmented Lagrangian Method for Efficient Sparse Reconstruction"
 % Ryota Tomioka and Masashi Sugiyama
 % http://arxiv.org/abs/0904.0584
 % 
-% Copyright(c) 2009 Ryota Tomioka
+% Copyright(c) 2009-2011 Ryota Tomioka
 % This software is distributed under the MIT license. See license.txt
  
  
 
-function [xx, uu, status]=dal(prob, ww0, uu0, A, AT, B, lambda, varargin)
+function [xx, uu, status]=dal(prob, ww0, uu0, A, B, lambda, varargin)
 
 opt=propertylist2struct(varargin{:});
 opt=set_defaults(opt, 'aa', [],...
@@ -78,6 +83,7 @@ opt=set_defaults(opt, 'aa', [],...
                       'eps_multp', 0.99,...
                       'eta_multp', 2, ...
                       'solver', 'cg', ...
+                      'boostb', 1,...
                       'display',2);
 
 
@@ -92,7 +98,14 @@ prob=set_defaults(prob, 'll', -inf*ones(prob.mm,1), ...
 if isempty(opt.eta)
   opt.eta = 0.01/lambda;
 end
+if ~isempty(uu0) && length(opt.eta)==1
+  opt.eta = opt.eta*[1 1];
+end
 
+
+if ~isempty(uu0) && length(opt.eta_multp)<2
+  opt.eta_multp = opt.eta_multp*[1 1];
+end
 
 if opt.display>0
   if ~isempty(uu0)
@@ -103,7 +116,7 @@ if opt.display>0
   end
   
   lstr=func2str(prob.floss.p); lstr=lstr(6:end-1);
-  fprintf(['DAL ver1.01\n#samples=%d #variables=%s lambda=%g ' ...
+  fprintf(['DAL ver1.05\n#samples=%d #variables=%s lambda=%g ' ...
              'loss=%s solver=%s\n'],prob.mm, vstr, lambda, lstr, ...
             opt.solver);
 end
@@ -116,19 +129,28 @@ end
 
 res    = nan*ones(1,opt.maxiter);
 fval   = nan*ones(1,opt.maxiter);
-etaout = nan*ones(1,opt.maxiter);
+etaout = nan*ones(length(opt.eta),opt.maxiter);
 time   = nan*ones(1,opt.maxiter);
 xi     = nan*ones(1,opt.maxiter);
-
+num_pcg= nan*ones(1,opt.maxiter);
 
 time0=cputime;
 ww   = ww0;
 uu   = uu0;
 gtmp = zeros(size(ww));
+
+
 if isempty(opt.aa)
-  %% Set the initial Lagrangian multiplier as the gradient
+  %% Test if ww is a valid initial solution
   [ff,gg]=evalloss(prob, ww, uu, A, B);
   aa = -gg;
+  if any(aa==prob.ll) || any(aa==prob.uu)
+    fprintf('invalid initial solution; using ww=zeros(n,1).\n');
+    w0 = zeros(prob.nn,1);
+    %% Set the initial Lagrangian multiplier as the gradient
+    [ff,gg]=evalloss(prob, w0, uu, A, B);
+    aa = -gg;
+  end
 else
   aa = opt.aa;
 end
@@ -138,16 +160,21 @@ eta  = opt.eta;
 epsl = opt.eps;
 info = prob.info;
 info.solver=opt.solver;
+info.ATaa=[];
+spec = prob.fspec(ww);
 for ii=1:opt.maxiter-1
-  etaout(ii)=eta;
+  ww_old = ww;
+  uu_old = uu;
+  
+  etaout(:,ii)=eta';
   time(ii)=cputime-time0;
 
   %% Evaluate objective and Check stopping condition
-  [fval(ii), spec] = evalprim(prob, ww, uu, A, B, lambda);
+  fval(ii) = evalprim(prob, ww, uu, A, B, lambda);
 
   switch(prob.stopcond)
    case 'pdg'
-    dval    = min(dval,evaldual(prob, aa, AT, B, lambda));
+    dval    = min(dval,evaldual(prob, aa, A, B, lambda));
     res(ii) = (fval(ii)-(-dval))/fval(ii);
     ret     = (res(ii)<opt.tol);
    case 'fval'
@@ -158,8 +185,13 @@ for ii=1:opt.maxiter-1
   %% Display
   if opt.display>1 || opt.display>0 && ret~=0
     nnz = full(sum(spec>0));
+    if length(eta)==1
     fprintf('[[%d]] fval=%g #(xx~=0)=%d res=%g eta=%g \n', ii, ...
             fval(ii), nnz, res(ii), eta);
+    else
+    fprintf('[[%d]] fval=%g #(xx~=0)=%d res=%g eta=[%g %g] \n', ii, ...
+            fval(ii), nnz, res(ii), eta(1), eta(2));
+    end
   end
 
   if ret~=0
@@ -170,7 +202,7 @@ for ii=1:opt.maxiter-1
   info.aa0 = aa;
   
   %% Solve minimization with respect to aa
-  fun  = @(aa,info)prob.obj(aa, info, prob,ww,uu,A,AT,B,lambda,eta);
+  fun  = @(aa,info)prob.obj(aa, info, prob,ww,uu,A,B,lambda,eta);
   if length(opt.eps)>1
     epsl=opt.eps(ii);
   end
@@ -179,13 +211,14 @@ for ii=1:opt.maxiter-1
     [aa,dfval,dgg,stat] = newton(fun, aa, prob.ll, prob.uu, prob.Ac, ...
                                  prob.bc, epsl, prob.finddir, info, opt.display>2);
    case 'cg'
-    funh = @(xx,Hinfo)prob.hessMult(xx,A,AT,eta,Hinfo);
+    funh = @(xx,Hinfo)prob.hessMult(xx,A,eta,Hinfo);
     fh = {fun, funh};
     [aa,dfval,dgg,stat] = newton(fh, aa, prob.ll, prob.uu, prob.Ac, ...
                                  prob.bc, epsl, prob.finddir, info, opt.display>2);
    case 'qn'
     optlbfgs=struct('epsginfo',epsl,'display',opt.display-1);
     [aa,stat]=lbfgs(fun,aa,prob.ll,prob.uu,prob.Ac,prob.bc,info,optlbfgs);
+    stat.num_pcg=stat.kk;
    case 'fminunc'
     optfm=optimset('LargeScale','on','GradObj','on','Hessian', ...
                    'on','TolFun',1e-16,'TolX',0,'MaxIter',1000,'display','iter');
@@ -193,33 +226,65 @@ for ii=1:opt.maxiter-1
                                                       uu,A,B,lambda,eta,epsl), aa, optfm);
     stat.info=info;
     stat.ret=exitflag~=1;
+    stat.num_pcg=nan;
    otherwise
     error('Unknown method [%s]',opt.solver);
   end
   info=stat.info;
   xi(ii)=info.ginfo;
-
+  num_pcg(ii)=stat.num_pcg;
 
   %% Update primal variable
   if isfield(prob,'Aeq')
     I1=1:mm-prob.meq;
     I2=mm-prob.meq+1:mm;
-    gtmp(:) = AT(aa(I1))+prob.Aeq'*aa(I2);
+    gtmp(:) = A.Ttimes(aa(I1))+prob.Aeq'*aa(I2);
+    [ww,spec] = prob.softth(ww+eta(1)*gtmp,eta(1)*lambda,info);
   else    
-    gtmp(:) = AT(aa);
+    ww  =info.wnew;
+    spec=info.spec;
   end
-  
-  ww = prob.softth(ww+eta*gtmp,eta*lambda,info);
+
   if ~isempty(uu)
     if isfield(prob,'Aeq')
-      uu  = uu+eta*(B'*aa(1:end-prob.meq));
+      uu  = uu+eta(2)*(B'*aa(1:end-prob.meq));
     else
-      uu  = uu+eta*(B'*aa);
+      uu  = uu+eta(2)*(B'*aa);
     end
   end
- 
+
+  %% Boosting the bias term
+  if length(eta)>1
+    viol = [norm(ww-ww_old)/eta(1), norm(uu-uu_old)/eta(2)];
+    if opt.boostb && ii>1 && viol(2)>viol_old*0.5 && viol(2)>min(0.001,opt.tol)
+      eta(2)=eta(2)*20.^(stat.ret==0);
+    end
+    %if (opt.display>1 || opt.display>0 && ret~=0)
+    % fprintf('violation = [%g %g]\n', viol(1), viol(2));
+    %end
+    viol_old = viol(2);
+  end
+  
+% $$$   if norm(ww1-ww)<eta(1)*eps_const(1)
+% $$$     ww=ww1;
+% $$$     spec=spec1;
+% $$$     eps_const(1)=eps_const(1)/max(2,eta(1)^0.1)
+% $$$   else
+% $$$     eta(1)=eta(1)*opt.eta_multp^(stat.ret==0);
+% $$$     eps_const(1)=1/max(2,eta(1)^0.9)
+% $$$   end
+% $$$   
+% $$$   if norm(uu1-uu)<eta(2)*eps_const(2)
+% $$$     uu=uu1;
+% $$$     eps_const(2)=eps_const(2)/max(2,eta(2)^0.1);
+% $$$   else    
+% $$$     eta(2)=eta(2)*opt.eta_multp^(stat.ret==0);
+% $$$     eps_const(2)=1/max(2,eta(2)^0.9);
+% $$$   end
+% $$$   
+
   %% Update barrier parameter eta and tolerance parameter epsl
-  eta     = eta*opt.eta_multp^(stat.ret==0);
+  eta     = eta.*opt.eta_multp.^(stat.ret==0);
   epsl    = epsl*opt.eps_multp^(stat.ret==0);
   if opt.iter
     xx(:,ii+1)=[ww(:);uu(:)];
@@ -229,8 +294,9 @@ end
 res(ii+1:end)=[];
 fval(ii+1:end)=[];
 time(ii+1:end)=[];
-etaout(ii+1:end)=[];
+etaout(:,ii+1:end)=[];
 xi(ii+1:end)=[];
+num_pcg(ii+1:end)=[];
 
 if opt.iter
   xx(:,ii+1:end)=[];
@@ -247,23 +313,24 @@ status=struct('aa', aa,...
               'res', res,...
               'opt', opt, ...
               'info', info,...
-              'fval', fval);
+              'fval', fval,...
+              'num_pcg',num_pcg);
 
 
 function [fval,gg]=evalloss(prob, ww, uu, A, B)
 fnc=prob.floss;
 
 if ~isempty(uu)
-  zz=A(ww)+B*uu;
+  zz=A.times(ww)+B*uu;
 else
-  zz=A(ww);
+  zz=A.times(ww);
 end
 
 [fval, gg] =fnc.p(zz, fnc.args{:});
 
 
 %% Evaluate primal objective
-function [fval,spec] = evalprim(prob, ww, uu, A, B, lambda)
+function fval = evalprim(prob, ww, uu, A, B, lambda)
 
 spec=prob.fspec(ww);
 fval = evalloss(prob,ww,uu,A,B)+lambda*sum(spec);
@@ -272,7 +339,7 @@ if isfield(prob,'Aeq')
   fval = fval+norm(prob.Aeq*ww-prob.ceq)^2/tol;
 end
 
-function dval = evaldual(prob, aa, AT, B, lambda)
+function dval = evaldual(prob, aa, A, B, lambda)
 
 mm=length(aa);
 
@@ -290,9 +357,9 @@ end
 if isfield(prob,'Aeq')
   I1=1:mm-prob.meq;
   I2=mm-prob.meq+1:mm;
-  vv = AT(aa(I1))+prob.Aeq'*aa(I2);
+  vv = A.Ttimes(aa(I1))+prob.Aeq'*aa(I2);
 else
-  vv = AT(aa);
+  vv = A.Ttimes(aa);
 end
 [dnm,ishard] = prob.dnorm(vv);
 
@@ -302,6 +369,11 @@ if ishard && dnm>0
   dnm = 0; 
 end
 
-dval = fnc.d(aa, fnc.args{:})+dnm;
+if any(aa<prob.ll) || any(aa>prob.uu)
+  dval = inf;
+else
+  dval = fnc.d(aa, fnc.args{:})+dnm;
+end
+
 
 

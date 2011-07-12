@@ -70,17 +70,18 @@ elseif ( ( env.genLoop  / prs.gen_designMat ) < ( histSize + Drow )) ...
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-if strcmp('me','me_')
-  D = zeros(Drow,env.cnum*ggsim.ihbasprs.nbase); 
-  penalty = 2*I(end - Drow +1: end,:) -1;
   tmp0.showProg=floor(env.cnum/10);
   tmp0.count = 0;
   fprintf(1,'\tprogress(%%): ');
 
+
+if strcmp('me','me_')
+  D = zeros(Drow,env.cnum*ggsim.ihbasprs.nbase); 
+  penalty = 2*I(end - Drow +1: end,:) -1;
+
   % ++parallelization
   for i1cellIndex = 1: env.cnum % i1cellIndex: for cell index.
-    if ~mod(i1,tmp0.showProg) %% show progress.
+    if ~mod(i1cellIndex,tmp0.showProg) %% show progress.
       fprintf(1,'%d ',tmp0.count*10)
       tmp0.count = tmp0.count +1;
     end
@@ -106,6 +107,10 @@ else
   y = I( idx, : );
   penalty = 2*y-1;
   for c = 1:C
+    if ~mod(c,tmp0.showProg) %% show progress.
+      fprintf(1,'%d ',tmp0.count*10)
+      tmp0.count = tmp0.count +1;
+    end
     for k = 1:K
       tmp1D = zeros( Drow, 1 );
       for t = 1:Drow

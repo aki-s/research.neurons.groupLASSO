@@ -87,10 +87,11 @@ pEKerWeight{1} = zeros(ggsim.ihbasprs.nbase,env.cnum);
 pEbias{1} = 0;
 
 DAL.speedup =0;
-DAL.loop = 5;
+DAL.loop = 3;
 DAL.lambda = zeros(1,DAL.loop +1);
 if strcmp('setLambda_auto','setLambda_auto')
-  DAL.lambda(1) = sqrt(ggsim.ihbasprs.nbase)*10; % DAL.lambda: group LASSO parameter.
+  %  DAL.lambda(1) = sqrt(ggsim.ihbasprs.nbase)*10; % DAL.lambda: group LASSO parameter.
+  DAL.lambda(1) = sqrt(ggsim.ihbasprs.nbase); % DAL.lambda:
 else
   DAL.lambda(1) = 1; % DAL.lambda: group LASSO parameter.
 end

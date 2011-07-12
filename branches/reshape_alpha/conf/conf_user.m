@@ -9,7 +9,7 @@ graph.GRAPHVIZ_OUT_FIG=1; % default: 0
 %%env.spar.level.from
 %%env.spar.level.to  
 
-env.genLoop=20000;
+env.genLoop=40000;
 env.hnum=50;
 env.hwind=2;
 env.Hz.video=100;
