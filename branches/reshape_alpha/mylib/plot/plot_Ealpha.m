@@ -6,7 +6,12 @@ function [ Ealpha ] = plot_Ealpha(EKerWeight,Ebias,env,ggsim,title)
 %% USAGE)
 %  plot_Ealpha(EKerWeight,Ebias,env,ggsim,'title')
 %%
+cnum = env.cnum;
+hnum = env.hnum;
+hwind = env.hwind;
+
 SELF_DEPRESS_BASE = env.SELF_DEPRESS_BASE;
+
 if exist('SELF_DEPRESS_BASE') == 0
   SELF_DEPRESS_BASE = 2;
 end
@@ -21,11 +26,6 @@ run([rootdir_ '/conf/conf_graph.m']);
 if exist('graph') == 0
   graph.TIGHT = 1
 end
-
-cnum = env.cnum;
-hnum = env.hnum;
-hwind = env.hwind;
-nbase = ggsim.ihbasprs.nbase;
 M = hnum*hwind; % M: total history frame.
 for i1to = 1:cnum
   for i2from = 1:cnum
@@ -41,7 +41,7 @@ if  graph.TIGHT == 1;
   axis tight;
 end
   grid on;
-set(gca,'Xlim',[0,env.hnum*2]);
+set(gca,'Xlim',[0,hnum*2]);
 set(gca,'Ylim',[-SELF_DEPRESS_BASE*gain-2,2]);
   subplot(cnum,cnum,i1);
   tmp1 = Ealpha{i2to}{i3from};
@@ -58,7 +58,7 @@ set(gca,'Ylim',[-SELF_DEPRESS_BASE*gain-2,2]);
   %% </ chage color ploted according to cell type >
   %{
   %% no use in setting xlim and ylim if not before subplot.
-  xlim([0,env.hnum*2]);
+  xlim([0,hnum*2]);
   ylim([-SELF_DEPRESS_BASE*gain-2,2]);
   %}
   set(gca,'XAxisLocation','top');
@@ -99,5 +99,3 @@ if 1 == 1
   print('-depsc','-tiff', [rootdir_ '/outdir/Estimated_alpha.eps'])
 end
 
-%% == CLEAN var ==
-% clear SELF_DEPRESS_BASE;

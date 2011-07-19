@@ -55,7 +55,7 @@ if strcmp('debug','debug')
 end
 if ( env.genLoop < ( histSize + Drow ))
   warning('The number of history windows is too large.');
-  error('choose appropriate number of basis.');
+  %  error('choose appropriate number of basis.'); %++debug:important
   %%+improve: auto select appropriate number of  basis used.
 elseif ( ( env.genLoop  / prs.gen_designMat ) < ( histSize + Drow )) ...
   % ++debug.1
@@ -76,10 +76,10 @@ if tmp0.showProg == 0
   tmp0.showProg = 1;
 end
 tmp0.count = 0;
-fprintf(1,'\tprogress(%%): ');
 
 tic;
-if strcmp('me','me')
+if strcmp('me','me_')
+  fprintf(1,'\tprogress(%%): ');
   D = zeros(Drow,env.cnum*ggsim.ihbasprs.nbase); 
   penalty = 2*I(end - Drow +1: end,:) -1;
 
@@ -100,11 +100,12 @@ if strcmp('me','me')
       D(:,(i1cellIndex-1)*ggsim.ihbasprs.nbase +i2basisIndex ) = tmp1D ;
     end
   end
-fprintf(1,'%d',toc);
+  fprintf(1,': past time %d\n',toc);
 end
 
 if strcmp('oba','oba')
-tic
+  fprintf(1,'\tprogress(%%): ');
+  tic
   tmp0.count = 0;
 
   ooC = env.cnum; % # of cells
@@ -129,12 +130,14 @@ tic
       ooD( :, (c-1)*ooK + k ) = tmp1D;
     end
   end
-fprintf(1,'%d',toc);
+  fprintf(1,': past time %d\n',toc);
 end
 
-fprintf(1,'\n gen_designMat:: diff D:  %f\n',sum( (ooD(:) - D(:) ...
-                                                  ).^2 ) );
 
+if strcmp('debug','debug_')
+  fprintf(1,'\n gen_designMat:: diff D:  %f\n',sum( (ooD(:) - D(:) ...
+                                                    ).^2 ) );
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% RETURN %%

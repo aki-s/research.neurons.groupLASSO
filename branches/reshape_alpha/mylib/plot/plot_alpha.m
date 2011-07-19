@@ -19,7 +19,7 @@ SELF_DEPRESS_BASE = env.SELF_DEPRESS_BASE;
 
 %% local var
 MAX=10;
-kdelta = inline('n == 0');
+kdelta = inline('n == 0'); % kronecker's delta
 tmp1 = zeros(hnum,1);
 if cnum < MAX
   figure;
@@ -30,7 +30,9 @@ if cnum < MAX
       subplot(cnum,cnum,(i1-1)*cnum+i2)
       hold on;
       %% < chage color ploted according to cell type >
-      tmp1 = alpha((1:hnum)+(i2-1)*hnum,i1) + kdelta(i1-i2)*alpha0(i1);
+      %      tmp1 = alpha((1:hnum)+(i2-1)*hnum,i1) +
+      %      kdelta(i1-i2)*alpha0(i1);
+      tmp1 = alpha((1:hnum)+(i2-1)*hnum,i1);
       if tmp1 > 0
         plot( 1:hnum, tmp1,'r','LineWidth',3);
       elseif tmp1 < 0         

@@ -64,7 +64,7 @@ prob.dnorm    = @(ww)gl_dnorm(ww,opt.blks);
 prob.obj      = @objdalgl;
 prob.softth   = @gl_softth;
 prob.stopcond = opt.stopcond;
-if 1 == 1
+if 1 == 0
  prob.ll = yy*0-1e5;
 else
   prob.ll = -inf*ones(size(yy));

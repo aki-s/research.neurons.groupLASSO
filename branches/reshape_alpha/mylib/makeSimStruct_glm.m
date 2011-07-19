@@ -1,4 +1,4 @@
-function S = makeSimStruct_glm(dt)
+function S = makeSimStruct_glm(dt);
 %
 %  Creates a structure with default parameters for a GLM model
 %
@@ -7,8 +7,7 @@ function S = makeSimStruct_glm(dt)
 %  Struct fields (model params):  
 %        'fnlin' - nonlinearity (exponential by default)
 %        'ihbas' - basis for alpha
-%        'iht' - time lattice for post-spike current
-%        'dtsim' - default time bin size for simulation
+%        'iht' - time lattice
 %        'kbasprs' - basis for stim filter 
 %        'ihbasprs' - basis for post-spike current
  
@@ -33,7 +32,7 @@ ih = ihbasis*[repmat(1,[ihbasprs.nbase 1])];
 S = struct(...
     'type', 'glm', ...
     'nlfun', nlinF, ...  % nonlinearity of x-axis
-    'iht', iht, ...      % time indices of aftercurrent
+    'iht', iht, ...      % time indices
     'ih', ih, ...
     'dt', dt, ...
     'ihbasprs', ihbasprs, ... % params for ih basis

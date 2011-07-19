@@ -1,6 +1,6 @@
 %% ( Number of basis vectors for post-spike kernel )
 % <Tweek here>
-ihbasprs.nbase = 10;
+ihbasprs.nbase = 5;
 %% ihbasprs.hpeaks: Peak location for first and last vectors.
 % To be [ihbasprs.hpeaks(1) > arg(makeSimStruct_glm)] is recommended.
 % Must be [ihbasprs.hpeaks(1) == ihbasprs.absref].

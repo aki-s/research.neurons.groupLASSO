@@ -1,4 +1,4 @@
-function [iht, ihbas, ihbasis] = make_basis(ihbasprs,dt,iht0);
+function [iht, ihbas, ihbasis] = make_basis(ihbasprs,dt);
 % [iht, ihbas, ihbasis] = make_basis(ihbasprs,dt,iht);
 %
 % Make nonlinearly stretched basis consisting of raised cosines
@@ -11,7 +11,6 @@ function [iht, ihbas, ihbasis] = make_basis(ihbasprs,dt,iht0);
 %                 (larger b -> more nearly linear stretching)
 %            absref = absolute refractory period (optional)
 %     dt = grid of time points for representing basis
-%     iht0 (optional) = cut off time (or extend) basis so it matches this
 %
 %  Outputs:  iht = time lattice on which basis is defined
 %            ihbas = orthogonalized basis

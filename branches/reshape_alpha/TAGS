@@ -114,12 +114,6 @@ function varargout=objdall1objdall16,174
 dal_ver1.05/gl_dnorm.m,45
 function [nm,ishard]=gl_dnormgl_dnorm5,159
 
-dal_ver1.05/dal.m,177
-function [xx, uu, status]=daldal74,3547
-function [fval,gg]=evallossevalloss320,10101
-function fval = evalprimevalprim333,10300
-function dval = evaldualevaldual342,10502
-
 dal_ver1.05/hessMultdall1.m,48
 function yy = hessMultdall1hessMultdall17,201
 
@@ -171,6 +165,12 @@ function [ww,bias,status]=dalprl1dalprl135,1250
 dal_mod/dalprgl_my.m,50
 function [ww,bias,status]=dallrgldallrgl45,1859
 
+dal_mod/dal.m,177
+function [xx, uu, status]=daldal74,3547
+function [fval,gg]=evallossevalloss320,10101
+function fval = evalprimevalprim333,10300
+function dval = evaldualevaldual342,10502
+
 dal_mod/loss_prd.m,45
 function varargout = loss_prdloss_prd8,129
 
@@ -195,9 +195,15 @@ function plot_ggsimBaseFunc(plot_ggsimBaseFunc1,0
 mylib/gen/gen_designMat.m,55
 function [D penalty] = gen_designMatgen_designMat1,0
 
+mylib/gen/gen_TrueI.m,61
+function [I,lambda,loglambda,Tout] = gen_TrueIgen_TrueI1,0
+
+mylib/gen/gen_TrueWeightKernel.m,72
+function [alpha,alpha0] = gen_TrueWeightKernelgen_TrueWeightKernel1,0
+
 mylib/plot/plot_Ealpha.m,82
 function [ Ealpha ] = plot_Ealphaplot_Ealpha1,0
-global rootdir_rootdir_17,332
+global rootdir_rootdir_22,387
 
 mylib/plot/plot_alpha.m,68
 function plot_alpha(plot_alpha1,0
@@ -209,12 +215,30 @@ function plot_I(plot_I1,0
 mylib/plot/plot_lambda.m,38
 function plot_lambda(plot_lambda1,0
 
+mylib/check/check_genState.m,54
+function [status] = check_genStatecheck_genState1,0
+
+mylib/mailMe.m,28
+function mailMe(mailMe1,0
+
 mylib/makeSimStruct_glm.m,85
 function S = makeSimStruct_glmmakeSimStruct_glm1,0
-global rootdir_rootdir_17,631
+global rootdir_rootdir_16,552
 
 mylib/make_basis.m,59
 function [iht, ihbas, ihbasis] = make_basismake_basis1,0
+
+mylib/get_neuronType.m,52
+function [Tout] = get_neuronTypeget_neuronType1,0
+
+mylib/compare_KIM.m,82
+function [kEKerWeight,kEbias,kEstatus,kEalpha,kDAL] = compare_KIMcompare_KIM1,0
+
+mylib/echo_TrueValueStatus.m,56
+function echo_TrueValueStatus(echo_TrueValueStatus1,0
+
+mylib/estimateWeightKernel.m,95
+function [KerWeight,Ebias,Estatus,kEalpha,DAL] = estimateWeightKernelestimateWeightKernel1,0
 
 tools/plot_lambda_video.m,50
 function plot_lambda_video(plot_lambda_video1,0
@@ -256,12 +280,12 @@ indir/Real_data/log_likelihood_trialcausal.m,79
 function [loglike] = log_likelihood_trialcausallog_likelihood_trialcausal1,0
 
 myest.m,206
-global env;env;4,49
-global status;status;5,62
-global rootdir_;   rootdir_ = pwd;pwd;6,78
-global rootdir_;   rootdir_ ==6,78
-global rootdir_;   rootdir_rootdir_6,78
-global rootdir_;rootdir_;6,78
+global env;env;5,51
+global status;status;6,64
+global rootdir_;   rootdir_ = pwd;pwd;7,80
+global rootdir_;   rootdir_ ==7,80
+global rootdir_;   rootdir_rootdir_7,80
+global rootdir_;rootdir_;7,80
 
 indir/Real_data/ksplotting.m,0
 
@@ -279,9 +303,11 @@ tools/plot_loglambda_video.m,0
 
 mylib/readTrueConnection.m,0
 
+mylib/check/check_conf.m,0
+
 mylib/clean.m,0
 
-mylib/check_conf.m,0
+mylib/plot/plot_TrueValues.m,0
 
 mylib/gen/gen_TrueValue.m,0
 
@@ -289,119 +315,9 @@ misc/sampleScript.m,0
 
 misc/plot_poisson_loss.m,0
 
-dal_mod/._loss_prp.m,0
-
-dal_mod/._loss_prd.m,0
-
-dal_mod/._job051_TestPR.m,0
-
 dal_mod/job051_TestPR.m,0
 
-dal_mod/._dalprgl.m,0
-
-dal_ver1.05/._l1n_spec.m,0
-
-dal_ver1.05/._loss_sqp.m,0
-
-dal_ver1.05/._gl_dnorm.m,0
-
-dal_ver1.05/._dalsql1.m,0
-
-dal_ver1.05/._objdall1.m,0
-
-dal_ver1.05/._loss_sqd.m,0
-
-dal_ver1.05/._en_softth.m,0
-
-dal_ver1.05/._dallren.m,0
-
-dal_ver1.05/._gl_spec.m,0
-
-dal_ver1.05/._set_defaults.m,0
-
-dal_ver1.05/._l1_softth.m,0
-
-dal_ver1.05/._hessMultdalds.m,0
-
-dal_ver1.05/._pca.m,0
-
-dal_ver1.05/._spdiag.m,0
-
-dal_ver1.05/._loss_lrp.m,0
-
-dal_ver1.05/._dalsqen.m,0
-
-dal_ver1.05/._dallrds.m,0
-
-dal_ver1.05/._ds_softth.m,0
-
-dal_ver1.05/._loss_lrd.m,0
-
-dal_ver1.05/._dalsql1n.m,0
-
-dal_ver1.05/._objdalen.m,0
-
-dal_ver1.05/._l1n_softth.m,0
-
-dal_ver1.05/._newton.m,0
-
-dal_ver1.05/._hessMultdalgl.m,0
-
-dal_ver1.05/._propertylist2struct.m,0
-
-dal_ver1.05/._dal.m,0
-
-dal_ver1.05/._randmvar.m,0
-
-dal_ver1.05/._mvarfilter.m,0
-
-dal_ver1.05/._en_dnorm.m,0
-
-dal_ver1.05/._lbfgs.m,0
-
-dal_ver1.05/._dalsqds.m,0
-
-dal_ver1.05/._loss_hsp.m,0
-
-dal_ver1.05/._randsparse.m,0
-
-dal_ver1.05/._svdmaj.m,0
-
-dal_ver1.05/._objdalds.m,0
-
-dal_ver1.05/._archive.m,0
-
-dal_ver1.05/._dallrgl.m,0
-
-dal_ver1.05/._loss_hsd.m,0
-
-dal_ver1.05/._dalhsgl.m,0
-
-dal_ver1.05/._vec.m,0
-
-dal_ver1.05/._en_spec.m,0
-
-dal_ver1.05/._gl_softth.m,0
-
-dal_ver1.05/._ds_dnorm.m,0
-
-dal_ver1.05/._objdall1n.m,0
-
 dal_ver1.05/s_test_hsgl.m,0
-
-dal_ver1.05/._dallrl1.m,0
-
-dal_ver1.05/._dalsqgl.m,0
-
-dal_ver1.05/._ds_spec.m,0
-
-dal_ver1.05/._evalgap.m,0
-
-dal_ver1.05/._objdalgl.m,0
-
-dal_ver1.05/._s_test_hsgl.m,0
-
-dal_ver1.05/._hessMultdall1.m,0
 
 conf/conf_makeSimStruct_glm.m,0
 

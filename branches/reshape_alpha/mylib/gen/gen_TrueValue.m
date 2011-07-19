@@ -61,17 +61,19 @@ if ( status.READ_NEURO_CONNECTION == 1 )
   tmp_alpha_weight = zeros(1,hnum);
   for i1 = 1:hnum
     %++improve: generate characteristic of neuron.
-    tmp_alpha_weight(i1) = cos( i1/hnum )*exp(-(i1-1)/hnum*3);
+    tmp_alpha_weight(i1) = cos( (i1/hnum)*(pi/2) )*exp(-(i1-1)/hnum*3);
   end
   i3 = 0;
   %% --</init >--
   for i1 = 1:cnum %%++parallel
     for i2 = 1:cnum
       i3 = i3 + 1;
-      flag = alpha_hash(i3);
-      ptr = (i2-1)*hnum;
+      flag = alpha_hash(i3); %flag: +/0/-, exitatory/0/inhibitory
+      ptr = (i2-1)*hnum; %ptr: pointer
 
       if i1 == i2
+        %        alpha(ptr+1:ptr+hnum,i1) = flag*(tmp_alpha_weight)
+        %        -SELF_DEPRESS_BASE;
         alpha(ptr+1:ptr+hnum,i1) = flag*(tmp_alpha_weight);
       else
         switch ( flag ) 
@@ -106,7 +108,7 @@ elseif strcmp('prepareTrueValues','prepareTrueValues')
   ctype(logical(eye(cnum))) = -pi;  % All neuron must have self-depression.
 
   for i1 = 1:cnum
-    error('temporary this functionality is disabled');
+    error('temporary this functionality is under development.');
     %   alpha=;
   end
   nIt = zeros([],cnum,hnum);
@@ -148,7 +150,8 @@ Tout.simtime = sprintf('%f[sec]',Tout.simtime);
 lambda    = zeros(genLoop,env.cnum);
 loglambda = zeros(genLoop,env.cnum);
 
-if ( status.READ_NEURO_CONNECTION == 1 )
+%if ( status.READ_NEURO_CONNECTION == 1 )
+if 1 == 1
   nIs = zeros(hnum,cnum); % nIs: number of I stack.
   tmp0.showProg=floor(genLoop/10);
   tmp0.count = 0;
@@ -185,43 +188,45 @@ if ( status.READ_NEURO_CONNECTION == 1 )
   end
   fprintf('\n');
   clear Tptr nIs;
-else
-
-  for i2 = 1:genLoop
-    %% ( genLoop -1 [frame] ) * dt [time/frame] == T [time]
-    %%%% ===== renew number of spikes fired by cell c at lag m ===== 
-    %%%% ===== START =====
-    for i1 = 1:hnum
-      %% nIt(t,c,m): number of firing in cell c at lag m.
-      %% correspond to I_{c,m}(t).                                   
-      nIt(i2,:,i1) = sum(I(end - i1*hwind +1 : end - (i1-1)*hwind,:),1);
-    end
-    %%%% ===== renew number of spikes fired by cell c at lag m ===== 
-    %%%% ===== END =====
-    %% nItrep: [ time cnum cnum hnum ] matrix.
-    nItrep(i2,:,:,:) = repmat( nIt(i2,:,:),[cnum 1 1]);
-    %% tmp1: equation (1)
-    tmp1 = alpha0 + transpose(sum(sum(alpha.*shiftdim(nItrep(i2,:,:,:)),3),2));
-    %% I don't know dot() is more faster than sum().
-    %    tmp1 = alpha0 + transpose(sum(dot(alpha, shiftdim(nItrep(i2,:,:,:)),3)),2);
-    loglambda = [ loglambda; tmp1 ];
-    tmp2_lambda = exp( tmp1 ); 
-    lambda = [ lambda; tmp2_lambda ]; % store time series of lambda
-                                      %    rand('seed',randIndex);
-                                      %    randIndex = randIndex +1;
-    %% poisson process. 
-    %%    tmp3 = poissrnd(tmp2_lambda,1,cnum);
-
-    %{
-    %% old
-    tmp3 = exp(-tmp2_lambda/Hz.video).*(tmp2_lambda/Hz.video); 
-    tmp3 = rand(1,cnum) < tmp3;
-    %}
-    tmp3 = exp(-tmp2_lambda/Hz.video)/Hz.video;
-    tmp3 = rand(1,cnum) < tmp3;
-    I = [I;tmp3];
-  end
 end
+% $$$ else
+% $$$ 
+% $$$   for i2 = 1:genLoop
+% $$$     %% ( genLoop -1 [frame] ) * dt [time/frame] == T [time]
+% $$$     %%%% ===== renew number of spikes fired by cell c at lag m ===== 
+% $$$     %%%% ===== START =====
+% $$$     for i1 = 1:hnum
+% $$$       %% nIt(t,c,m): number of firing in cell c at lag m.
+% $$$       %% correspond to I_{c,m}(t).                                   
+% $$$       nIt(i2,:,i1) = sum(I(end - i1*hwind +1 : end - (i1-1)*hwind,:),1);
+% $$$     end
+% $$$     %%%% ===== renew number of spikes fired by cell c at lag m ===== 
+% $$$     %%%% ===== END =====
+% $$$     %% nItrep: [ time cnum cnum hnum ] matrix.
+% $$$     nItrep(i2,:,:,:) = repmat( nIt(i2,:,:),[cnum 1 1]);
+% $$$     %% tmp1: equation (1)
+% $$$     tmp1 = alpha0 + transpose(sum(sum(alpha.*shiftdim(nItrep(i2,:,:,:)),3),2));
+% $$$     %% I don't know dot() is more faster than sum().
+% $$$     %    tmp1 = alpha0 + transpose(sum(dot(alpha, shiftdim(nItrep(i2,:,:,:)),3)),2);
+% $$$     loglambda = [ loglambda; tmp1 ];
+% $$$     tmp2_lambda = exp( tmp1 ); 
+% $$$     lambda = [ lambda; tmp2_lambda ]; % store time series of lambda
+% $$$                                       %    rand('seed',randIndex);
+% $$$                                       %    randIndex = randIndex +1;
+% $$$     %% poisson process. 
+% $$$     %%    tmp3 = poissrnd(tmp2_lambda,1,cnum);
+% $$$ 
+% $$$     %{
+% $$$     %% old
+% $$$     tmp3 = exp(-tmp2_lambda/Hz.video).*(tmp2_lambda/Hz.video); 
+% $$$     tmp3 = rand(1,cnum) < tmp3;
+% $$$     %}
+% $$$     tmp3 = exp(-tmp2_lambda/Hz.video)/Hz.video;
+% $$$     tmp3 = rand(1,cnum) < tmp3;
+% $$$     I = [I;tmp3];
+% $$$   end
+% $$$ end
+
 Tout.I = sprintf('%6d',sum(I,1));
 I = logical(sparse(I)); %<->full(), logical()
 %%% ===== PLOT LAMBDA ===== START =====

@@ -1,3 +1,4 @@
+function [DAL] = conf_DAL;
 tmp.switch = 1;
 
   switch tmp.switch
@@ -23,3 +24,5 @@ tmp.switch = 1;
           'display',2,...
           'iter',20); % for dalprgl.m
   end
+
+DAL.opt = opt;

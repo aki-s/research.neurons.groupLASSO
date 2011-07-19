@@ -1,10 +1,12 @@
 %% Main program.
+run([rootdir_ '/conf/setpaths.m']);
+
 %++debug
 profile on -history
 
-
 global env;
 global status;
+global Tout;
 global rootdir_;   rootdir_ = pwd;
 
 status.time.start = clock;
@@ -12,228 +14,85 @@ status.time.start = clock;
 %% ==< configure >==
 %% read user custom configuration.
 %% This overrides all configurations below.
-run([rootdir_ '/conf/conf_user.m']);
+%run([rootdir_ '/conf/conf_user.m']);
 
 if strcmp('configure', 'configure') %++conf
-  run([rootdir_ '/conf/setpaths.m']);
-  %< gen_TrueValue
+
+  run([rootdir_ '/conf/conf_progress.m']);
+
   run([rootdir_ '/conf/conf_graph.m']);
   run([rootdir_ '/conf/conf_rand.m']);
   if status.READ_NEURO_CONNECTION == 1
     run([rootdir_ '/mylib/readTrueConnection.m']);
   end
 
-  run([rootdir_ '/conf/conf_gen_TrueValue.m']);
-  %> gen_TrueValue
-  %< DAL
-  run([rootdir_ '/conf/conf_DAL.m']);
-  %> DAL
-  run([rootdir_ '/conf/conf_mail.m']);
+  [DAL] = conf_DAL(); % configuration for solver 'DAL'.
+
+  run([rootdir_ '/conf/conf_mail.m']);% notify the end of program via mail.
 end
-%run([rootdir_ '/conf/conf_user.m']);
+
+run([rootdir_ '/conf/conf_user.m']);
+
+run([rootdir_ '/mylib/gen/gen_defaultEnv.m']);
+gen_defaultEnv_Direction(env,status);
+
 
 env
 
 %% ==</ configure >==
 
 % check configuration
-run([rootdir_ '/mylib/check_conf.m']);
+run([rootdir_ '/mylib/check/check_conf.m']);
+status = check_genState(status);
 
-if exist('status') && isfield(status,'GEN')
-  if ( 0 == getfield(status,'GEN') )
-    warning('WarnTests:convertTest', ...
-            ['Generating [ FiringIntensity ''lambda'', Firing ''I'', ''ggsim'' ' ...
-            '] was skipped.\n Warning#1']);
-  end
-else
-  status.GEN = 1; % default.
-end
-
-if status.GEN == 1
+if status.GEN_TrureValues == 1
   %% 1.  Set parameters and display for GLM % =============================
   if strcmp('genTrueVale','genTrueVale') %++conf
     %% prepare 'TrueValues'.
     tic;
-    run([rootdir_ '/mylib/gen/gen_TrueValue.m']);
+    if 1 == 1
+      [alpha ] = gen_TrueWeightKernel(env,status,alpha_hash);
+      [alpha0] = gen_TrueWeightSelf(env);
+      [I,lambda,loglambda] = gen_TrueI(env,alpha0,alpha);
+      run([rootdir_ '/mylib/plot/plot_TrueValues']);
+      get_neuronType(env,status,alpha_fig);
+      echo_TrueValueStatus(env,status);
+    else
+      run([rootdir_ '/mylib/gen/gen_TrueValue.m']);
+    end
     status.time.gen_TrueValue = toc;
 
-    ggsim = makeSimStruct_glm(1/env.Hz.video); % Create GLM structure with default params
   end
 end
 
-%% Start estimation with DAL.
+%% ggsim should be loaded from mat file.
+ggsim = makeSimStruct_glm(1/env.Hz.video); % Create GLM structure with default params
 
-tic;
-if strcmp('allI','allI_')  %++conf
-  %%% use all available firing history.
-  %% Drow: length of total frames used at loss function.
-  Drow = env.genLoop - size(ggsim.iht,1) +1; 
-else
-  Drow = floor(env.genLoop/4);
-end
+%% ==< Start estimation with DAL>==
 
-%% dimension reduction to be estimated.
-fprintf('\tGenerating Matrix for DAL\n');
-[D penalty] = gen_designMat(env,ggsim,I,Drow);
+if status.estimateConnection == 1
+  %% matlabpool close force local
+  matlabpool(8);
 
-
-if strcmp('dalprgl','dalprgl')
-  pI= I(end - Drow +1: end,:);
-end
-
-%% ==< init variables >==
-tmp.method = 2;
-
-pEKerWeight{1} = zeros(ggsim.ihbasprs.nbase,env.cnum);
-pEbias{1} = 0;
-
-DAL.speedup =0;
-DAL.loop = 3;
-DAL.lambda = zeros(1,DAL.loop +1);
-if strcmp('setLambda_auto','setLambda_auto')
-  %  DAL.lambda(1) = sqrt(ggsim.ihbasprs.nbase)*10; % DAL.lambda: group LASSO parameter.
-  DAL.lambda(1) = sqrt(ggsim.ihbasprs.nbase); % DAL.lambda:
-else
-  DAL.lambda(1) = 1; % DAL.lambda: group LASSO parameter.
-end
-%% ==</init variables >==
-%opt.blks = repmat( [ggsim.ihbasprs.nbase], [1 env.cnum] );%++bug:don't work
-
-%% matlabpool close force local
-matlabpool(4);
-for ii1 = 1:DAL.loop % search appropriate parameter.
-  for i1 = 1:env.cnum % ++parallelization 
-    switch  tmp.method
-      %%+improve: save all data for various tmp.method
-      case 1
-        %% logistic regression group lasso
-        [EKerWeight{i1}, Ebias{i1}, Estatus{i1}] = ...
-            dallrgl( zeros(ggsim.ihbasprs.nbase,env.cnum), 0,...
-                     D, penalty(:,i1), DAL.lambda(ii1),...
-                     opt);
-      case 2
-        %% poisson regression group lasso
-        if DAL.speedup == 0
-          [pEKerWeight{i1}, pEbias{i1}, pEstatus{i1}] = ...
-              dalprgl( zeros(ggsim.ihbasprs.nbase*env.cnum,1), 0,...
-                       D, pI(:,i1), DAL.lambda(ii1),...
-                       'blks',repmat([ggsim.ihbasprs.nbase],[1 env.cnum]));
-        else
-          [pEKerWeight{i1}, pEbias{i1}, pEstatus{i1}] = ...
-              dalprgl( pEKerWeight{i1}, pEbias{i1}, ...
-                       D, pI(:,i1), DAL.lambda(ii1),...
-                       'blks',repmat([ggsim.ihbasprs.nbase],[1 env.cnum]));
-        end
-      case 3
-        %% poisson regression group lasso: error? Can't be run.
-% $$$         [pEKerWeight{i1}, pEbias{i1}, pEstatus{i1}] = ...
-% $$$             dalprgl( zeros(ggsim.ihbasprs.nbase,env.cnum), 0,...
-% $$$                      D, pI(:,i1), DAL.lambda(ii1),...
-% $$$                      opt);
-
-        %% Returned pEKerWeight must be [10x9], not be [90x1] %++bug
-        if DAL.speedup == 0
-          [pEKerWeight{i1}, pEbias{i1}, pEstatus{i1}] = ...
-              dalprgl( zeros(ggsim.ihbasprs.nbase*env.cnum,1), 0,...
-                       D, pI(:,i1), DAL.lambda(ii1)...
-                                ,opt);
-          %                       );
-        else
-          [pEKerWeight{i1}, pEbias{i1}, pEstatus{i1}] = ...
-              dalprgl( pEKerWeight{i1}, pEbias{i1}, ...
-                       D, pI(:,i1), DAL.lambda(ii1)...
-                       ,opt);
-          %             );
-        end
-    end
-  end
-  DAL.lambda(ii1+1) = DAL.lambda(ii1)/5;
-  %++improve: plot lambda [title.a]={};
-  if graph.PLOT_T == 1
-    switch tmp.method
-      case 1
-        [ Ealpha ] = plot_Ealpha(EKerWeight,Ebias,env,ggsim,strcat(['dallrgl:DAL ' ...
-                            'lambda'],num2str(DAL.lambda(ii1))));
-      case {2,3}
-        [ Ealpha ] = plot_Ealpha(pEKerWeight,pEbias,env,ggsim, ...
-                                 strcat(['dalprgl:DAL lambda'],num2str(DAL.lambda(ii1))));
-    end
-  end
-  DAL.speedup = 1;
-end
-%[ Ealpha ] = plot_Ealpha(EKerWeight,Ebias,env,ggsim,'Estimated_alpha');
-
-status.time.estimate_TrueValue = toc;
-
-matlabpool close
-
-%% reconstruct lambda
-if strcmp('reconstruct','reconstruct_')
-
-end
-
-
-%%% ==< Kim >==
-if 1 == 0
-  load([rootdir_ '/indir/Simulation/data_sim_9neuron.mat'])
-  [L,N] = size(X);
-  KDrow = floor(N/4);
-  Kenv =struct('cnum',N,'genLoop',L);
-  fprintf('\tGenerating Matrix for DAL\n');
-  [KD Kpenalty] = gen_designMat(Kenv,ggsim,X,KDrow);
-  %  kDAL.lambda = 3; % DAL.lambda: group LASSO parameter.
-  kDAL.lambda = DAL.lambda;
-  for ii1 = 1:3 % search appropriate parameter.
-    kDAL.lambda = kDAL.lambda*3;
-    for i1 = 1:N % ++parallelization 
-      switch  tmp.method
-        case 1
-          %% logistic regression group lasso
-          [kEKerWeight{i1}, kEbias{i1}, kEstatus{i1}] = ...
-              dallrgl( zeros(ggsim.ihbasprs.nbase,env.cnum), 0,...
-                       D, penalty(:,i1), kDAL.lambda,...
-                       opt);
-        case 2
-          %% poisson regression group lasso
-          [kpEKerWeight{i1}, kpEbias{i1}, kpEstatus{i1}] = ...
-              dalprgl( zeros(ggsim.ihbasprs.nbase*env.cnum,1), 0,...
-                       D, pI(:,i1), kDAL.lambda,...
-                       'blks',repmat([ggsim.ihbasprs.nbase],[1 env.cnum]));
-        case 3
-          %% poisson regression group lasso: error? Can't be run.
-          [kpEKerWeight{i1}, kpEbias{i1}, kpEstatus{i1}] = ...
-              dalprgl( zeros(ggsim.ihbasprs.nbase,env.cnum), 0,...
-                       D, pI(:,i1), kDAL.lambda,...
-                       opt);
-      end
-    end
-
-    if graph.PLOT_T == 1
-      switch tmp.method
-        case 1
-          [ kEalpha ] = plot_Ealpha(kEKerWeight,kEbias,env,ggsim,strcat(['Kim:dallrgl:kDAL ' ...
-                              'lambda'],num2str(kDAL.lambda)));
-        case {2,3}
-          [ kEalpha ] = plot_Ealpha(kpEKerWeight,kpEbias,env,ggsim, ...
-                                    strcat(['Kim:dalprgl:kDAL lambda'],num2str(kDAL.lambda)));
-      end
-    end
+  [KerWeight,Ebias,Estatus,kEalpha,DALrf] = estimateWeightKernel(env,status,graph,ggsim,I,DAL);
+  %% reconstruct lambda
+  if strcmp('reconstruct','reconstruct_')
+    
   end
 
-end
-%%% ==</Kim >==
+% $$$ [kEKerWeight,kEbias,kEstatus,kEalpha,kDALrf] = compare_KIM(env,status,graph,ggsim,DALrf);
 
-if strcmp('clean','clean')  %++conf
-  run([rootdir_ '/mylib/clean.m'])
+  matlabpool close
+  %% ==</Start estimation with DAL>==
 end
 
-
-if status.mail == 1
-  setpref('Internet','SMTPServer',env.mail.smtp);
-  sendmail(env.mail.to,'Finished myest.m',status.time.start);
-end
 status.time.end = clock;
 
+if status.estimateConnection == 1
+  mailMe(env,status,DALrf)
+end
+
+tmp0 = status.time.start;
 if strcmp('saveInterActive','saveInterActive')  %++conf
   uisave(who,strcat(rootdir_ , 'outdir/mat/', 'frame', num2str(sprintf('%05d',env.genLoop)), 'hwind', num2str(sprintf('%04d',env.hwind)), 'hnum' , num2str(sprintf('%02d',env.hnum))));
 
@@ -243,7 +102,16 @@ if strcmp('saveInterActive','saveInterActive')  %++conf
   %   '  'hnum' , num2str(sprintf('%02d',env.hnum)))) ;
 
 else
-  save( [ rootdir_ '/outdir/myestOut.mat']);
+  save( [ rootdir_ '/outdir/',date,tmp0(4),tmp0(5),'.mat']);
 end
 
 status.profile=profile('info');
+
+
+
+%% ==< clean >==
+if strcmp('clean','clean')  %++conf
+  run([rootdir_ '/mylib/clean.m'])
+end
+
+

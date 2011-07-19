@@ -46,7 +46,4 @@ alpha_fig = transpose(reshape(alpha_hash, env.cnum , env.cnum));
 
 fclose(tmp.fid);
 
-%% calculate env.spar
-%++todo
-
-status.READ_NEURO_CONNECTION =1; % flag
+%% calculate env.spar %++todo
