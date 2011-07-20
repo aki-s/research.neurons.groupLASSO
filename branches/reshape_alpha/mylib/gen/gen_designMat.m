@@ -42,6 +42,9 @@ function [D penalty] = gen_designMat(env,ggsim,I,Drow);
 %%
 
 %%< conf
+
+DEBUG = 0;
+
 prs.gen_designMat = 2; % prs: parameters
 %%> conf
 %%< check size
@@ -78,9 +81,37 @@ end
 tmp0.count = 0;
 
 tic;
-if strcmp('me','me_')
+C = env.cnum;
+B = ggsim.ihbasprs.nbase;
+
+if DEBUG == 1
   fprintf(1,'\tprogress(%%): ');
-  D = zeros(Drow,env.cnum*ggsim.ihbasprs.nbase); 
+  D = zeros(Drow,C*B);
+  penalty = 2*I((end - Drow +1):end,:) -1;
+
+  % ++parallelization
+  for i1cellIndex = 1: C % i1cellIndex: for cell index.
+    if ~mod(i1cellIndex,tmp0.showProg) %% show progress.
+      fprintf(1,'%d ',tmp0.count*10)
+      tmp0.count = tmp0.count +1;
+    end
+
+    %% Time axis is in descending order.
+    tmp1D = zeros(Drow,B); % reset at new bottom right part in matrix D.
+    for i2basisIndex = 1:B % i2basisIndex: for ggsim.ihbasis( ,i2basisIndex).
+      for i3 = 0:Drow-1 % i3: ascending time point.
+        %% demension reduction with basis function 'ggsim.ihbasis'.
+        tmp1D(Drow -i3,i2basisIndex) = dot( ggsim.ihbasis(1:histSize,i2basisIndex), I(end +1 -(1:histSize) -i3, i1cellIndex) ) ; 
+      end %++debug.1
+    end
+    D(:,(i1cellIndex-1)*B + (1:B) ) = tmp1D ;
+  end
+  fprintf(1,': past time %d\n',toc);
+end
+
+if DEBUG == 1
+  fprintf(1,'\tprogress(%%): ');
+  D2 = zeros(Drow,env.cnum*ggsim.ihbasprs.nbase); 
   penalty = 2*I(end - Drow +1: end,:) -1;
 
   % ++parallelization
@@ -92,12 +123,12 @@ if strcmp('me','me_')
 
     %% Time axis is in descending order.
     for i2basisIndex = 1:ggsim.ihbasprs.nbase % i2basisIndex: for ggsim.ihbasis( ,i2basisIndex).
-      tmp1D = zeros(Drow,1); % reset at new bottom right part in matrix D.
+      tmp1D = zeros(Drow,1); % reset at new bottom right part in matrix D2.
       for i3 = 0:Drow-1 % i3: ascending time point.
         %% demension reduction with basis function 'ggsim.ihbasis'.
         tmp1D(Drow -i3) = dot( ggsim.ihbasis(1:histSize,i2basisIndex), I(end +1 -(1:histSize) -i3, i1cellIndex) ) ; 
       end %++debug.1
-      D(:,(i1cellIndex-1)*ggsim.ihbasprs.nbase +i2basisIndex ) = tmp1D ;
+      D2(:,(i1cellIndex-1)*ggsim.ihbasprs.nbase +i2basisIndex ) = tmp1D ;
     end
   end
   fprintf(1,': past time %d\n',toc);
@@ -134,9 +165,14 @@ if strcmp('oba','oba')
 end
 
 
-if strcmp('debug','debug_')
-  fprintf(1,'\n gen_designMat:: diff D:  %f\n',sum( (ooD(:) - D(:) ...
-                                                    ).^2 ) );
+if DEBUG == 1
+
+  fprintf(1,'\n gen_designMat:: diff D:  %f\n',...
+          sum( (D(:) - D2(:) ).^2 ) );
+  fprintf(1,'\n gen_designMat:: diff D:  %f\n',...
+          sum( (D2(:) - ooD(:) ).^2 ) );
+  fprintf(1,'\n gen_designMat:: diff D:  %f\n',...
+          sum( (ooD(:) - D(:) ).^2 ) );
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

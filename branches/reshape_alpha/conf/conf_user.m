@@ -1,6 +1,8 @@
 %% Set freely your configuration.
 warning('conf_user.m overrides all configuration variables set after this file.');
 
+status.READ_NEURO_CONNECTION =1;
+
 graph.TIGHT=1;
 graph.PLOT_T = 1;
 graph.GRAPHVIZ_OUT_FIG=1; % default: 0
@@ -36,5 +38,5 @@ env.SELF_DEPRESS_BASE=2;
 env.mail.to='aki-s@sys.i.kyoto-u.ac.jp';
 env.mail.smtp='hawaii.sys.i.kyoto-u.ac.jp';
 
-status.READ_NEURO_CONNECTION =1;
+status.mail = 1
 

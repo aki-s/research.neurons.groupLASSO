@@ -1,5 +1,9 @@
+%% calculating with DAL takes some time.
+%% So I prepared the method to notify you via mail
+%%  when this calculation finished.
+
 if isfield(env,'mail')
-  status.mail = 1; % 0: don't notify with mail when program ended.
+  status.mail = 1; % 1: notify with mail when program ended.
 else
   status.mail = 0;
 end

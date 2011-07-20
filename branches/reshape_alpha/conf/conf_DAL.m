@@ -1,9 +1,9 @@
 function [DAL] = conf_DAL;
-tmp.switch = 1;
+tmp.switch = 0;
 
   switch tmp.switch
     case 0
-      ;
+      opt.display = 0; %0: suppress stdout
     case 1
       opt.display = 1;
     case 2

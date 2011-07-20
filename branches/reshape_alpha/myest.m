@@ -1,15 +1,12 @@
 %% Main program.
-run([rootdir_ '/conf/setpaths.m']);
-
-%++debug
-profile on -history
-
 global env;
 global status;
 global Tout;
 global rootdir_;   rootdir_ = pwd;
 
-status.time.start = clock;
+status.time.start = fix(clock);
+
+run([rootdir_ '/conf/setpaths.m']);
 
 %% ==< configure >==
 %% read user custom configuration.
@@ -33,8 +30,7 @@ end
 
 run([rootdir_ '/conf/conf_user.m']);
 
-run([rootdir_ '/mylib/gen/gen_defaultEnv.m']);
-gen_defaultEnv_Direction(env,status);
+gen_defaultEnv_ask(env,status);
 
 
 env
@@ -74,22 +70,22 @@ if status.estimateConnection == 1
   %% matlabpool close force local
   matlabpool(8);
 
-  [KerWeight,Ebias,Estatus,kEalpha,DALrf] = estimateWeightKernel(env,status,graph,ggsim,I,DAL);
+  [KerWeight,Ebias,Estatus,Ealpha,DAL] = estimateWeightKernel(env,status,graph,ggsim,I,DAL);
   %% reconstruct lambda
   if strcmp('reconstruct','reconstruct_')
     
   end
 
-% $$$ [kEKerWeight,kEbias,kEstatus,kEalpha,kDALrf] = compare_KIM(env,status,graph,ggsim,DALrf);
+% $$$ [kEKerWeight,kEbias,kEstatus,kEalpha,kDAL] = compare_KIM(env,status,graph,ggsim,DAL);
 
   matlabpool close
   %% ==</Start estimation with DAL>==
 end
 
-status.time.end = clock;
+status.time.end = fix(clock);
 
 if status.estimateConnection == 1
-  mailMe(env,status,DALrf)
+  mailMe(env,status,DAL)
 end
 
 tmp0 = status.time.start;

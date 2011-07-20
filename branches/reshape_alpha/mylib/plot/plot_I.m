@@ -9,7 +9,7 @@ function plot_I(graph,env,I,title)
 %% arg6 : string. plot window title.
 %%
 %% Example)
-% plot_I(env.cnum,env.gen_lambda_loop,env.hnum,env.wind,I,title)
+% plot_I(env.cnum,env.gen_lambda_loop,env.hnum,env.wind,I,'title')
 %%
 gen_lambda_loop = env.genLoop;
 cnum = env.cnum;
@@ -17,14 +17,22 @@ hnum = env.hnum;
 wind = env.hwind;
 xrange = graph.xrange;
 
+DEBUG =0;
+
 figure;
 tmp1spacing = floor(gen_lambda_loop/hnum) ;
 for i1 = 1:cnum
   subplot(cnum,1,i1)
   %% I(:,:): first hnum*wind history is all zero.
-  plot( 1 :gen_lambda_loop + hnum*wind , I(:,i1))
-  %  set(gca,'Xtick',-hnum*wind+1:20:gen_lambda_loop)
-  set(gca,'Xtick',-hnum*wind+1: tmp1spacing :gen_lambda_loop)
+  if DEBUG == 1
+    %    plot( I(end - (100:-1:1),i1))
+    bar( I(end - (100:-1:1),i1))
+  else
+    %    plot( 1 :gen_lambda_loop + hnum*wind , I(:,i1))
+    bar( 1 :gen_lambda_loop + hnum*wind , I(:,i1))
+    %  set(gca,'Xtick',-hnum*wind+1:20:gen_lambda_loop)
+    set(gca,'Xtick',-hnum*wind+1: tmp1spacing :gen_lambda_loop)
+  end
   grid off;
   ylim([0,1]);
   if gen_lambda_loop > 100000
