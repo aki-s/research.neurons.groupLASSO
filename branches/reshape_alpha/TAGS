@@ -192,8 +192,8 @@ function varargout = loss_sqdloss_sqd8,211
 dal_mod/loss_sqp.m,48
 function [floss, gloss]=loss_sqploss_sqp5,141
 
-misc/plot_ggsimBaseFunc.m,52
-function plot_ggsimBaseFunc(plot_ggsimBaseFunc1,0
+misc/plot_basesBaseFunc.m,52
+function plot_basesBaseFunc(plot_basesBaseFunc1,0
 
 mylib/gen/gen_designMat.m,55
 function [D penalty] = gen_designMatgen_designMat1,0

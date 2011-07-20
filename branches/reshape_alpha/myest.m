@@ -61,8 +61,8 @@ if status.GEN_TrureValues == 1
   end
 end
 
-%% ggsim should be loaded from mat file.
-ggsim = makeSimStruct_glm(1/env.Hz.video); % Create GLM structure with default params
+%% bases should be loaded from mat file.
+bases = makeSimStruct_glm(1/env.Hz.video); % Create GLM structure with default params
 
 %% ==< Start estimation with DAL>==
 
@@ -70,13 +70,13 @@ if status.estimateConnection == 1
   %% matlabpool close force local
   matlabpool(8);
 
-  [KerWeight,Ebias,Estatus,Ealpha,DAL] = estimateWeightKernel(env,status,graph,ggsim,I,DAL);
+  [KerWeight,Ebias,Estatus,Ealpha,DAL] = estimateWeightKernel(env,status,graph,bases,I,DAL);
   %% reconstruct lambda
   if strcmp('reconstruct','reconstruct_')
     
   end
 
-% $$$ [kEKerWeight,kEbias,kEstatus,kEalpha,kDAL] = compare_KIM(env,status,graph,ggsim,DAL);
+% $$$ [kEKerWeight,kEbias,kEstatus,kEalpha,kDAL] = compare_KIM(env,status,graph,bases,DAL);
 
   matlabpool close
   %% ==</Start estimation with DAL>==

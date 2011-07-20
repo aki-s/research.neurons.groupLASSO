@@ -1,13 +1,13 @@
-function [D penalty] = gen_designMat(env,ggsim,I,Drow);
+function [D penalty] = gen_designMat(env,bases,I,Drow);
 %% 
 %% Reduce dimension to be estimated 
 %% from raw large dimension (number of frames which are coverd with
-%% ggsim.ihbasis )to
-%% ggsim.ihbasprs.nbase new smaller dimension.
+%% bases.ihbasis )to
+%% bases.ihbasprs.nbase new smaller dimension.
 %%
 %% INPUT)
 %% env  :
-%% ggsim: basis function
+%% bases: basis function
 %% I    : [time,cell] matrix. Firing history flag. 
 %% Drow : number of flames to be to be used for penalty.
 %%
@@ -15,7 +15,7 @@ function [D penalty] = gen_designMat(env,ggsim,I,Drow);
 %% D	: matrix having info about argument of discriminant function.
 %%	: D(i,(#neuron -1)*B + j), j=1:B
 %% 	: Suppose each variable is set as following.
-%% 	: B:= ggsim.ihbasprs.nbase (Number of basis)
+%% 	: B:= bases.ihbasprs.nbase (Number of basis)
 %% 	: env.cnum:=5
 %% 	: ^   |-----------------------------|    |  ~ old time
 %% 	: |   |  #  |  #  |  #  |  #  |  #  |    |
@@ -38,7 +38,7 @@ function [D penalty] = gen_designMat(env,ggsim,I,Drow);
 %% penalty: penalty for discriminant function. returned as matrix.
 %%
 %% USAGE)
-%[D penalty] = gen_designMat(env,ggsim,I,Drow);
+%[D penalty] = gen_designMat(env,bases,I,Drow);
 %%
 
 %%< conf
@@ -54,7 +54,7 @@ end
 
 %% histSize: presume this number of frames is valid history length.
 if strcmp('debug','debug')
-  histSize = size(ggsim.ih,1); % default histSize.
+  histSize = size(bases.ih,1); % default histSize.
 end
 if ( env.genLoop < ( histSize + Drow ))
   warning('The number of history windows is too large.');
@@ -82,7 +82,7 @@ tmp0.count = 0;
 
 tic;
 C = env.cnum;
-B = ggsim.ihbasprs.nbase;
+B = bases.ihbasprs.nbase;
 
 if DEBUG == 1
   fprintf(1,'\tprogress(%%): ');
@@ -98,10 +98,10 @@ if DEBUG == 1
 
     %% Time axis is in descending order.
     tmp1D = zeros(Drow,B); % reset at new bottom right part in matrix D.
-    for i2basisIndex = 1:B % i2basisIndex: for ggsim.ihbasis( ,i2basisIndex).
+    for i2basisIndex = 1:B % i2basisIndex: for bases.ihbasis( ,i2basisIndex).
       for i3 = 0:Drow-1 % i3: ascending time point.
-        %% demension reduction with basis function 'ggsim.ihbasis'.
-        tmp1D(Drow -i3,i2basisIndex) = dot( ggsim.ihbasis(1:histSize,i2basisIndex), I(end +1 -(1:histSize) -i3, i1cellIndex) ) ; 
+        %% demension reduction with basis function 'bases.ihbasis'.
+        tmp1D(Drow -i3,i2basisIndex) = dot( bases.ihbasis(1:histSize,i2basisIndex), I(end +1 -(1:histSize) -i3, i1cellIndex) ) ; 
       end %++debug.1
     end
     D(:,(i1cellIndex-1)*B + (1:B) ) = tmp1D ;
@@ -111,7 +111,7 @@ end
 
 if DEBUG == 1
   fprintf(1,'\tprogress(%%): ');
-  D2 = zeros(Drow,env.cnum*ggsim.ihbasprs.nbase); 
+  D2 = zeros(Drow,env.cnum*bases.ihbasprs.nbase); 
   penalty = 2*I(end - Drow +1: end,:) -1;
 
   % ++parallelization
@@ -122,13 +122,13 @@ if DEBUG == 1
     end
 
     %% Time axis is in descending order.
-    for i2basisIndex = 1:ggsim.ihbasprs.nbase % i2basisIndex: for ggsim.ihbasis( ,i2basisIndex).
+    for i2basisIndex = 1:bases.ihbasprs.nbase % i2basisIndex: for bases.ihbasis( ,i2basisIndex).
       tmp1D = zeros(Drow,1); % reset at new bottom right part in matrix D2.
       for i3 = 0:Drow-1 % i3: ascending time point.
-        %% demension reduction with basis function 'ggsim.ihbasis'.
-        tmp1D(Drow -i3) = dot( ggsim.ihbasis(1:histSize,i2basisIndex), I(end +1 -(1:histSize) -i3, i1cellIndex) ) ; 
+        %% demension reduction with basis function 'bases.ihbasis'.
+        tmp1D(Drow -i3) = dot( bases.ihbasis(1:histSize,i2basisIndex), I(end +1 -(1:histSize) -i3, i1cellIndex) ) ; 
       end %++debug.1
-      D2(:,(i1cellIndex-1)*ggsim.ihbasprs.nbase +i2basisIndex ) = tmp1D ;
+      D2(:,(i1cellIndex-1)*bases.ihbasprs.nbase +i2basisIndex ) = tmp1D ;
     end
   end
   fprintf(1,': past time %d\n',toc);
@@ -140,7 +140,7 @@ if strcmp('oba','oba')
   tmp0.count = 0;
 
   ooC = env.cnum; % # of cells
-  ooK = ggsim.ihbasprs.nbase; % # of bases per a cell
+  ooK = bases.ihbasprs.nbase; % # of bases per a cell
   ooN = histSize; % length of each single basis
   ooD = zeros( Drow, ooC*ooK ); % design matrix
   ooT = size( I, 1 ); % length of the time-sequence
@@ -155,7 +155,7 @@ if strcmp('oba','oba')
     for k = 1:ooK
       tmp1D = zeros( Drow, 1 );
       for t = 1:Drow
-        tmp1D( t ) = dot( ggsim.ihbasis( 1:ooN, k ), ...
+        tmp1D( t ) = dot( bases.ihbasis( 1:ooN, k ), ...
                           I( ooidx(t)-(1:ooN), c ) );
       end
       ooD( :, (c-1)*ooK + k ) = tmp1D;

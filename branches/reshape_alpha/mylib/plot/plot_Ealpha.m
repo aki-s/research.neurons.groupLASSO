@@ -1,10 +1,10 @@
-function [ Ealpha ] = plot_Ealpha(EKerWeight,Ebias,env,ggsim,title)
+function [ Ealpha ] = plot_Ealpha(EKerWeight,Ebias,env,bases,title)
 %%
 %% Generate and plot estimated alpha.
 %% INPUT)
 %%
 %% USAGE)
-%  plot_Ealpha(EKerWeight,Ebias,env,ggsim,'title')
+%  plot_Ealpha(EKerWeight,Ebias,env,bases,'title')
 %%
 cnum = env.cnum;
 hnum = env.hnum;
@@ -29,7 +29,7 @@ end
 M = hnum*hwind; % M: total history frame.
 for i1to = 1:cnum
   for i2from = 1:cnum
-    Ealpha{i1to}{i2from} = (ggsim.ihbasis* EKerWeight{i1to}(:,i2from))';
+    Ealpha{i1to}{i2from} = (bases.ihbasis* EKerWeight{i1to}(:,i2from))';
   end
 end
 
