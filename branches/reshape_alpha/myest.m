@@ -2,6 +2,7 @@
 global env;
 global status;
 global Tout;
+global graph; %++bug: global
 global rootdir_;   rootdir_ = pwd;
 
 status.time.start = fix(clock);
@@ -29,7 +30,8 @@ gen_defaultEnv_ask();
 
 if status.READ_NEURO_CONNECTION == 1
   %  run([rootdir_ '/mylib/readTrueConnection.m']);
-  [alpha_fig,alpha_hash] = readTrueConnection(env,status);
+  %  [alpha_fig,alpha_hash] = readTrueConnection(env,status);
+  [alpha_fig,alpha_hash] = readTrueConnection();
 else 
   [alpha_fig,alpha_hash] = gen_alpha_hash();
 end
@@ -37,7 +39,11 @@ end
 %% ==</ configure >==
 
 % check configuration
-check_conf(env,status,Tout,graph);
+if 1== 0
+  check_conf(env,status,Tout,graph);
+else
+  check_conf();
+end
 status = check_genState(status);
 
 echo_initStatus(env,status,Tout)

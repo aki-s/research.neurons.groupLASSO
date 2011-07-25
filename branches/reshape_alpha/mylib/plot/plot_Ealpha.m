@@ -26,7 +26,7 @@ end
 MAX=10;
 
 Lnum = 3;
-dh = floor((hnum*hwind)/Lnum);
+dh = floor((hnum*hwind)/Lnum); %dh: width of each tick.
 ddh = dh/Hz; % convert XTick unit from [frame] to [sec]
 TIMEL = cell(1,Lnum);
 for i1 = 1:Lnum+1
@@ -43,7 +43,7 @@ if cnum < MAX
       axis tight;
     end
     grid on;
-    set(gca,'Xlim',[0,hnum*XSIZE]);
+    set(gca,'Xlim',[0,hnum*hwind*XSIZE]);
     %{
     set(gca,'Ylim',[SELF_DEPRESS_BASE*gain-2,2]);
     %}
@@ -61,18 +61,18 @@ if cnum < MAX
     end
     %% </ chage color ploted according to cell type >
     %% no use in setting xlim and ylim if not before subplot.
-    xlim([0,hnum*XSIZE]);  
+    xlim([0,hnum*hwind*XSIZE]);  
     %{
     ylim([-SELF_DEPRESS_BASE*gain-2,2]);
     %}
     set(gca,'XAxisLocation','top');
-    set(gca,'XTick' , 1:dh:hnum);
+    set(gca,'XTick' , 1:dh:hnum*hwind);
     set(gca,'XTickLabel',TIMEL);
 
     %% < from-to cell label >
     if (i2to == 1)     % When in the topmost margin.
       xlabel(i3from);
-      xlim([0,hnum]);
+      xlim([0,hnum*hwind]);
     end
     if (i3from == 1) ylabel(i2to); % When in the leftmost margin.
     end

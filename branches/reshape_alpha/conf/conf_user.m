@@ -41,7 +41,7 @@ switch DEBUG_s
     env.hnum=(3000);
     env.hwind=(1); % large hwind cause continuous firing of each neuron.
     env.Hz.video=(1000);
-    status.estimateConnection = 4;
+    status.estimateConnection = 1;
 end
 
 %{

@@ -1,4 +1,5 @@
-function  [alpha_fig,alpha_hash] = readTrueConnection(env,status)
+function  [alpha_fig,alpha_hash] = readTrueConnection()
+%function  [alpha_fig,alpha_hash] = readTrueConnection(env,status)
 %% ============ about: input file ============
 %% read true connection of neurons
 %% input file format)
@@ -14,8 +15,13 @@ function  [alpha_fig,alpha_hash] = readTrueConnection(env,status)
 %%   a neuron #from to #to.
 %%
 
+if 1 == 1
 global env
 global status
+
+else
+
+end
 
 %if status.GUI
 %if strcmp('GUI','_GUI')
