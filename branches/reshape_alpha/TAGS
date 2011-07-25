@@ -192,29 +192,59 @@ function varargout = loss_sqdloss_sqd8,211
 dal_mod/loss_sqp.m,48
 function [floss, gloss]=loss_sqploss_sqp5,141
 
-misc/plot_basesBaseFunc.m,52
+misc/plot_ggsimBaseFunc.m,52
 function plot_basesBaseFunc(plot_basesBaseFunc1,0
 
-mylib/gen/gen_designMat.m,55
-function [D penalty] = gen_designMatgen_designMat1,0
+misc/compare_KIM.m,85
+global rootdir_;rootdir_;9,287
+global env;env;10,304
+global graph;graph;11,316
 
-mylib/gen/gen_TrueI.m,82
+mylib/gen/gen_designMat.m,86
+function [D penalty] = gen_designMatgen_designMat1,0
+function compD(compD276,8674
+
+mylib/gen/gen_TrueI.m,110
 function [I,lambda,loglambda] = gen_TrueIgen_TrueI1,0
-global Tout;Tout;11,389
+global Tout;Tout;5,123
+global status;status;6,136
 
 mylib/gen/gen_TrueWeightKernel.m,94
 function [alpha] = gen_TrueWeightKernelgen_TrueWeightKernel1,0
-  global Tout;Tout;50,1476
+  global Tout;Tout;50,1455
 
-mylib/gen/gen_defaultEnv_ask.m,52
+mylib/gen/gen_defaultEnv_ask.m,102
 function gen_defaultEnv_ask(gen_defaultEnv_ask1,0
+global rootdir_rootdir_3,41
+global envenv4,57
 
 mylib/gen/gen_TrueWeightSelf.m,67
 function      [alpha0] = gen_TrueWeightSelfgen_TrueWeightSelf1,0
 
-mylib/plot/plot_Ealpha.m,82
-function [ Ealpha ] = plot_Ealphaplot_Ealpha1,0
-global rootdir_rootdir_22,387
+mylib/gen/loren.m,31
+function [L] = lorenloren1,0
+
+mylib/gen/gen_alpha_hash.m,88
+function [alpha_fig,alpha_hash] = gen_alpha_hashgen_alpha_hash1,0
+global envenv3,56
+
+mylib/gen/gen_kernel1.m,48
+function [kernel] = gen_kernel1gen_kernel11,0
+
+mylib/gen/gen_kernel0.m,39
+function  gen_kernel0(gen_kernel01,0
+
+mylib/gen/lorentz.m,35
+function [L] = lorentzlorentz1,0
+
+mylib/gen/kernel00.m,41
+function [alpha] = kernel00kernel001,0
+
+mylib/plot/plot_Ealpha.m,121
+function plot_Ealpha(plot_Ealpha1,0
+global rootdir_rootdir_9,150
+global env;env;10,166
+global graph;graph;11,178
 
 mylib/plot/plot_alpha.m,68
 function plot_alpha(plot_alpha1,0
@@ -229,8 +259,9 @@ function plot_lambda(plot_lambda1,0
 mylib/check/check_genState.m,54
 function [status] = check_genStatecheck_genState1,0
 
-mylib/mailMe.m,28
+mylib/mailMe.m,68
 function mailMe(mailMe1,0
+function [time_] = mydatemydate17,633
 
 mylib/makeSimStruct_glm.m,85
 function S = makeSimStruct_glmmakeSimStruct_glm1,0
@@ -239,12 +270,14 @@ global rootdir_rootdir_16,552
 mylib/make_basis.m,59
 function [iht, ihbas, ihbasis] = make_basismake_basis1,0
 
+mylib/readTrueConnection.m,127
+function  [alpha_fig,alpha_hash] = readTrueConnectionreadTrueConnection1,0
+global envenv17,638
+global statusstatus18,649
+
 mylib/get_neuronType.m,72
 function  get_neuronType(get_neuronType1,0
-  global Tout;Tout;5,147
-
-mylib/compare_KIM.m,85
-function  [kEKerWeight,kEbias,kEstatus,kEalpha,kDALrf] = compare_KIMcompare_KIM1,0
+  global Tout;Tout;6,158
 
 mylib/echo_TrueValueStatus.m,80
 function echo_TrueValueStatus(echo_TrueValueStatus1,0
@@ -252,6 +285,12 @@ global Tout;Tout;4,91
 
 mylib/estimateWeightKernel.m,98
 function [pEKerWeight,pEbias,pEstatus,Ealpha,DAL] = estimateWeightKernelestimateWeightKernel1,0
+
+mylib/echo_initStatus.m,46
+function echo_initStatus(echo_initStatus1,0
+
+mylib/estimateFiringIntensity.m,73
+function [Elambda] = estimateFiringIntensityestimateFiringIntensity1,0
 
 tools/plot_lambda_video.m,50
 function plot_lambda_video(plot_lambda_video1,0
@@ -293,13 +332,28 @@ indir/Real_data/log_likelihood_trialcausal.m,79
 function [loglike] = log_likelihood_trialcausallog_likelihood_trialcausal1,0
 
 myest.m,230
-global env;env;5,51
-global status;status;6,64
-global Tout;Tout;7,80
-global rootdir_;   rootdir_ = pwd;pwd;8,94
-global rootdir_;   rootdir_ ==8,94
-global rootdir_;   rootdir_rootdir_8,94
-global rootdir_;rootdir_;8,94
+global env;env;2,18
+global status;status;3,31
+global Tout;Tout;4,47
+global rootdir_;   rootdir_ = pwd;pwd;5,61
+global rootdir_;   rootdir_ ==5,61
+global rootdir_;   rootdir_rootdir_5,61
+global rootdir_;rootdir_;5,61
+
+confidential/yoshimoto/getSpikeDataFromMATmodel01.m,90
+function [tbin,DELTA,Y,R,W,TAU]=getSpikeDataFromMATmodel01getSpikeDataFromMATmodel011,0
+
+confidential/yoshimoto/getSpikeDataFromMATmodel02.m,90
+function [tbin,DELTA,Y,R,W,TAU]=getSpikeDataFromMATmodel02getSpikeDataFromMATmodel021,0
+
+confidential/yoshimoto/getSpikeDataFromMATmodel03.m,90
+function [tbin,DELTA,Y,R,W,TAU]=getSpikeDataFromMATmodel03getSpikeDataFromMATmodel031,0
+
+confidential/yoshimoto/mainGenerateData.m,49
+function  mainGenerateData(mainGenerateData1,0
+
+confidential/yoshimoto/transVoltageToSpike.m,54
+function transVoltageToSpike(transVoltageToSpike1,0
 
 indir/Real_data/ksplotting.m,0
 
@@ -314,8 +368,6 @@ indir/Simulation/CausalTest.m,0
 tools/plot_graphviz.m,0
 
 tools/plot_loglambda_video.m,0
-
-mylib/readTrueConnection.m,0
 
 mylib/check/check_conf.m,0
 
@@ -335,9 +387,9 @@ dal_mod/job051_TestPR.m,0
 
 dal_ver1.05/s_test_hsgl.m,0
 
-conf/conf_progress.m,0
-
 conf/conf_makeSimStruct_glm.m,0
+
+conf/conf_progress.m,0
 
 conf/conf_mail.m,0
 

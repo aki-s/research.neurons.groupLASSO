@@ -1,52 +1,39 @@
-function [ Ealpha ] = plot_Ealpha(EKerWeight,Ebias,env,bases,title)
+function plot_Ealpha(env,graph,Ealpha,title)
 %%
 %% Generate and plot estimated alpha.
 %% INPUT)
 %%
 %% USAGE)
-%  plot_Ealpha(EKerWeight,Ebias,env,bases,'title')
+% plot_Ealpha(env,graph,Ealpha,title)
 %%
+global rootdir_
+global env;
+global graph;
 cnum = env.cnum;
 hnum = env.hnum;
-hwind = env.hwind;
 
 SELF_DEPRESS_BASE = env.SELF_DEPRESS_BASE;
 
-if exist('SELF_DEPRESS_BASE') == 0
-  SELF_DEPRESS_BASE = 2;
-end
 if exist('gain') == 0
   gain = 1;
-end
-
-global rootdir_
-run([rootdir_ '/conf/setpaths.m']);
-run([rootdir_ '/conf/conf_graph.m']);
-
-if exist('graph') == 0
-  graph.TIGHT = 1
-end
-M = hnum*hwind; % M: total history frame.
-for i1to = 1:cnum
-  for i2from = 1:cnum
-    Ealpha{i1to}{i2from} = (bases.ihbasis* EKerWeight{i1to}(:,i2from))';
-  end
 end
 
 figure;
 i2to =1; % cell to
 i3from =1; % cell from
 for i1 = 1:cnum*cnum % subplot select
-if  graph.TIGHT == 1;
-  axis tight;
-end
+  if  graph.TIGHT == 1;
+    axis tight;
+  end
   grid on;
-set(gca,'Xlim',[0,hnum*2]);
-set(gca,'Ylim',[-SELF_DEPRESS_BASE*gain-2,2]);
+  set(gca,'Xlim',[0,hnum*2]);
+  %{
+  set(gca,'Ylim',[SELF_DEPRESS_BASE*gain-2,2]);
+  %}
   subplot(cnum,cnum,i1);
   tmp1 = Ealpha{i2to}{i3from};
   if i2to == i3from
-    tmp1 = tmp1 + Ebias{i2to};
+    %    tmp1 = tmp1 + Ebias{i2to};
   end
   if tmp1 > 0
     plot(tmp1,'r','LineWidth',3);
@@ -56,9 +43,9 @@ set(gca,'Ylim',[-SELF_DEPRESS_BASE*gain-2,2]);
     plot(tmp1,'k','LineWidth',3);
   end
   %% </ chage color ploted according to cell type >
-  %{
   %% no use in setting xlim and ylim if not before subplot.
-  xlim([0,hnum*2]);
+  xlim([0,hnum*2]);  
+  %{
   ylim([-SELF_DEPRESS_BASE*gain-2,2]);
   %}
   set(gca,'XAxisLocation','top');
@@ -94,8 +81,7 @@ ylabel(h,'Target')
 
 %%% ===== PLOT alpha ===== END =====
 %% write out eps file
-%if graph.PLOT_T == 1
-if 1 == 1
+if graph.PLOT_T == 1
   print('-depsc','-tiff', [rootdir_ '/outdir/Estimated_alpha.eps'])
 end
 

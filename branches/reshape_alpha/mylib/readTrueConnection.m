@@ -1,3 +1,4 @@
+function  [alpha_fig,alpha_hash] = readTrueConnection(env,status)
 %% ============ about: input file ============
 %% read true connection of neurons
 %% input file format)
@@ -13,7 +14,12 @@
 %%   a neuron #from to #to.
 %%
 
-if strcmp('GUI','_GUI')
+global env
+global status
+
+%if status.GUI
+%if strcmp('GUI','_GUI')
+if status.use.GUI == 1
 fprintf('Which file describing neuronal connections do you want to use?');
 tmp.in = uigetfile('*.con');
 else

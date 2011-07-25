@@ -44,6 +44,8 @@ function [D penalty] = gen_designMat(env,bases,I,Drow);
 %%< conf
 
 DEBUG = 0;
+DEBUG = 2; % ooD
+%%DEBUG = 3;
 
 prs.gen_designMat = 2; % prs: parameters
 %%> conf
@@ -78,15 +80,47 @@ tmp0.showProg=floor(env.cnum/reportEvery);
 if tmp0.showProg == 0
   tmp0.showProg = 1;
 end
-tmp0.count = 0;
 
 tic;
 C = env.cnum;
 B = bases.ihbasprs.nbase;
 
-if DEBUG == 1
-  fprintf(1,'\tprogress(%%): ');
-  D = zeros(Drow,C*B);
+
+str=sprintf('D3');
+if DEBUG == 1 && strcmp('D3',str)
+  tmp0.count = 0;
+  fprintf(1,'%10s:\tprogress(%%): ',str);
+  D3 = zeros(Drow,C*B);
+  penalty = 2*I((end - Drow +1):end,:) -1;
+
+  flipI = flipud(I);
+
+  % ++parallelization
+  for i1cellIndex = 1: C % i1cellIndex: for cell index.
+    if ~mod(i1cellIndex,tmp0.showProg) %% show progress.
+      fprintf(1,'%d ',tmp0.count*10)
+      tmp0.count = tmp0.count +1;
+    end
+
+    %% Time axis is in descending order.
+    tmp1D = zeros(Drow,B); % reset at new bottom right part in matrix D3.
+    for i2basisIndex = 1:B % i2basisIndex: for bases.ihbasis( ,i2basisIndex).
+      for i3stpt = 1:Drow % i3stpt: ascending time. stand point.
+        %% demension reduction with basis function 'bases.ihbasis'.
+        tmp1D(1 + Drow - i3stpt,i2basisIndex) = dot( bases.ihbasis(1:histSize, i2basisIndex),...
+                                                     flipI(i3stpt-1 +(1:histSize), i1cellIndex) ) ; 
+      end %++debug.1
+    end
+    D3(:,(i1cellIndex-1)*B + (1:B) ) = (tmp1D);
+  end
+  fprintf(1,': past time %d\n',toc);
+end
+
+str=sprintf('D2');
+if DEBUG == 1 && strcmp('D2',str)
+  tmp0.count = 0;
+  fprintf(1,'%10s:\tprogress(%%): ',str);
+  D2 = zeros(Drow,C*B);
   penalty = 2*I((end - Drow +1):end,:) -1;
 
   % ++parallelization
@@ -97,21 +131,23 @@ if DEBUG == 1
     end
 
     %% Time axis is in descending order.
-    tmp1D = zeros(Drow,B); % reset at new bottom right part in matrix D.
+    tmp1D = zeros(Drow,B); % reset at new bottom right part in matrix D2.
     for i2basisIndex = 1:B % i2basisIndex: for bases.ihbasis( ,i2basisIndex).
-      for i3 = 0:Drow-1 % i3: ascending time point.
+      for i3stpt = 0:Drow-1 % i3stpt: ascending time. stand point.
         %% demension reduction with basis function 'bases.ihbasis'.
-        tmp1D(Drow -i3,i2basisIndex) = dot( bases.ihbasis(1:histSize,i2basisIndex), I(end +1 -(1:histSize) -i3, i1cellIndex) ) ; 
+        tmp1D(Drow -i3stpt,i2basisIndex) = dot( bases.ihbasis(1:histSize,i2basisIndex), I(end +1 -(1:histSize) -i3stpt, i1cellIndex) ) ; 
       end %++debug.1
     end
-    D(:,(i1cellIndex-1)*B + (1:B) ) = tmp1D ;
+    D2(:,(i1cellIndex-1)*B + (1:B) ) = tmp1D ;
   end
   fprintf(1,': past time %d\n',toc);
 end
 
-if DEBUG == 1
-  fprintf(1,'\tprogress(%%): ');
-  D2 = zeros(Drow,env.cnum*bases.ihbasprs.nbase); 
+str=sprintf('D_');
+if DEBUG == 1 && strcmp('D',str)
+  tmp0.count = 0;
+  fprintf(1,'%10s:\tprogress(%%): ',str);
+  D = zeros(Drow,env.cnum*bases.ihbasprs.nbase); 
   penalty = 2*I(end - Drow +1: end,:) -1;
 
   % ++parallelization
@@ -123,19 +159,21 @@ if DEBUG == 1
 
     %% Time axis is in descending order.
     for i2basisIndex = 1:bases.ihbasprs.nbase % i2basisIndex: for bases.ihbasis( ,i2basisIndex).
-      tmp1D = zeros(Drow,1); % reset at new bottom right part in matrix D2.
+      tmp1D = zeros(Drow,1); % reset at new bottom right part in matrix D.
       for i3 = 0:Drow-1 % i3: ascending time point.
         %% demension reduction with basis function 'bases.ihbasis'.
         tmp1D(Drow -i3) = dot( bases.ihbasis(1:histSize,i2basisIndex), I(end +1 -(1:histSize) -i3, i1cellIndex) ) ; 
       end %++debug.1
-      D2(:,(i1cellIndex-1)*bases.ihbasprs.nbase +i2basisIndex ) = tmp1D ;
+      D(:,(i1cellIndex-1)*bases.ihbasprs.nbase +i2basisIndex ) = tmp1D ;
     end
   end
   fprintf(1,': past time %d\n',toc);
 end
 
-if strcmp('oba','oba')
-  fprintf(1,'\tprogress(%%): ');
+str = sprintf('oba');
+if DEBUG == 2 && strcmp('oba',str)
+  tmp0.count = 0;
+  fprintf(1,'%10s:\tprogress(%%): ',str);
   tic
   tmp0.count = 0;
 
@@ -164,19 +202,77 @@ if strcmp('oba','oba')
   fprintf(1,': past time %d\n',toc);
 end
 
+str = sprintf('oba1');
+if DEBUG == 1 && strcmp('oba1',str)
+  tmp0.count = 0;
+  fprintf(1,'%10s:\tprogress(%%): ',str);
+  tic
+  tmp0.count = 0;
 
-if DEBUG == 1
-
-  fprintf(1,'\n gen_designMat:: diff D:  %f\n',...
-          sum( (D(:) - D2(:) ).^2 ) );
-  fprintf(1,'\n gen_designMat:: diff D:  %f\n',...
-          sum( (D2(:) - ooD(:) ).^2 ) );
-  fprintf(1,'\n gen_designMat:: diff D:  %f\n',...
-          sum( (ooD(:) - D(:) ).^2 ) );
+  o1C = env.cnum; % # of cells
+  o1K = bases.ihbasprs.nbase; % # of bases per a cell
+  o1N = histSize; % length of each single basis
+  o1D = zeros( Drow, o1C*o1K ); % design matrix
+  o1T = size( I, 1 ); % length of the time-sequence
+  o1idx = (o1T-Drow+1):o1T; % time index to be estimated
+  o1y = I( o1idx, : );
+  penalty = 2*o1y-1;
+  for c = 1:o1C
+    if ~mod(c,tmp0.showProg) %% show progress.
+      fprintf(1,'%d ',tmp0.count*10)
+      tmp0.count = tmp0.count +1;
+    end
+    tmp1D = zeros( Drow, o1K );
+    for k = 1:o1K
+      for t = 1:Drow
+        tmp1D( t, k ) = dot( bases.ihbasis( 1:o1N, k ), ...
+                             I( o1idx(t)+1 -(1:o1N), c ) );
+        %                          I( o1idx(t)-(1:o1N), c ) );
+      end
+    end
+    o1D( :, (c-1)*o1K +(1:o1K) ) = tmp1D;
+  end
+  fprintf(1,': past time %d\n',toc);
 end
 
+
+if DEBUG == 1
+  switch 0 
+    case 1
+      fprintf(1,'\n gen_designMat:: diff D:  %f\n',...
+              sum( (D(:) - D2(:) ).^2 ) );
+    case 2
+      fprintf(1,'\n gen_designMat:: diff D:  %f\n',...
+              sum(sum( (D2 - D3),1 ),2) );
+    case 3
+      fprintf(1,'\n gen_designMat:: diff D:  %f\n',...
+              sum( (ooD(:) - D(:) ).^2 ) );
+    case 4
+      fprintf(1,'\n gen_designMat:: diff D:  %f\n',...
+              sum( (ooD(:) - D2(:) ).^2 ) );
+    case 5
+      fprintf(1,'\n gen_designMat:: diff D:  %f\n',...
+              sum(sum( (ooD - D3),1 ),2) );
+    otherwise
+      compD(ooD,D3);
+      compD(ooD,D2);
+      compD(ooD,o1D);
+  end
+end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% RETURN %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-D = ooD;
+switch 1
+  case 1
+    D = ooD;
+  case 2
+    D = D2;
+end
 
+
+
+
+
+function compD(D1,D2);
+fprintf(1,'\n gen_designMat:: diff %s %s:  %f\n',...
+        D1, D2, sum(sum( (D1(:) - D2(:)),1 ),2) );

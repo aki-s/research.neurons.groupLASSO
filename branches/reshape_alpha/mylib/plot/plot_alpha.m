@@ -44,7 +44,7 @@ if cnum < MAX
       plot( 1:hnum, 0, 'b','LineWidth',4);
       %% </ chage color ploted according to cell type >
       xlim([0,hnum]);
-      ylim([-SELF_DEPRESS_BASE-1,2]);
+      %      ylim([SELF_DEPRESS_BASE-1,2]);
       set(gca,'XAxisLocation','top');
 
       %% < from-to cell label >

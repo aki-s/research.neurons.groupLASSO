@@ -23,7 +23,8 @@ ylim( [0,mean(median(lambda))]);
 for i1 = 1:cnum
   subplot(cnum,1,i1)
   set(gca,'Xlim',[0,graph.xrange]); %++bug:'don't work well.
-  plot( 1:gen_lambda_loop, lambda(:,i1))
+  %%  plot( 1:gen_lambda_loop, lambda(:,i1))
+  bar( 1:gen_lambda_loop, lambda(:,i1))
   grid on;
   ylim([0,max(max(lambda))]);
   ylabel(sprintf('%d',i1));

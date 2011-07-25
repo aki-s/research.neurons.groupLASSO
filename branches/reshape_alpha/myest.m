@@ -19,27 +19,32 @@ if strcmp('configure', 'configure') %++conf
 
   run([rootdir_ '/conf/conf_graph.m']);
   run([rootdir_ '/conf/conf_rand.m']);
-  if status.READ_NEURO_CONNECTION == 1
-    run([rootdir_ '/mylib/readTrueConnection.m']);
-  end
-
   [DAL] = conf_DAL(); % configuration for solver 'DAL'.
 
   run([rootdir_ '/conf/conf_mail.m']);% notify the end of program via mail.
 end
 
 run([rootdir_ '/conf/conf_user.m']);
-
 gen_defaultEnv_ask(env,status);
 
+if status.READ_NEURO_CONNECTION == 1
+  %  run([rootdir_ '/mylib/readTrueConnection.m']);
+  [alpha_fig,alpha_hash] = readTrueConnection(env,status)
+else 
+  [alpha_fig,alpha_hash] = gen_alpha_hash(env);
+end
 
-env
-
+echo_initStatus(env,status)
 %% ==</ configure >==
 
 % check configuration
 run([rootdir_ '/mylib/check/check_conf.m']);
 status = check_genState(status);
+
+
+
+%% bases should be loaded from a mat file.
+bases = makeSimStruct_glm(1/env.Hz.video); % Create GLM structure with default params
 
 if status.GEN_TrureValues == 1
   %% 1.  Set parameters and display for GLM % =============================
@@ -51,9 +56,11 @@ if status.GEN_TrureValues == 1
       [alpha0] = gen_TrueWeightSelf(env);
       [I,lambda,loglambda] = gen_TrueI(env,alpha0,alpha);
       run([rootdir_ '/mylib/plot/plot_TrueValues']);
+
       get_neuronType(env,status,alpha_fig);
       echo_TrueValueStatus(env,status);
     else
+      error('this function was deprecated.')
       run([rootdir_ '/mylib/gen/gen_TrueValue.m']);
     end
     status.time.gen_TrueValue = toc;
@@ -61,21 +68,19 @@ if status.GEN_TrureValues == 1
   end
 end
 
-%% bases should be loaded from mat file.
-bases = makeSimStruct_glm(1/env.Hz.video); % Create GLM structure with default params
-
 %% ==< Start estimation with DAL>==
 
 if status.estimateConnection == 1
   %% matlabpool close force local
   matlabpool(8);
 
-  [KerWeight,Ebias,Estatus,Ealpha,DAL] = estimateWeightKernel(env,status,graph,bases,I,DAL);
+  [EKerWeight,Ebias,Estatus,Ealpha,DAL] = estimateWeightKernel(env,status,graph,bases,I,DAL);
   %% reconstruct lambda
   if strcmp('reconstruct','reconstruct_')
-    
+    estimateFiringIntensity();
   end
 
+  %% compare results from group LASSO and GCM by KIM
 % $$$ [kEKerWeight,kEbias,kEstatus,kEalpha,kDAL] = compare_KIM(env,status,graph,bases,DAL);
 
   matlabpool close
@@ -89,7 +94,8 @@ if status.estimateConnection == 1
 end
 
 tmp0 = status.time.start;
-if strcmp('saveInterActive','saveInterActive')  %++conf
+%if strcmp('saveInterActive','saveInterActive')  %++conf
+if status.use.GUI == 1
   uisave(who,strcat(rootdir_ , 'outdir/mat/', 'frame', num2str(sprintf('%05d',env.genLoop)), 'hwind', num2str(sprintf('%04d',env.hwind)), 'hnum' , num2str(sprintf('%02d',env.hnum))));
 
   % uisave(who,strcat(rootdir_ , 'outdir/mat/', '...
@@ -98,7 +104,7 @@ if strcmp('saveInterActive','saveInterActive')  %++conf
   %   '  'hnum' , num2str(sprintf('%02d',env.hnum)))) ;
 
 else
-  save( [ rootdir_ '/outdir/',date,tmp0(4),tmp0(5),'.mat']);
+  save( [ rootdir_ '/outdir/',date,num2str(tmp0(4)),num2str(tmp0(5)),'.mat']);
 end
 
 status.profile=profile('info');
@@ -109,5 +115,3 @@ status.profile=profile('info');
 if strcmp('clean','clean')  %++conf
   run([rootdir_ '/mylib/clean.m'])
 end
-
-

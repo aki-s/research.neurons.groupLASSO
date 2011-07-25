@@ -8,17 +8,17 @@ p = [];
 figure;
 hold on;
 for num = z
-     pp = @(D) -( num*log(lambda(D)) - lambda(D) );
-     p =[p; pp(D)];
-%           DprintD('%10.7D\n',p)
+  pp = @(D) -( num*log(lambda(D)) - lambda(D) );
+  p =[p; pp(D)];
+  %           DprintD('%10.7D\n',p)
 end
 color=['b','g','r','c','m','b'];
 %col=ceil(7*rand(1,2));
 
-  for i1 = z +1
-%h = plot(f,p(i1,:),color(col(i1)));
-plot(D,p(i1,:),color(i1));
-%legend(zz(i1))
-%set(h,'Displayname',zz(i1))
-  end
+for i1 = z +1
+  %h = plot(f,p(i1,:),color(col(i1)));
+  plot(D,p(i1,:),color(i1));
+  %legend(zz(i1))
+  %set(h,'Displayname',zz(i1))
+end
 legend(zz)
