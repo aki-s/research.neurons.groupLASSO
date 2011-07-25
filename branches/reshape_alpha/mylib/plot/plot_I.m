@@ -1,43 +1,59 @@
 function plot_I(graph,env,I,title)
 %%
 %% input)
-%% arg1 : the number of cells
-%% arg2 : the number of all generated frames 
-%% arg3 : the number of variable 'wind'
-%% arg4 : the number of frames each 'wind' has.
-%% arg5 : variable I representing nurons' fring.
-%% arg6 : string. plot window title.
+%% arg1 : 
+%% arg2 : 
+%% arg3 : 
+%% arg4 : 
+%% arg5 : 
+%% arg6 : 
 %%
 %% Example)
-% plot_I(env.cnum,env.gen_lambda_loop,env.hnum,env.wind,I,'title')
+% plot_I(
 %%
-gen_lambda_loop = env.genLoop;
+global status
+global Tout
+DEBUG = 0;
+
+genLoop = env.genLoop;
 cnum = env.cnum;
 hnum = env.hnum;
 wind = env.hwind;
+Hz = env.Hz.video;
 xrange = graph.xrange;
 
-DEBUG =1;
+%% ==< convert XTick unit from [frame] to [sec] >==
+Lnum = 3;% Lnum: Label number
+dh = (xrange/Hz)
+TIMEL = cell(1,Lnum);
+%for i1 = Lnum+1:-1:1
+for i1 = 1:Lnum+1
+  TIMEL{i1} = Tout.simsec - (Lnum+1 -i1)*dh;
+end
+%% ==</convert XTick unit from [frame] to [sec] >==
 
 figure;
-tmp1spacing = floor(gen_lambda_loop/hnum) ;
+tmp1spacing = floor(genLoop/(hnum*hwind)) ;
 for i1 = 1:cnum
   subplot(cnum,1,i1)
   %% I(:,:): first hnum*wind history is all zero.
-    bar( 1 :gen_lambda_loop + hnum*wind , I(:,i1))
-    %  set(gca,'Xtick',-hnum*wind+1:20:gen_lambda_loop)
-    set(gca,'Xtick',-hnum*wind+1: tmp1spacing :gen_lambda_loop)
+    bar( 1 :genLoop + hnum*wind , I(:,i1))
+    %  set(gca,'Xtick',-hnum*wind+1:20:genLoop)
+    set(gca,'Xtick',-hnum*wind+1: tmp1spacing :genLoop)
   grid off;
   ylim([0,1]);
+  %%if status.DEBUG.plot == 1
 if DEBUG == 1
     xlim([hnum*wind - 3, hnum*wind + 3000]);
 else
-  if gen_lambda_loop > 100000
+  if genLoop > 100000
     warning(['graph.xrange is too large. I''ve tweeked to appropriate ' ...
              'range.']);
-    xlim([-hnum*wind+1,gen_lambda_loop/hnum]);
+    xlim([-hnum*wind+1,genLoop/hnum]);
   else
-    xlim([0,xrange]);
+    xlim([genLoop-xrange,genLoop]);
+    set(gca,'XTick' , 1:dh:hnum);
+    set(gca,'XTickLabel',TIMEL);
   end
 end
   ylabel(sprintf('%d',i1));

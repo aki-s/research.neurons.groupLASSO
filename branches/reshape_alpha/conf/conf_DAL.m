@@ -1,5 +1,5 @@
 function [DAL] = conf_DAL;
-tmp.switch = 0;
+tmp.switch = 1;
 
   switch tmp.switch
     case 0

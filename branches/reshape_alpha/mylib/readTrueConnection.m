@@ -52,4 +52,11 @@ alpha_fig = transpose(reshape(alpha_hash, env.cnum , env.cnum));
 
 fclose(tmp.fid);
 
-%% calculate env.spar %++todo
+%% calculate env.spar %++todo ++bug
+if 1 == 1
+env.spar.from = NaN;
+env.spar.to   = NaN;
+else
+env.spar.from = sum(sum(alpha_fig ~= 0));
+env.spar.to = env.spar.to;
+end

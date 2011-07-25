@@ -11,18 +11,42 @@ function plot_alpha(graph,env,alpha0,alpha,title);
 %  plot_alpha(graph,env,alpha0,alpha,'\alpha: Spatio-temporal Kernels');
 %%
 
+DEBUG = 0;
+
+if DEBUG == 1
+  title = 'DEBUG';
+end
+
 global rootdir_
 cnum = env.cnum;
 hnum = env.hnum;
+hwind = env.hwind;
+Hz = env.Hz.video;
+
 SELF_DEPRESS_BASE = env.SELF_DEPRESS_BASE;
+
+
+%%% == useful func ==
+kdelta = inline('n == 0'); % kronecker's delta
+
 %%% ===== PLOT alpha ===== START =====
 
 %% local var
+%% prohibit protting if the number of neurons is 
+%% >= constant 'MAX' 
 MAX=10;
-kdelta = inline('n == 0'); % kronecker's delta
-tmp1 = zeros(hnum,1);
+
+Lnum = 3;
+dh = floor((hnum*hwind)/Lnum);
+ddh = dh/Hz; %  convert XTick unit from [frame] to [sec]
+TIMEL = cell(1,Lnum);
+for i1 = 1:Lnum+1
+  TIMEL{i1} = (i1-1)*ddh;
+end
+XSIZE = 1;
 if cnum < MAX
   figure;
+  %  tmp1 = zeros(hnum,1); % malloc
   for i1 = 1:cnum %++parallel
     for i2 = 1:cnum;
       %%    axis tight;
@@ -41,17 +65,20 @@ if cnum < MAX
         plot( 1:hnum, tmp1,'k','LineWidth',3);
       end
 
-      plot( 1:hnum, 0, 'b','LineWidth',4);
+      plot( 1:hnum, 0, 'b','LineWidth',4); % emphasize 0.
       %% </ chage color ploted according to cell type >
-      xlim([0,hnum]);
+      xlim([0,hnum*XSIZE]);
       %      ylim([SELF_DEPRESS_BASE-1,2]);
       set(gca,'XAxisLocation','top');
+      set(gca,'XTick' , 1:dh:hnum);
+      set(gca,'XTickLabel',TIMEL);
 
       %% < from-to cell label >
       if (i1 == 1)     % When in the topmost margin.
         xlabel(i2);
       end
-      if (i2 == 1) ylabel(i1); % When in the leftmost margin.
+      if (i2 == 1) % When in the leftmost margin.
+        ylabel(i1);
       end
       %% </ from-to cell label >
     end

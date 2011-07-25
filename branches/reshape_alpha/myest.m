@@ -25,26 +25,26 @@ if strcmp('configure', 'configure') %++conf
 end
 
 run([rootdir_ '/conf/conf_user.m']);
-gen_defaultEnv_ask(env,status);
+gen_defaultEnv_ask();
 
 if status.READ_NEURO_CONNECTION == 1
   %  run([rootdir_ '/mylib/readTrueConnection.m']);
-  [alpha_fig,alpha_hash] = readTrueConnection(env,status)
+  [alpha_fig,alpha_hash] = readTrueConnection(env,status);
 else 
-  [alpha_fig,alpha_hash] = gen_alpha_hash(env);
+  [alpha_fig,alpha_hash] = gen_alpha_hash();
 end
 
-echo_initStatus(env,status)
 %% ==</ configure >==
 
 % check configuration
-run([rootdir_ '/mylib/check/check_conf.m']);
+check_conf(env,status,Tout,graph);
 status = check_genState(status);
 
+echo_initStatus(env,status,Tout)
 
 
 %% bases should be loaded from a mat file.
-bases = makeSimStruct_glm(1/env.Hz.video); % Create GLM structure with default params
+bases = makeSimStruct_glm(0.01); % Create GLM structure with default params
 
 if status.GEN_TrureValues == 1
   %% 1.  Set parameters and display for GLM % =============================
@@ -58,7 +58,7 @@ if status.GEN_TrureValues == 1
       run([rootdir_ '/mylib/plot/plot_TrueValues']);
 
       get_neuronType(env,status,alpha_fig);
-      echo_TrueValueStatus(env,status);
+      echo_TrueValueStatus(env,status,lambda,I);
     else
       error('this function was deprecated.')
       run([rootdir_ '/mylib/gen/gen_TrueValue.m']);
