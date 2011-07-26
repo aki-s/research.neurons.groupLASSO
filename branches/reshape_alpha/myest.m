@@ -66,7 +66,7 @@ if status.GEN_TrureValues == 1
       get_neuronType(env,status,alpha_fig);
       echo_TrueValueStatus(env,status,lambda,I);
     else
-      error('this function was deprecated.')
+      error('this function was deprecated.:obsolete.')
       run([rootdir_ '/mylib/gen/gen_TrueValue.m']);
     end
     status.time.gen_TrueValue = toc;
