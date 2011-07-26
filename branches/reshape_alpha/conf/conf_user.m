@@ -1,6 +1,6 @@
 %% Set freely your configuration.
 warning('conf_user.m overrides all configuration variables set after this file.');
-DEBUG_s = 4
+DEBUG_s = 5
 
 
 graph.TIGHT = 0;
@@ -41,6 +41,14 @@ switch DEBUG_s
     env.hnum=(3000);
     env.hwind=(1); % large hwind cause continuous firing of each neuron.
     env.Hz.video=(1000);
+    status.estimateConnection = 1;
+  case 5
+    env.genLoop =  2000;
+    status.GEN_TrureValues = 1;
+
+    env.hnum=(300);
+    env.hwind=(1); % large hwind cause continuous firing of each neuron.
+    env.Hz.video=(100);
     status.estimateConnection = 1;
 end
 

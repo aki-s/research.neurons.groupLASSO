@@ -1,0 +1,26 @@
+function mailMe(env,status,DAL);
+
+
+if status.mail == 1
+  setpref('Internet','SMTPServer',env.mail.smtp);
+  sendmail( env.mail.to, 'Finished myest.m', ...
+            ['Mailed date    : ', date, 10, ...
+             'program started   : ', mydate(status.time.start), 10,...
+             'program ended     : ', mydate(status.time.end), 10, ...
+             'time elapsed [sec]: ', num2str(etime(status.time.end,status.time.start)),10,...
+             10,...
+             'Used frame [ratio]   : ', num2str(DAL.Drow),'/', num2str(env.genLoop), 10,...
+             'regularization factor:',num2str(DAL.regFac),...
+            ] );
+end
+
+function [time_] = mydate( out_clock );
+time_=[];
+for i1 = 1:3
+  time_ = strcat(time_, num2str(out_clock(i1),'%02d') );
+  time_ = strcat(time_, '-');
+end
+for i1 = 4:6
+  time_ = strcat(time_, num2str(out_clock(i1),'%02d') );
+  time_ = strcat(time_, ':');
+end
