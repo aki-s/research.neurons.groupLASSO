@@ -20,11 +20,11 @@ if exist('graph')
     graph.SAVE_EPS = 0; % save plotted figures as eps pictures
   end
   if ~isfield(graph,'TIGHT') % precede user defined value.
-    graph.TIGHT = 1;
+    graph.TIGHT = 0;
   end
 
 else   %% defalut:
-  graph = struct('PLOT_T',1,'PLOT_MAX_NUM_OF_NEURO',10', 'SAVE_EPS',0,'TIGHT',1);
+  graph = struct('PLOT_T',1,'PLOT_MAX_NUM_OF_NEURO',10', 'SAVE_EPS',0,'TIGHT',0);
 end
 
 %%> Free software graphviz setting

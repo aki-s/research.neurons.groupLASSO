@@ -1,4 +1,4 @@
-function plot_alpha(graph,env,alpha0,alpha,title)
+function plot_alpha(graph,env,alpha,title)
 %%
 %% Usage:
 %% Example:
@@ -25,14 +25,14 @@ MAX = graph.PLOT_MAX_NUM_OF_NEURO;
 %%% ===== PLOT alpha ===== START =====
 
 if strcmp('set_xticks','set_xticks')
-Lnum = 2;
-dh = floor((hnum*hwind)/Lnum);
-ddh = dh/Hz; %  convert XTick unit from [frame] to [sec]
-TIMEL = cell(1,Lnum);
-for i1to = 1:Lnum+1
-  TIMEL{i1to} = (i1to-1)*ddh;
-  %  TIMEL{i1to} = sprintf( '%.3d',(i1to-1)*ddh);
-end
+  Lnum = 2;
+  dh = floor((hnum*hwind)/Lnum);
+  ddh = dh/Hz; %  convert XTick unit from [frame] to [sec]
+  TIMEL = cell(1,Lnum);
+  for i1to = 1:Lnum+1
+    TIMEL{i1to} = (i1to-1)*ddh;
+    %  TIMEL{i1to} = sprintf( '%.3d',(i1to-1)*ddh);
+  end
 end
 if strcmp('set_range','set_range')
   XSIZE = 2;
@@ -44,9 +44,6 @@ if cnum < MAX
   figure;
   for i1to = 1:cnum %++parallel
     for i2from = 1:cnum;
-% $$$       if  graph.TIGHT == 1;
-% $$$         axis tight;
-% $$$       end
       %% subplot() delete existing Axes property.
       subplot(cnum,cnum,(i1to-1)*cnum+i2from)
       tmp1 = alpha((1:hnum)+(i2from-1)*hnum,i1to);
@@ -67,9 +64,12 @@ if cnum < MAX
       plot( 1:hnum, 0, 'b','LineWidth',4); % emphasize 0.
       grid on;
       %% </ chage color ploted according to cell type >
-      xlim([0,hnum*XSIZE]);
+      xlim([0,hnum*hwind*XSIZE]);
       if i1to == i2from
         ylim(diag_Yrange)
+      end
+      if  graph.TIGHT == 1;
+        axis tight;
       end
       set(gca,'XAxisLocation','top');
       set(gca,'XTick' , 1:dh:hnum);
@@ -85,9 +85,7 @@ if cnum < MAX
       %% </ from-to cell label >
     end
   end
-  if  graph.TIGHT == 1;
-    axis tight;
-  end
+
   %% h: description about outer x-y axis
   h = axes('Position',[0 0 1 1],'Visible','off'); 
   set(gcf,'CurrentAxes',h)

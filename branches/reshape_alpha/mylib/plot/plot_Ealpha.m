@@ -45,11 +45,6 @@ if cnum < MAX
   i2to = 1; % cell to
   i3from = 1; % cell from
   for i1 = 1:cnum*cnum % subplot select
-    if 1 == 0
-      if  graph.TIGHT == 1;
-        axis tight;
-      end
-    end
     subplot(cnum,cnum,i1);
     tmp1 = Ealpha{i2to}{i3from};
     %% <  chage color ploted according to cell type >
@@ -73,6 +68,9 @@ if cnum < MAX
     if i2to == i3from
       ylim(diag_Yrange)
     end
+    if  graph.TIGHT == 1;
+      axis tight;
+    end
     set(gca,'XAxisLocation','top');
     set(gca,'XTick' , 1:dh:hnum*hwind);
     set(gca,'XTickLabel',TIMEL);
@@ -92,10 +90,7 @@ if cnum < MAX
     %% </ index config >
   end
 end
-if  graph.TIGHT == 1;
-  axis tight;
-end
-grid on; % for right-bottom subplot.
+
 %% h: description about outer x-y axis
 h = axes('Position',[0 0 1 1],'Visible','off'); 
 set(gcf,'CurrentAxes',h)

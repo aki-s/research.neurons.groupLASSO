@@ -29,12 +29,11 @@ run([rootdir_ '/conf/conf_user.m']);
 gen_defaultEnv_ask();
 
 if status.READ_NEURO_CONNECTION == 1
-  %  run([rootdir_ '/mylib/readTrueConnection.m']);
-  %  [alpha_fig,alpha_hash] = readTrueConnection(env,status);
-  [alpha_fig,alpha_hash] = readTrueConnection();
+   [alpha_fig,alpha_hash] = readTrueConnection();
 else 
   [alpha_fig,alpha_hash] = gen_alpha_hash();
 end
+get_neuronType(env,status,alpha_fig);
 
 %% ==</ configure >==
 
@@ -61,7 +60,7 @@ if status.GEN_TrureValues == 1
       [alpha ] = gen_TrueWeightKernel(env,status,alpha_hash);
       [alpha0] = gen_TrueWeightSelf(env);
       [I,lambda,loglambda] = gen_TrueI(env,alpha0,alpha);
-      get_neuronType(env,status,alpha_fig);
+      %      Tout = get_neuronType(env,status,alpha_fig);
       echo_TrueValueStatus(env,status,lambda,I);
 
       run([rootdir_ '/mylib/plot/plot_TrueValues']);

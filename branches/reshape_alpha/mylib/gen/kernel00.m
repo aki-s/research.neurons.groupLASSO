@@ -11,12 +11,14 @@ hnum = env.hnum;
 % $$$ end
 
 if 1 == 1
-N = 100;
+  N = 100;
 else
-N = 10;
+  N = 10;
 end
+GAIN_SELF = 1;
+
 W=(1:hnum)/hnum;
-weight_kernel = 0.5 * cos( (W)*(pi/2) ).*exp(-(W)*3);
+weight_kernel = GAIN_SELF * cos( (W)*(pi/2) ).*exp(-(W)*3);
 %weight_kernel = cos(exp(-(W)*3).^2);
 
 switch 3
@@ -32,6 +34,7 @@ switch 3
     weight_kernel_1 = N*chi2pdf(1,1:hnum);
 end
 
+alpha = zeros(cnum*hnum,cnum);
 i3 =0;
 for i1 = 1:cnum %%++parallel
   for i2 = 1:cnum

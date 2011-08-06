@@ -23,10 +23,7 @@ end
 
 figure; 
 set(gca,'XAxisLocation','top');
-ylim( [0,10*mean(median(lambda))]);
-%ylim( [0,4]);
-%xlim([0,graph.xrange]);
-%set(gca,'Xlim',[0,graph.xrange]);
+ylim( [0,100*mean(median(lambda))]);
 for i1 = 1:cnum
   subplot(cnum,1,i1)
   set(gca,'Xlim',[0,graph.xrange]); %++bug:'don't work well.

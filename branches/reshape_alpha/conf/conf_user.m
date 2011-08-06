@@ -3,7 +3,7 @@ warning('DEBUG:conf','conf_user.m overrides all configuration variables set afte
 DEBUG_s = 4
 
 
-%graph.TIGHT = 0;
+graph.TIGHT = 0;
 graph.PLOT_T = 1;
 graph.PLOT_MAX_NUM_OF_NEURO = 11;
 graph.GRAPHVIZ_OUT_FIG = 1; % default: 0
@@ -32,7 +32,7 @@ switch DEBUG_s
     env.genLoop = 200000;
     status.GEN_TrureValues = 1;
 
-    env.hnum=5000;
+    env.hnum=50;
     env.hwind = 1; % large hwind cause continuous firing of each neuron.
     env.Hz.video=1000;
     status.estimateConnection = 1;
@@ -41,7 +41,13 @@ switch DEBUG_s
     status.GEN_TrureValues = 1;
 
     if 1 == 0
+      % load to plot() is heavy. && one neuron depress firing of others.
+      % This cause error.
       env.hnum=(3000);
+    elseif 1 == 0
+      env.hnum = 300;
+    elseif 1 == 1
+      env.hnum=100;
     else
       env.hnum=(50);
     end
@@ -78,7 +84,11 @@ status.profiler = 1;
 status.save_warning = 1; %++bug: not yet implemented.
 status.parfor_ = 1; %++bug: not yet implemented.
 
-status.READ_NEURO_CONNECTION = 1;
+if 1 == 0
+  status.READ_NEURO_CONNECTION = 0;
+else
+  status.READ_NEURO_CONNECTION = 1;
+end
 status.mail = 1;
 status.DEBUG.plot = 1; %++bug: not yet implemented.
 status.DEBUG.level = 0; %++bug: not yet implemented.

@@ -80,8 +80,8 @@ end
 %% ==< set xlabel >==
 h = axes('Position',[0 0 1 1],'Visible','off');
 set(gcf,'CurrentAxes',h)
-if exist('title')
-  text(.4,.95,title,'FontSize',12)
-end
+
+text(.4,.95,title,'FontSize',12)
+
 %% ==</ set xlabel >==
-xrange
+
