@@ -1,57 +1,63 @@
-function plot_Ealpha(env,graph,Ealpha,title)
-%%
-%% Generate and plot estimated alpha.
-%% INPUT)
+function plot_Ealpha(env,graph,alpha,Ealpha,title)
 %%
 %% USAGE)
-% plot_Ealpha(env,graph,Ealpha,title)
+%% Example:
+% plot_Ealpha(env,graph,alpha,Ealpha,'title')
 %%
+
+DEBUG = 0;
+
+if DEBUG == 1
+  title = 'DEBUG';
+end
+
 global rootdir_
-%global env;
-%global graph;
+
 cnum = env.cnum;
 hnum = env.hnum;
 hwind = env.hwind;
 Hz = env.Hz.video;
 
-SELF_DEPRESS_BASE = env.SELF_DEPRESS_BASE;
+MAX = graph.PLOT_MAX_NUM_OF_NEURO;
 
+%%% == useful func ==
+%kdelta = inline('n == 0'); % kronecker's delta
 %%% ===== PLOT alpha ===== START =====
-if exist('gain') == 0
-  gain = 1;
+
+if strcmp('set_xticks','set_xticks')
+  Lnum = 2;
+  dh = floor((hnum*hwind)/Lnum); %dh: width of each tick.
+  ddh = dh/Hz; % convert XTick unit from [frame] to [sec]
+  TIMEL = cell(1,Lnum);
+  for i1 = 1:Lnum+1
+    TIMEL{i1} = (i1-1)*ddh;
+  end
 end
 
-%% prohibit protting if the number of neurons is 
-%% >= constant 'MAX' 
-MAX=10;
-
-Lnum = 3;
-dh = floor((hnum*hwind)/Lnum); %dh: width of each tick.
-ddh = dh/Hz; % convert XTick unit from [frame] to [sec]
-TIMEL = cell(1,Lnum);
-for i1 = 1:Lnum+1
-  TIMEL{i1} = (i1-1)*ddh;
+if strcmp('set_range','set_range')
+  XSIZE = 2;
+  %  tmp1 = alpha((1:hnum)+(i2from-1)*hnum,i1to);
+  tmp1 = alpha((1:hnum),1);
+  diag_Yrange = [min(tmp1)*1.5, max(tmp1)*1.5];
 end
-
-XSIZE = 2;
 if cnum < MAX
   figure;
-  i2to =1; % cell to
-  i3from =1; % cell from
+  i2to = 1; % cell to
+  i3from = 1; % cell from
   for i1 = 1:cnum*cnum % subplot select
-    if  graph.TIGHT == 1;
-      axis tight;
+    if 1 == 0
+      if  graph.TIGHT == 1;
+        axis tight;
+      end
     end
-    grid on;
-    set(gca,'Xlim',[0,hnum*hwind*XSIZE]);
-    %{
-    set(gca,'Ylim',[SELF_DEPRESS_BASE*gain-2,2]);
-    %}
     subplot(cnum,cnum,i1);
     tmp1 = Ealpha{i2to}{i3from};
+    %% <  chage color ploted according to cell type >
     if i2to == i3from
-      %    tmp1 = tmp1 + Ebias{i2to};
+      %      ylim(diag_Yrange)
     end
+    hold on;
+
     if tmp1 > 0
       plot(tmp1,'r','LineWidth',3);
     elseif tmp1 < 0
@@ -59,12 +65,14 @@ if cnum < MAX
     else           
       plot(tmp1,'k','LineWidth',3);
     end
+
+    plot( 1:hnum, 0, 'b','LineWidth',4); % emphasize 0.
+    grid on;
     %% </ chage color ploted according to cell type >
-    %% no use in setting xlim and ylim if not before subplot.
     xlim([0,hnum*hwind*XSIZE]);  
-    %{
-    ylim([-SELF_DEPRESS_BASE*gain-2,2]);
-    %}
+    if i2to == i3from
+      ylim(diag_Yrange)
+    end
     set(gca,'XAxisLocation','top');
     set(gca,'XTick' , 1:dh:hnum*hwind);
     set(gca,'XTickLabel',TIMEL);

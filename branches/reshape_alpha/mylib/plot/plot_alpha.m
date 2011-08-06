@@ -1,12 +1,6 @@
-function plot_alpha(graph,env,alpha0,alpha,title);
+function plot_alpha(graph,env,alpha0,alpha,title)
 %%
 %% Usage:
-%% arg1 == variable: graph
-%% arg1 == variable: env
-%% arg2 == variable: alpha0
-%% arg3 == variable: alpha
-%% arg4 == string: title of plotted window
-%%
 %% Example:
 %  plot_alpha(graph,env,alpha0,alpha,'\alpha: Spatio-temporal Kernels');
 %%
@@ -18,45 +12,50 @@ if DEBUG == 1
 end
 
 global rootdir_
+
 cnum = env.cnum;
 hnum = env.hnum;
 hwind = env.hwind;
 Hz = env.Hz.video;
 
-SELF_DEPRESS_BASE = env.SELF_DEPRESS_BASE;
-
+MAX = graph.PLOT_MAX_NUM_OF_NEURO;
 
 %%% == useful func ==
-kdelta = inline('n == 0'); % kronecker's delta
-
+%kdelta = inline('n == 0'); % kronecker's delta
 %%% ===== PLOT alpha ===== START =====
 
-%% local var
-%% prohibit protting if the number of neurons is 
-%% >= constant 'MAX' 
-MAX=10;
-
-Lnum = 3;
+if strcmp('set_xticks','set_xticks')
+Lnum = 2;
 dh = floor((hnum*hwind)/Lnum);
 ddh = dh/Hz; %  convert XTick unit from [frame] to [sec]
 TIMEL = cell(1,Lnum);
-for i1 = 1:Lnum+1
-  TIMEL{i1} = (i1-1)*ddh;
+for i1to = 1:Lnum+1
+  TIMEL{i1to} = (i1to-1)*ddh;
+  %  TIMEL{i1to} = sprintf( '%.3d',(i1to-1)*ddh);
 end
-XSIZE = 1;
+end
+if strcmp('set_range','set_range')
+  XSIZE = 2;
+  %  tmp1 = alpha((1:hnum)+(i2from-1)*hnum,i1to);
+  tmp1 = alpha((1:hnum),1);
+  diag_Yrange = [min(tmp1)*1.5, max(tmp1)*1.5];
+end
 if cnum < MAX
   figure;
-  %  tmp1 = zeros(hnum,1); % malloc
-  for i1 = 1:cnum %++parallel
-    for i2 = 1:cnum;
-      %%    axis tight;
+  for i1to = 1:cnum %++parallel
+    for i2from = 1:cnum;
+% $$$       if  graph.TIGHT == 1;
+% $$$         axis tight;
+% $$$       end
       %% subplot() delete existing Axes property.
-      subplot(cnum,cnum,(i1-1)*cnum+i2)
-      hold on;
+      subplot(cnum,cnum,(i1to-1)*cnum+i2from)
+      tmp1 = alpha((1:hnum)+(i2from-1)*hnum,i1to);
       %% < chage color ploted according to cell type >
-      %      tmp1 = alpha((1:hnum)+(i2-1)*hnum,i1) +
-      %      kdelta(i1-i2)*alpha0(i1);
-      tmp1 = alpha((1:hnum)+(i2-1)*hnum,i1);
+      if i1to == i2from
+        %        graph.param.alphaY = max(tmp1);
+      end
+      hold on;
+
       if tmp1 > 0
         plot( 1:hnum, tmp1,'r','LineWidth',3);
       elseif tmp1 < 0         
@@ -66,24 +65,29 @@ if cnum < MAX
       end
 
       plot( 1:hnum, 0, 'b','LineWidth',4); % emphasize 0.
+      grid on;
       %% </ chage color ploted according to cell type >
       xlim([0,hnum*XSIZE]);
-      %      ylim([SELF_DEPRESS_BASE-1,2]);
+      if i1to == i2from
+        ylim(diag_Yrange)
+      end
       set(gca,'XAxisLocation','top');
       set(gca,'XTick' , 1:dh:hnum);
       set(gca,'XTickLabel',TIMEL);
 
       %% < from-to cell label >
-      if (i1 == 1)     % When in the topmost margin.
-        xlabel(i2);
+      if (i1to == 1)     % When in the topmost margin.
+        xlabel(i2from);
       end
-      if (i2 == 1) % When in the leftmost margin.
-        ylabel(i1);
+      if (i2from == 1) % When in the leftmost margin.
+        ylabel(i1to);
       end
       %% </ from-to cell label >
     end
   end
-  %%  axis tight;
+  if  graph.TIGHT == 1;
+    axis tight;
+  end
   %% h: description about outer x-y axis
   h = axes('Position',[0 0 1 1],'Visible','off'); 
   set(gcf,'CurrentAxes',h)
@@ -102,5 +106,5 @@ if cnum < MAX
     print('-depsc', '-tiff' ,[rootdir_ '/outdir/artificial_alpha.eps'])
   end
 else
-  warning('Too large number of cells to plot.\n Plot aborted.')
+  warning('plot:aborted','Too large number of cells to plot.\n Plot aborted.')
 end

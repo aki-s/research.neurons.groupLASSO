@@ -1,7 +1,7 @@
 function [kernel] = gen_kernel1(hnum);
 
-DEBUG = 1;
-if DEBUG == 1
+global status
+if status.DEBUG.plot == 1
   hold on
 end
 
@@ -22,7 +22,8 @@ kernel = sin( (H)*pi - phase  ).* ...
 
 kernel1 =  1./(pi*(1+(H2)))
 a = lorentz(0.5,hnum);
-if DEBUG == 1
+
+if status.DEBUG.plot == 1
   plot(kernel)
 
   plot(kernel1)

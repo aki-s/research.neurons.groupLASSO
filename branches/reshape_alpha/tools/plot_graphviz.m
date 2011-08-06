@@ -2,6 +2,9 @@
 % plot_graphviz
 %%
 
+%% ==< TODO >==
+% add color representing the number of firing 'I'.
+%% ==</TODO >==
 
 if ~exist('rootdir_')
   warning('run ''setpaths.m'' existing in ''conf'' directory.')

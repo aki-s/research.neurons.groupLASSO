@@ -1,3 +1,5 @@
+fprintf(1,'plotting generated "True Values"')
+
 %%% ===== PLOT alpha ===== START =====
 if ( 1 == graph.PLOT_T )
   %% ++bug: func plot_alpha must be given 'env'.

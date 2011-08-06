@@ -1,15 +1,17 @@
 %% Set freely your configuration.
-warning('conf_user.m overrides all configuration variables set after this file.');
-DEBUG_s = 5
+warning('DEBUG:conf','conf_user.m overrides all configuration variables set after this file.');
+DEBUG_s = 4
 
 
-graph.TIGHT = 0;
+%graph.TIGHT = 0;
 graph.PLOT_T = 1;
+graph.PLOT_MAX_NUM_OF_NEURO = 11;
 graph.GRAPHVIZ_OUT_FIG = 1; % default: 0
+graph.xrange = 1000;
 
-env.cnum=9;
-env.spar.level.from=.9;
-env.spar.level.to  =.8;
+env.cnum = 9;
+env.spar.level.from= .9;
+env.spar.level.to  = .8;
 
 switch DEBUG_s
   case 1
@@ -17,9 +19,9 @@ switch DEBUG_s
     env.genLoop = 100000;
     status.GEN_TrureValues = 0;
 
-    env.hnum=50;
-    env.hwind=2; % large hwind cause continuous firing of each neuron.
-    env.Hz.video=100;
+    env.hnum = 50;
+    env.hwind = 2; % large hwind cause continuous firing of each neuron.
+    env.Hz.video = 100;
   case 2
     env.genLoop = 400000;
     status.GEN_TrureValues = 1;
@@ -31,25 +33,31 @@ switch DEBUG_s
     status.GEN_TrureValues = 1;
 
     env.hnum=5000;
-    env.hwind=2; % large hwind cause continuous firing of each neuron.
+    env.hwind = 1; % large hwind cause continuous firing of each neuron.
     env.Hz.video=1000;
     status.estimateConnection = 1;
   case 4
     env.genLoop =  20000;
     status.GEN_TrureValues = 1;
 
-    env.hnum=(3000);
+    if 1 == 0
+      env.hnum=(3000);
+    else
+      env.hnum=(50);
+    end
     env.hwind=(1); % large hwind cause continuous firing of each neuron.
     env.Hz.video=(1000);
     status.estimateConnection = 1;
+    graph.GRAPHVIZ_OUT_FIG = 1;
   case 5
     env.genLoop =  2000;
     status.GEN_TrureValues = 1;
 
     env.hnum=(300);
-    env.hwind=(1); % large hwind cause continuous firing of each neuron.
+    env.hwind= 2; % large hwind cause continuous firing of each neuron.
     env.Hz.video=(100);
     status.estimateConnection = 1;
+    graph.GRAPHVIZ_OUT_FIG = 1;
 end
 
 %{
@@ -57,7 +65,10 @@ env.Hz.neuro=;
 env.Hz.fn=;
 %}
 % (1-exp(-exp(env.SELF_DEPRESS_BASE)/env.Hz.video))*env.Hz.video
-env.SELF_DEPRESS_BASE = 4.3;
+%env.SELF_DEPRESS_BASE = 4.3; % 1 Hz
+%env.SELF_DEPRESS_BASE = 10; % all cells always firing
+env.SELF_DEPRESS_BASE = 8; % a cell depress firing of other cells.
+                           %env.SELF_DEPRESS_BASE = 6; % a cell depress firing of other cells.
 
 % log(2) == 0.7
 env.mail.to='aki-s@sys.i.kyoto-u.ac.jp';
@@ -70,5 +81,5 @@ status.parfor_ = 1; %++bug: not yet implemented.
 status.READ_NEURO_CONNECTION = 1;
 status.mail = 1;
 status.DEBUG.plot = 1; %++bug: not yet implemented.
-status.DEBUG.level = 1; %++bug: not yet implemented.
+status.DEBUG.level = 0; %++bug: not yet implemented.
 status.use.GUI = 0; %++bug: not yet implemented.

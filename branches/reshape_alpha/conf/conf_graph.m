@@ -9,6 +9,9 @@ if exist('graph')
     %% 0: output eps file from graphviz dot file.
     graph.GRAPHVIZ_OUT_FIG=0;
   end
+  if ~isfield(graph,'PLOT_MAX_NUM_OF_NEURO') % precede user defined value.
+    graph.PLOT_MAX_NUM_OF_NEURO = 10;
+  end
   if ~isfield(graph,'PLOT_T') % precede user defined value.
     graph.PLOT_T = 1; % graph.PLOT_T: if (graph.PLOT_T == 1)
                       % then plot artificial (True) data.
@@ -19,8 +22,9 @@ if exist('graph')
   if ~isfield(graph,'TIGHT') % precede user defined value.
     graph.TIGHT = 1;
   end
+
 else   %% defalut:
-  graph = struct('PLOT_T',1, 'SAVE_EPS',0,'TIGHT',1);
+  graph = struct('PLOT_T',1,'PLOT_MAX_NUM_OF_NEURO',10', 'SAVE_EPS',0,'TIGHT',1);
 end
 
 %%> Free software graphviz setting
@@ -28,4 +32,4 @@ end
 % name output 'dot' file by yourself.
 % Default outputfile name is graphviz.dot.
 graph.Graphviz = 0; %++undone
-graph.xrange=2000; %x range of graph.
+graph.xrange=2000; %x plot range of graph.

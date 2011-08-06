@@ -61,13 +61,10 @@ if status.GEN_TrureValues == 1
       [alpha ] = gen_TrueWeightKernel(env,status,alpha_hash);
       [alpha0] = gen_TrueWeightSelf(env);
       [I,lambda,loglambda] = gen_TrueI(env,alpha0,alpha);
-      run([rootdir_ '/mylib/plot/plot_TrueValues']);
-
       get_neuronType(env,status,alpha_fig);
       echo_TrueValueStatus(env,status,lambda,I);
-    else
-      error('this function was deprecated.:obsolete.')
-      run([rootdir_ '/mylib/gen/gen_TrueValue.m']);
+
+      run([rootdir_ '/mylib/plot/plot_TrueValues']);
     end
     status.time.gen_TrueValue = toc;
 
@@ -81,6 +78,12 @@ if status.estimateConnection == 1
   matlabpool(8);
 
   [EKerWeight,Ebias,Estatus,Ealpha,DAL] = estimateWeightKernel(env,status,graph,bases,I,DAL);
+  if graph.PLOT_T == 1
+    for i1 = 1:length(DAL.regFac)
+    plot_Ealpha(env,graph,alpha,Ealpha{i1},...
+                strcat(['dallrgl:DAL regFac=  '], num2str(DAL.regFac(i1))));
+    end
+  end
   %% reconstruct lambda
   if strcmp('reconstruct','reconstruct_')
     estimateFiringIntensity();

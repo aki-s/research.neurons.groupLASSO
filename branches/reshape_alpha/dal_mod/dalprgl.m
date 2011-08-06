@@ -49,9 +49,9 @@ opt=set_defaults(opt,'solver','cg',...
                      'stopcond','pdg',...
                      'blks',[]);
 
-
-
-
+if ~isequal(unique(yy), [0;1])
+  error('yy must be a column vector of 0''s and 1''s');
+end
 
 if isempty(opt.blks)
   opt.blks=size(ww,1)*ones(1,size(ww,2));

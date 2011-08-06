@@ -1,11 +1,12 @@
-function [alpha] = gen_TrueWeightKernel(env,status,alpha_hash);
+function [alpha] = gen_TrueWeightKernel(env,status,alpha_hash)
+%%
+%% Usage:)
+%% [alpha] = gen_TrueWeightKernel(env,status,alpha_hash);
+global Tout;
 
 %% ==< set local variables >==
-hwind   = env.hwind  ;   
-genLoop = env.genLoop; 
 cnum    = env.cnum   ;    
 hnum    = env.hnum   ;    
-SELF_DEPRESS_BASE = env.SELF_DEPRESS_BASE;
 %% ==</set local variables >==
 
 alpha = zeros(hnum*cnum,cnum);
@@ -13,6 +14,7 @@ alpha = zeros(hnum*cnum,cnum);
 if ( status.READ_NEURO_CONNECTION == 1 )
   %% ==< generate alpha>==
 % $$$   %% --< init >--
+% $$$ SELF_DEPRESS_BASE = env.SELF_DEPRESS_BASE;
 % $$$   weight_kernel = zeros(1,hnum);
 % $$$   for i1 = 1:hnum
 % $$$     %++improve: generate characteristic of neuron.
@@ -48,14 +50,11 @@ end
 
 if ( status.READ_NEURO_CONNECTION ~= 1 )
   %%% ===== prepare True Values ===== START ===== 
-  global Tout;
-  spar    = env.spar   ;
   ctype = 2*(randn(1,cnum)>0) - 1; 
   ctype_hash = ctype;
   Tout.ctypesum.inhibitory = length(find(ctype == -1)); % number of inhibitory neurons.
   Tout.ctypesum.excitatory = length(find(ctype == +1)); % number of excitatory neurons.
 
-  iniPhase = rand([cnum cnum])/2;
   %% ctype: ctype of neuron. 0 == excitatory, -1 == inhibitory
   ctype = repmat(ctype*(pi/2),cnum,1);
   ctype(logical(eye(cnum))) = -pi;  % All neuron must have self-depression.

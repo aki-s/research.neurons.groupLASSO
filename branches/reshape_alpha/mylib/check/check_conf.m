@@ -28,4 +28,4 @@ Tout.simtime = env.genLoop/env.Hz.video;
 Tout.weightKernelSec = (env.hnum*env.hwind)/env.Hz.video;
 
 %% AUTO firing rate in [sec]
-Tout.autoFiringRate =  (1-exp(-exp(env.SELF_DEPRESS_BASE)/env.Hz.video))*env.Hz.video; 
+Tout.hypoAutoFiringRate =  (1-exp(-exp(env.SELF_DEPRESS_BASE)/env.Hz.video))*env.Hz.video; 

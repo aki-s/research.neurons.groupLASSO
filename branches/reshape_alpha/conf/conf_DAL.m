@@ -26,3 +26,8 @@ tmp.switch = 1;
   end
 
 DAL.opt = opt;
+if 1 == 1
+  DAL.method = 'prgl' %prgl: poisson  regression group lasso
+else
+  DAL.method = 'lrgl' %lrgl: logistic regression group lasso
+end
