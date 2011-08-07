@@ -1,4 +1,4 @@
-function [DAL] = conf_DAL;
+function [DAL] = conf_DAL
 tmp.switch = 1;
 
   switch tmp.switch
@@ -27,7 +27,7 @@ tmp.switch = 1;
 
 DAL.opt = opt;
 if 1 == 1
-  DAL.method = 'prgl' %prgl: poisson  regression group lasso
+  DAL.method = 'prgl'; %prgl: poisson  regression group lasso
 else
-  DAL.method = 'lrgl' %lrgl: logistic regression group lasso
+  DAL.method = 'lrgl'; %lrgl: logistic regression group lasso
 end

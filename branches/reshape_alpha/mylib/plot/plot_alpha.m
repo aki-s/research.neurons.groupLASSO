@@ -2,7 +2,7 @@ function plot_alpha(graph,env,alpha,title)
 %%
 %% Usage:
 %% Example:
-%  plot_alpha(graph,env,alpha0,alpha,'\alpha: Spatio-temporal Kernels');
+%  plot_alpha(graph,env,alpha,'\alpha: Spatio-temporal Kernels');
 %%
 
 DEBUG = 0;
@@ -37,8 +37,10 @@ end
 if strcmp('set_range','set_range')
   XSIZE = 2;
   %  tmp1 = alpha((1:hnum)+(i2from-1)*hnum,i1to);
-  tmp1 = alpha((1:hnum),1);
-  diag_Yrange = [min(tmp1)*1.5, max(tmp1)*1.5];
+% $$$   tmp1 = alpha((1:hnum),1);
+% $$$   diag_Yrange = [min(tmp1)*1.5, max(tmp1)*1.5];
+  diag_Yrange = graph.prm.diag_Yrange;
+  Yrange = graph.prm.Yrange;
 end
 if cnum < MAX
   figure;
@@ -67,6 +69,8 @@ if cnum < MAX
       xlim([0,hnum*hwind*XSIZE]);
       if i1to == i2from
         ylim(diag_Yrange)
+      else
+        ylim(Yrange);
       end
       if  graph.TIGHT == 1;
         axis tight;

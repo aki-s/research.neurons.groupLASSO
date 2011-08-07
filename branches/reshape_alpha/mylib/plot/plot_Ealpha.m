@@ -1,4 +1,4 @@
-function plot_Ealpha(env,graph,alpha,Ealpha,title)
+function plot_Ealpha(env,graph,Ealpha,title)
 %%
 %% USAGE)
 %% Example:
@@ -14,9 +14,21 @@ end
 global rootdir_
 
 cnum = env.cnum;
-hnum = env.hnum;
-hwind = env.hwind;
-Hz = env.Hz.video;
+if isfield(env,'hnum')
+  hnum = env.hnum;
+else
+  hnum = 2000;
+end
+if isfield(env,'hwind')
+  hwind = env.hwind;
+else
+  hwind = 1;
+end
+if isfield(env,'Hz') && isfield(env.Hz,'video')
+  Hz = env.Hz.video;
+else
+  Hz = 1000;
+end
 
 MAX = graph.PLOT_MAX_NUM_OF_NEURO;
 
@@ -37,8 +49,10 @@ end
 if strcmp('set_range','set_range')
   XSIZE = 2;
   %  tmp1 = alpha((1:hnum)+(i2from-1)*hnum,i1to);
-  tmp1 = alpha((1:hnum),1);
-  diag_Yrange = [min(tmp1)*1.5, max(tmp1)*1.5];
+  %  tmp1 = alpha((1:hnum),1);
+  %  diag_Yrange = [min(tmp1)*1.5, max(tmp1)*1.5];
+  diag_Yrange = graph.prm.diag_Yrange;
+  Yrange = graph.prm.Yrange;
 end
 if cnum < MAX
   figure;
@@ -67,6 +81,8 @@ if cnum < MAX
     xlim([0,hnum*hwind*XSIZE]);  
     if i2to == i3from
       ylim(diag_Yrange)
+    else
+      ylim(Yrange);
     end
     if  graph.TIGHT == 1;
       axis tight;
@@ -80,12 +96,15 @@ if cnum < MAX
       xlabel(i3from);
       xlim([0,hnum*hwind]);
     end
-    if (i3from == 1) ylabel(i2to); % When in the leftmost margin.
+    if (i3from == 1) % When in the leftmost margin.
+      ylabel(i2to); 
     end
     %% </ from-to cell label >
 
     %% < index config >
-    if (i3from == cnum ) i2to = i2to +1; i3from = 0; end % When in the righmost margin.
+    if (i3from == cnum ) % When in the righmost margin.
+      i2to = i2to +1; i3from = 0;
+    end
     i3from = i3from +1;
     %% </ index config >
   end

@@ -18,7 +18,8 @@ if strcmp('configure', 'configure') %++conf
 
   run([rootdir_ '/conf/conf_progress.m']);
 
-  run([rootdir_ '/conf/conf_graph.m']);
+  %  run([rootdir_ '/conf/conf_graph.m']);
+  graph = conf_graph();
   run([rootdir_ '/conf/conf_rand.m']);
   [DAL] = conf_DAL(); % configuration for solver 'DAL'.
 
@@ -76,10 +77,10 @@ if status.estimateConnection == 1
   %% matlabpool close force local
   matlabpool(8);
 
-  [EKerWeight,Ebias,Estatus,Ealpha,DAL] = estimateWeightKernel(env,status,graph,bases,I,DAL);
+  [EKerWeight,Ebias,Estatus,Ealpha,DAL] = estimateWeightKernel(env,graph,bases,I,DAL);
   if graph.PLOT_T == 1
     for i1 = 1:length(DAL.regFac)
-    plot_Ealpha(env,graph,alpha,Ealpha{i1},...
+    plot_Ealpha(env,graph,Ealpha{i1},...
                 strcat(['dallrgl:DAL regFac=  '], num2str(DAL.regFac(i1))));
     end
   end

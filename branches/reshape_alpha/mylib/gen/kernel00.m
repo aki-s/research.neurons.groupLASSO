@@ -1,5 +1,6 @@
 function [alpha] = kernel00(alpha_hash,env)
 
+global graph;
 cnum = env.cnum;
 hnum = env.hnum;
 
@@ -21,6 +22,9 @@ W=(1:hnum)/hnum;
 weight_kernel = GAIN_SELF * cos( (W)*(pi/2) ).*exp(-(W)*3);
 %weight_kernel = cos(exp(-(W)*3).^2);
 
+ABS = max(weight_kernel);
+graph.prm.Yrange = 1.5 * [ -ABS, ABS ];
+
 switch 3
   case 0
     W = zeros(1,bases.ihbasprs.nbase);
@@ -33,6 +37,9 @@ switch 3
   case 3              
     weight_kernel_1 = N*chi2pdf(1,1:hnum);
 end
+
+ABS = max(weight_kernel_1);
+graph.prm.diag_Yrange = 1 * [ -ABS, ABS ];
 
 alpha = zeros(cnum*hnum,cnum);
 i3 =0;

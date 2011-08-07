@@ -1,10 +1,12 @@
-function [pEKerWeight,pEbias,pEstatus,Ealpha,DAL] = estimateWeightKernel(env,status,graph,bases,I,DAL);
+function [pEKerWeight,pEbias,pEstatus,Ealpha,DAL] = estimateWeightKernel(env,graph,bases,I,DAL);
 %%
 %%
 %%
 %%
 % [KerWeight,Ebias,Estatus,Ealpha,DAL] = ...
 % estimateWeightKernel(env,status,graph,bases,I,DAL);
+
+global status;
 
 tic;
 cnum = env.cnum;
@@ -27,7 +29,7 @@ DAL.loop = 3;
 DAL.regFac = zeros(1,DAL.loop); % DAL.regFac: regularization factor.
 if strcmp('setRegFac_auto','setRegFac_auto')
  if 1==1
-   DAL.regFac(1) = sqrt(nbase)*20; % DAL.regFac: group LASSO parameter.
+   DAL.regFac(1) = sqrt(nbase)*10; % DAL.regFac: group LASSO parameter.
  else
    DAL.regFac(1) = sqrt(nbase); % DAL.regFac:
  end
@@ -53,21 +55,27 @@ if status.GEN_TrureValues == 1
   end
 
 elseif    exist('D') && exist('penalty')
-  warning('reused Matrix ''DAL.D'' and ''DAL.penalty''.');
+  warning(BUG:status,'reused Matrix ''DAL.D'' and ''DAL.penalty''.');
 end
 
 
 if strcmp('calcDAL','calcDAL')
 
+  % == init ==
+  Ealpha = cell(zeros(1,DAL.loop));
   switch tmp.method
     case 'lrgl'
+      Estatus = cell(zeros(cnum));
+      EKerWeight = cell(1,cnum);
+      Ebias = cell(1,cnum);
 % $$$       EKerWeight{1} = zeros(nbase,cnum);
 % $$$       Ebias{1} = 0;
     case {2,'prgl'}
       %      pEKerWeight = cell(1,cnum);
       %      pEKerWeight{1} = zeros(nbase,cnum);
+      pEKerWeight = cell(1,cnum);
       pEbias = cell(1,cnum);
-      %      pEstatus = cell(1,cnum);
+      pEstatus = cell(1,cnum);
       %      pEbias{1} = 0;
     otherwise
       error('This function is under developement.')
@@ -94,12 +102,12 @@ if strcmp('calcDAL','calcDAL')
             [pEKerWeight{i1to}, pEbias{i1to}, pEstatus{i1to}] = ...
                 dalprgl( pEKerWeight{i1to}, pEbias{i1to}, ...
                          D, pI(:,i1to), DAL.regFac(ii1),...
-                         'blks',repmat([nbase],[1 cnum]));
+                         'blks',repmat(nbase,[1 cnum]));
           else
             [pEKerWeight{i1to}, pEbias{i1to}, pEstatus{i1to}] = ...
                 dalprgl( zeros(nbase*cnum,1), 0,...
                          D, pI(:,i1to), DAL.regFac(ii1),...
-                         'blks',repmat([nbase],[1 cnum]));
+                         'blks',repmat(nbase,[1 cnum]));
           end
         case 'prgl'
           %% poisson regression group lasso: 

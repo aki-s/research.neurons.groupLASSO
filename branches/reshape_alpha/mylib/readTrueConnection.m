@@ -1,4 +1,4 @@
-function  [alpha_fig,alpha_hash] = readTrueConnection()
+function  [alpha_fig,alpha_hash] = readTrueConnection(varargin)
 %% ============ about: input file ============
 %% read true connection of neurons
 %% input file format)
@@ -18,10 +18,11 @@ function  [alpha_fig,alpha_hash] = readTrueConnection()
 global env
 global status
 
+tmp.in = varargin; % must be absolete path
+tmp.in = char(tmp.in);
 
-%if status.GUI
-%if strcmp('GUI','_GUI')
-if status.use.GUI == 1
+if ~isempty(tmp.in)
+elseif status.use.GUI == 1
 fprintf('Which file describing neuronal connections do you want to use?');
 tmp.in = uigetfile('*.con');
 else
@@ -29,11 +30,6 @@ tmp.in  = input(['Which file describing neuronal connections do you ' ...
                 'want to use?\n>> >> ']);
 end
 tmp.fid = fopen(tmp.in,'rt');
-
-%[mat , matNum] = fscanf(tmp.fid,'%c');
-%mat = str2mat(cellstr(mat));
-%[mat , matNum] = fscanf(tmp.fid,'%[+0-]');
-%[mat , matNum] = fscanf(tmp.fid,'%[+0-]*\r*\n');
 
 %% Need exception hundler: if (#column ~= #row )  %%++improve
 [alpha_hash, env.cnum ] = fscanf(tmp.fid,'%s'); % don't read LF.

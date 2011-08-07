@@ -1,5 +1,9 @@
+function [graph] = conf_graph()
 %%% default graph options apply to all function
 %%> gen_TrueBalue.m plot_alpha.m
+
+global graph;
+
 if exist('graph')
   if ~isfield(graph,'GRAPHVIZ_NAME_DOT')
     %% 0: name output dot file as 'graphviz.dot'.
@@ -22,7 +26,8 @@ if exist('graph')
   if ~isfield(graph,'TIGHT') % precede user defined value.
     graph.TIGHT = 0;
   end
-
+  graph.prm.Yrange      = [-3,3];
+  graph.prm.diag_Yrange = [-50,50];
 else   %% defalut:
   graph = struct('PLOT_T',1,'PLOT_MAX_NUM_OF_NEURO',10', 'SAVE_EPS',0,'TIGHT',0);
 end

@@ -1,4 +1,4 @@
-function mailMe(env,status,DAL);
+function mailMe(env,status,DAL)
 
 
 if status.mail == 1
@@ -11,10 +11,11 @@ if status.mail == 1
              10,...
              'Used frame [ratio]   : ', num2str(DAL.Drow),'/', num2str(env.genLoop), 10,...
              'regularization factor:',num2str(DAL.regFac),...
+             'time elapsed to estimae Kernel [sec]: ', num2str(status.time.estimate_TrueValue),10,...
             ] );
 end
 
-function [time_] = mydate( out_clock );
+function [time_] = mydate( out_clock )
 time_=[];
 for i1 = 1:3
   time_ = strcat(time_, num2str(out_clock(i1),'%02d') );
