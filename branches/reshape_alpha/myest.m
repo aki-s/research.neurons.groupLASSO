@@ -16,7 +16,8 @@ run([rootdir_ '/conf/setpaths.m']);
 
 if strcmp('configure', 'configure') %++conf
 
-  run([rootdir_ '/conf/conf_progress.m']);
+  %  run([rootdir_ '/conf/conf_progress.m']);
+  status = conf_progress();
 
   %  run([rootdir_ '/conf/conf_graph.m']);
   graph = conf_graph();
@@ -99,19 +100,12 @@ end
 status.time.end = fix(clock);
 
 if status.estimateConnection == 1
-  mailMe(env,status,DAL)
+  mailMe(env,status,DAL,'Finished myest.m')
 end
 
 tmp0 = status.time.start;
-%if strcmp('saveInterActive','saveInterActive')  %++conf
 if status.use.GUI == 1
   uisave(who,strcat(rootdir_ , 'outdir/mat/', 'frame', num2str(sprintf('%05d',env.genLoop)), 'hwind', num2str(sprintf('%04d',env.hwind)), 'hnum' , num2str(sprintf('%02d',env.hnum))));
-
-  % uisave(who,strcat(rootdir_ , 'outdir/mat/', '...
-  %   '  'frame', num2str(sprintf('%05d',env.genLoop)),' ...
-  %   '  'hwind', num2str(sprintf('%04d',env.hwind)), '...
-  %   '  'hnum' , num2str(sprintf('%02d',env.hnum)))) ;
-
 else
   save( [ rootdir_ '/outdir/',date,num2str(tmp0(4)),num2str(tmp0(5)),'.mat']);
 end

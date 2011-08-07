@@ -42,11 +42,11 @@ function [D penalty] = gen_designMat(env,bases,I,Drow)
 %%
 
 global status;
-%%< conf
+
 
 prs.gen_designMat = 2; % prs: parameters
-%%> conf
-%%< check size
+
+%%% ==< check size>==
 if ~( Drow < env.genLoop)
   warning('DEBUG:fatal','4th arg ''Drow'' must be smaller than env.genLoop')
 end
@@ -107,7 +107,9 @@ elseif ( ( env.genLoop  / prs.gen_designMat ) < ( histSize + Drow )) ...
   %  histSize = ;
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% ==</check size>==
+
+%%% ==< calc matrix D >==
 reportEvery = 10;
 tmp0.showProg=floor(env.cnum/reportEvery);
 if tmp0.showProg == 0
@@ -142,5 +144,4 @@ for c = 1:C
   end
 end
 fprintf(1,': past time %d\n',toc);
-
-
+%%% ==</calc matrix D >==

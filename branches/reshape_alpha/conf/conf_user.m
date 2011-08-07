@@ -73,8 +73,8 @@ env.Hz.fn=;
 % (1-exp(-exp(env.SELF_DEPRESS_BASE)/env.Hz.video))*env.Hz.video
 %env.SELF_DEPRESS_BASE = 4.3; % 1 Hz
 %env.SELF_DEPRESS_BASE = 10; % all cells always firing
-env.SELF_DEPRESS_BASE = 8; % a cell depress firing of other cells.
-                           %env.SELF_DEPRESS_BASE = 6; % a cell depress firing of other cells.
+%env.SELF_DEPRESS_BASE = 8; % o.k.
+env.SELF_DEPRESS_BASE = 6;
 
 % log(2) == 0.7
 env.mail.to='aki-s@sys.i.kyoto-u.ac.jp';

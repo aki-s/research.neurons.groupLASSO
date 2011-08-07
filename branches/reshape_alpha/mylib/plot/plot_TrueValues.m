@@ -23,7 +23,7 @@ end
 
 %%% ===== PLOT I(t) ===== START =====
 if 1 == graph.PLOT_T
-  plot_I(graph,env,I,'I(t): Spikes [per frame]')
+  plot_I(status,graph,env,I,'I(t): Spikes [per frame]')
   %%% ===== PLOT I(t) ===== END =====
   %% write out eps file
   if graph.SAVE_EPS == 1

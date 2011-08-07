@@ -1,4 +1,4 @@
-function plot_I(graph,env,I,title)
+function plot_I(status,graph,env,I,title)
 %%
 %% input)
 %% arg1 : 
@@ -13,7 +13,6 @@ function plot_I(graph,env,I,title)
 %%
 
 %%
-global status
 global Tout
 
 genLoop = env.genLoop;
@@ -32,6 +31,7 @@ dh = floor(xrange/Lnum);  %dh: width of each tick. [frame]
 ddh = dh/Hz; % convert XTick unit from [frame] to [sec]
 TIMEL = cell(1,Lnum);
 
+if exist(Tout)
 for i1 = 1:Lnum+1
   if 1 == 1
     TIMEL{i1} = Tout.simtime - (Lnum+1 -i1)*ddh;
@@ -39,6 +39,7 @@ for i1 = 1:Lnum+1
     TIMEL{i1} = sprintf('%s [sec]',...
                         Tout.simtime - (Lnum+1 -i1)*ddh);
   end
+end
 end
 %% ==</convert XTick unit from [frame] to [sec] >==
 

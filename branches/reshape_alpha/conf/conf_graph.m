@@ -26,8 +26,8 @@ if exist('graph')
   if ~isfield(graph,'TIGHT') % precede user defined value.
     graph.TIGHT = 0;
   end
-  graph.prm.Yrange      = [-3,3];
-  graph.prm.diag_Yrange = [-50,50];
+  graph.prm.Yrange      = [-1,1];
+  graph.prm.diag_Yrange = [-40,10];
 else   %% defalut:
   graph = struct('PLOT_T',1,'PLOT_MAX_NUM_OF_NEURO',10', 'SAVE_EPS',0,'TIGHT',0);
 end

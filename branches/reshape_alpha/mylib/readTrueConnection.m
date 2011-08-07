@@ -33,10 +33,19 @@ tmp.fid = fopen(tmp.in,'rt');
 
 %% Need exception hundler: if (#column ~= #row )  %%++improve
 [alpha_hash, env.cnum ] = fscanf(tmp.fid,'%s'); % don't read LF.
+                                                %[alpha_hash, env.cnum ] = fscanf(tmp.fid,'%s[+0-]'); % don't read LF.
 alpha_hash = strrep(alpha_hash, '+','+1 ');
 alpha_hash = strrep(alpha_hash, '0','0 ');
 alpha_hash = strrep(alpha_hash, '-','-1 ');
+alpha_hash = regexprep(alpha_hash,'[a-z,A-Z,'','',''.'']','#');
+alpha_hash = regexprep(alpha_hash,'(\#[0-9\ ]*)','');
+
 alpha_hash = str2num(alpha_hash);
+[garbage,N] = size(alpha_hash);
+env.cnum = uint64(sqrt(N));
+if env.cnum*env.cnum ~= N
+  error('Check your inputfile')
+end
 
 %% The shape of alpha_hash is 
 %                =>[to #neuron]
