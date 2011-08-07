@@ -154,7 +154,7 @@ if strcmp('calcDAL','calcDAL')
       end
   end
   
-  status.time.estimate_TrueValue = toc;
+  status.time.estimate_TrueKernel = toc;
 end
 
 switch tmp.method

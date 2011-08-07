@@ -17,7 +17,7 @@ run([rootdir_ '/conf/setpaths.m']);
 if strcmp('configure', 'configure') %++conf
 
   %  run([rootdir_ '/conf/conf_progress.m']);
-  status = conf_progress();
+  status = conf_progress(status);
 
   %  run([rootdir_ '/conf/conf_graph.m']);
   graph = conf_graph();
@@ -80,6 +80,7 @@ if status.estimateConnection == 1
 
   [EKerWeight,Ebias,Estatus,Ealpha,DAL] = estimateWeightKernel(env,graph,bases,I,DAL);
   if graph.PLOT_T == 1
+    fprintf(1,'\n\n Now plotting estimated kernel\n');
     for i1 = 1:length(DAL.regFac)
     plot_Ealpha(env,graph,Ealpha{i1},...
                 strcat(['dallrgl:DAL regFac=  '], num2str(DAL.regFac(i1))));

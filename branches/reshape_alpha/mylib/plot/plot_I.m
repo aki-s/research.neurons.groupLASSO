@@ -31,7 +31,7 @@ dh = floor(xrange/Lnum);  %dh: width of each tick. [frame]
 ddh = dh/Hz; % convert XTick unit from [frame] to [sec]
 TIMEL = cell(1,Lnum);
 
-if exist(Tout)
+if exist('Tout')
 for i1 = 1:Lnum+1
   if 1 == 1
     TIMEL{i1} = Tout.simtime - (Lnum+1 -i1)*ddh;

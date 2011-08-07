@@ -11,7 +11,7 @@ global kenv;
 global kgraph;
 global rootdir_
 
-kstatus = conf_progress();
+kstatus = conf_progress(kstatus);
 kstatus.mail = 1;
 kstatus.use.GUI = 0;
 % $$$ if strcmp('tweek_to_yours','tweek_to_yours')
@@ -166,14 +166,14 @@ kEbias = kpEbias;
 kEstatus = kpEstatus;
 
 %%% ==</Kim >==
-kstatus.time.estimate_TrueValue = toc;
-fprintf(1,'%s',kstatus.time.estimate_TrueValue);
+kstatus.time.estimate_TrueKernel = toc;
+fprintf(1,'%s',kstatus.time.estimate_TrueKernel);
 
 fprintf(1,'\n\n Now plotting estimated kernel\n');
 
-if 1 == 0
+if strcmp('plot_True','plot_True')
   [kalpha_fig,kalpha_hash] = readTrueConnection([rootdir_ '/indir/KimFig1.con']); 
-  plot_alpha_binary(kgraph,kenv,kalpha_hash);
+  plot_alpha_ternary(kgraph,kenv,kalpha_hash);
 end
 if kgraph.PLOT_T == 1
   for i1 = 1:length(kDAL.regFac)
@@ -187,12 +187,12 @@ kstatus.time.end = fix(clock);
 if strcmp('mailMe','mailMe')
   mailMe(kenv,kstatus,kDAL,'Finished compare_KIM.m')
 end
-% judge connection from variance
+% judge connection from variance<->mean,median (enumerate)
 %kEalpha_fig =
 tmp0 = kstatus.time.start;
 if kstatus.use.GUI == 1
   uisave(who,strcat(rootdir_ , 'outdir/Kim/'));
 else
-  save( [ rootdir_ '/outdir/',date,num2str(tmp0(4)), ...
+  save( [ rootdir_ '/outdir/Kim',date,num2str(tmp0(4)), ...
           num2str(tmp0(5)),'-',regexprep(data_of_firing,'(.*/)(.*)','$2')]);
 end

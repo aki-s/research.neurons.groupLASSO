@@ -1,4 +1,6 @@
-fprintf(1,'plotting generated "True Values"')
+
+
+fprintf(1,'\nplotting generated "True Values"\n\n')
 
 %%% ===== PLOT alpha ===== START =====
 if ( 1 == graph.PLOT_T )

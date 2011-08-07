@@ -46,6 +46,7 @@ env.cnum = uint64(sqrt(N));
 if env.cnum*env.cnum ~= N
   error('Check your inputfile')
 end
+env.cnum = double(env.cnum);
 
 %% The shape of alpha_hash is 
 %                =>[to #neuron]

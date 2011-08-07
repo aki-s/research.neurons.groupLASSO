@@ -74,7 +74,8 @@ env.Hz.fn=;
 %env.SELF_DEPRESS_BASE = 4.3; % 1 Hz
 %env.SELF_DEPRESS_BASE = 10; % all cells always firing
 %env.SELF_DEPRESS_BASE = 8; % o.k.
-env.SELF_DEPRESS_BASE = 6;
+env.SELF_DEPRESS_BASE = 7; % o.k. Hz
+%env.SELF_DEPRESS_BASE = 6; % o.k. 15Hz
 
 % log(2) == 0.7
 env.mail.to='aki-s@sys.i.kyoto-u.ac.jp';
