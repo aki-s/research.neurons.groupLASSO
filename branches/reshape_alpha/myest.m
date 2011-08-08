@@ -88,7 +88,7 @@ if status.estimateConnection == 1
   end
   %% reconstruct lambda
   if strcmp('reconstruct','reconstruct_')
-    estimateFiringIntensity();
+    estimateFiringIntensity(Ebias,EKerWeight);
   end
 
   %% compare results from group LASSO and GCM by KIM

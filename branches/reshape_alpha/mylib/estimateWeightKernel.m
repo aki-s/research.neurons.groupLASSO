@@ -1,4 +1,4 @@
-function [pEKerWeight,pEbias,pEstatus,Ealpha,DAL] = estimateWeightKernel(env,graph,bases,I,DAL);
+function [pEKerWeight,pEbias,pEstatus,Ealpha,DAL] = estimateWeightKernel(env,graph,bases,I,DAL)
 %%
 %%
 %%

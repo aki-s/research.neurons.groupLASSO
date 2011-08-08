@@ -22,3 +22,16 @@ end
 kgraph = conf_graph();
 [kEKerWeight,kEbias,kEstatus,kEalpha,kDAL,kstatus] = ...
     compare_KIM(kbases,[rootdir_ '/indir/Simulation/data_sim_9neuron.mat']);
+
+
+% judge connection from variance<->mean,median
+% (enumerate in term of confidence.)
+
+if exist('alpha_hash')
+  [kEalpha_hash] = comp_alpha_ternary(kenv,kEalpha,Ebias,2,alpha_hash);
+else
+  [kEalpha_hash] = judge_alpha_ternary(kenv,kEalpha);
+end
+plot_alpha_ternary(kgraph,kenv,kEalpha_hash);
+
+kEalpha_fig = reshape(kEalpha_hash,[],9);

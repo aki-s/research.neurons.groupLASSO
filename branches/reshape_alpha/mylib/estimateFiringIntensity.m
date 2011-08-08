@@ -1,1 +1,2 @@
-function [Elambda] = estimateFiringIntensity(Ealpha,Ebias);
+function estimateFiringEntensity(bias,kernel)
+

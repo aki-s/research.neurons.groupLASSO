@@ -9,8 +9,9 @@ global graph;graph;5,114
 conf/setpaths.m,32
 function setpaths(setpaths1,0
 
-conf/conf_progress.m,50
+conf/conf_progress.m,76
 function status = conf_progressconf_progress1,0
+global statusstatus3,66
 
 dal_ver1.05/dallrgl.m,50
 function [ww,bias,status]=dallrgldallrgl45,1859
@@ -208,10 +209,11 @@ global kenv;kenv;10,295
 global kgraph;kgraph;11,308
 global rootdir_rootdir_12,323
 
-misc/demo_compare_KIM.m,83
+misc/demo_compare_KIM.m,111
 global kenv;kenv;1,0
 global kgraph;kgraph;2,13
-  global rootdir_rootdir_4,48
+global kbases;kbases;3,28
+  global rootdir_rootdir_6,64
 
 mylib/gen/gen_designMat.m,86
 function [D penalty] = gen_designMatgen_designMat1,0
@@ -275,7 +277,7 @@ function plot_lambda(plot_lambda1,0
 global Tout;Tout;13,247
 global status;status;14,260
 
-mylib/plot/plot_alpha_binary.m,50
+mylib/plot/plot_alpha_ternary.m,50
 function plot_alpha_binary(plot_alpha_binary1,0
 
 mylib/check/check_conf.m,230
@@ -294,7 +296,7 @@ function [status] = check_genStatecheck_genState1,0
 
 mylib/mailMe.m,68
 function mailMe(mailMe1,0
-function [time_] = mydatemydate20,786
+function [time_] = mydatemydate20,787
 
 mylib/makeSimStruct_glm.m,85
 function S = makeSimStruct_glmmakeSimStruct_glm1,0
