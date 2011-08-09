@@ -5,14 +5,22 @@ function [Ealpha_hash] = judge_alpha_ternary(env,Ealpha,varargin)
 %%
 
 if size(varargin,2) > 0
-  Ebias = varargin{1};
-  FAC = varargin{2};
-  alpha_hash = varargin{3};
-else
-  %  FAC = uint64(2);
+  for k = 1:size(varargin,2)
+    switch k
+      case 1
+        Ebias = varargin{k};
+      case 2
+        FAC = varargin{k}
+      case 3
+        alpha_hash = varargin{k};
+    end
+  end
+end
+
+if ~exist('FAC')
   FAC = 2;
 end
-whos FAC
+
 cnum = env.cnum;
 
 Eb_threshold = 5;

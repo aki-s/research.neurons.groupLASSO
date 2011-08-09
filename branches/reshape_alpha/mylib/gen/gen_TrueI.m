@@ -58,12 +58,12 @@ if strcmp('genLoop','genLoop')
     %%%% ===== renew number of spikes fired by cell c at lag m ===== 
     %%%% ===== END =====
     loglambda(i1,:) = alpha0 + sum( alpha.*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
-    %{
-    %% old
-    tmp3 = exp(-tmp2_lambda/Hz.video).*(tmp2_lambda/Hz.video); 
+    if strcmp('may_bug','may_bug_')
+    %% old: This may be correct non stable poisson process.
+    tmp3 = exp(-exp(loglambda(i1,:))/Hz.video).*(exp(loglambda(i1,:))/Hz.video); 
     tmp3 = rand(1,cnum) < tmp3;
-    %}
-    %    tmp3 = exp(-tmp2_lambda/Hz.video);
+    end
+
     tmp3 = exp(-exp(loglambda(i1,:))/Hz.video);
     tmp3 = rand(1,cnum) > tmp3;
 

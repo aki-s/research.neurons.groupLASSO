@@ -1,14 +1,27 @@
 global kenv;
+
+global kstatus;
+kstatus = conf_progress(kstatus);
+kstatus.mail = 1;
+kstatus.use.GUI = 0;
+kstatus.GEN_TrureValues = NaN;
+kstatus.GEN_Neuron_individuality = NaN;
+kstatus.time.start = fix(clock);
+
 global kgraph;
+kgraph = conf_graph();
 global kbases;
+
 
 if ~exist(rootdir_)
   global rootdir_
-  rootdir_ = pwd;
+  %  rootdir_ = pwd;
+  error('set ''rootdir_'' to where ''myest.m'' is located');
 end
+addpath([rootdir_ '/misc']);
+addpath([rootdir_ '/misc/compare']);
 
-
-if strcmp('tweek_to_yours','tweek_to_yours')
+if strcmp('tweak_to_yours','tweak_to_yours')
   kenv.mail.to='aki-s@sys.i.kyoto-u.ac.jp';
   kenv.mail.smtp='hawaii.sys.i.kyoto-u.ac.jp';
 end
@@ -19,7 +32,7 @@ if ~exist('kbases')
   warning('NOTICE:speedup','generating kbases was skipped to speed up.')
 end
 
-kgraph = conf_graph();
+kenv
 [kEKerWeight,kEbias,kEstatus,kEalpha,kDAL,kstatus] = ...
     compare_KIM(kbases,[rootdir_ '/indir/Simulation/data_sim_9neuron.mat']);
 
