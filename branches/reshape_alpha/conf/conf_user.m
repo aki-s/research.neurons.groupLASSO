@@ -1,9 +1,9 @@
 %% Set freely your configuration.
 warning('DEBUG:conf','conf_user.m overrides all configuration variables set after this file.');
-DEBUG_s = 4
+DEBUG_s = 1
 
 
-graph.TIGHT = 0;
+graph.TIGHT = 1;
 graph.PLOT_T = 1;
 graph.PLOT_MAX_NUM_OF_NEURO = 11;
 graph.GRAPHVIZ_OUT_FIG = 1; % default: 0
@@ -15,12 +15,12 @@ env.spar.level.to  = .8;
 
 switch DEBUG_s
   case 1
-    %kim only
+    %kim 
     env.genLoop = 100000;
-    status.GEN_TrureValues = 0;
+    status.GEN_TrureValues = 1;
 
     env.hnum = 50;
-    env.hwind = 2; % large hwind cause continuous firing of each neuron.
+    env.hwind = 1; % large hwind cause continuous firing of each neuron.
     env.Hz.video = 100;
   case 2
     env.genLoop = 400000;
@@ -59,11 +59,11 @@ switch DEBUG_s
     env.genLoop =  2000;
     status.GEN_TrureValues = 1;
 
-    env.hnum=(300);
-    env.hwind= 2; % large hwind cause continuous firing of each neuron.
+    env.hnum=50;
+    env.hwind= 1; % large hwind cause continuous firing of each neuron.
     env.Hz.video=(100);
     status.estimateConnection = 1;
-    graph.GRAPHVIZ_OUT_FIG = 1;
+    graph.GRAPHVIZ_OUT_FIG = 0;
 end
 
 %{
@@ -74,7 +74,8 @@ env.Hz.fn=;
 %env.SELF_DEPRESS_BASE = 4.3; % 1 Hz
 %env.SELF_DEPRESS_BASE = 10; % all cells always firing
 %env.SELF_DEPRESS_BASE = 8; % o.k.
-env.SELF_DEPRESS_BASE = 7; % o.k. Hz
+%env.SELF_DEPRESS_BASE = 7; % o.k. Hz % a little too much
+env.SELF_DEPRESS_BASE = 6.5; % o.k. Hz
 %env.SELF_DEPRESS_BASE = 6; % o.k. 15Hz
 
 % log(2) == 0.7

@@ -1,7 +1,8 @@
-function plot_alpha_binary(graph,env,alpha_hash)
+function plot_alpha_ternary(graph,env,alpha_hash,description)
 %% 
 % plot_alpha_binary(graph,env,alpha_hash)
 %% 
+
 cnum = env.cnum;
 MAX = graph.PLOT_MAX_NUM_OF_NEURO;
 N = 50;
@@ -46,25 +47,18 @@ if cnum < MAX
       %% </ from-to cell label >
     end
   end
-
   %% h: description about outer x-y axis
   h = axes('Position',[0 0 1 1],'Visible','off'); 
   set(gcf,'CurrentAxes',h)
-  text(.12,.90,'Triggers')
-  text(.08,.85,'Targets')
+  text(.12,.90,'Triggers','LineWidth',3) %++bug LineWidth
+  text(.08,.85,'Targets' ,'LineWidth',3)
+  text(.4,.95,description,'LineWidth',3);
 
   %{
   xlabel(h,'Trigger')
   ylabel(h,'Target')
   %}
 
-  %%% ===== PLOT alpha ===== END =====
-  %% write out eps file
-% $$$   if graph.SAVE_EPS == 1
-% $$$     print('-depsc', '-tiff' ,[rootdir_ '/outdir/artificial_alpha.eps'])
-% $$$   end
 else
   warning('plot:aborted','Too large number of cells to plot.\n Plot aborted.')
 end
-
-

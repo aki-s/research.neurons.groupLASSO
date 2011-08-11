@@ -14,16 +14,20 @@ tic
 %% ==< local var >==
 nbase = kbases.ihbasprs.nbase;
 %% ==</local var >==
+fprintf(1,'Comparing with %s\n',data_of_firing);
 
-load([data_of_firing ]); % load 'X'
+load([data_of_firing ]); % load 'X'(serise of firing)
 %%load([rootdir_ '/indir/Simulation/data_sim_hidden.mat'])
 %%load([rootdir_ '/indir/Real_data/data_real_catM1.mat'])
 % Dimension of X (# Channels x # Samples x # Trials)
 % [CHN SMP TRL] = size(X);
 %%load([rootdir_ '/indir/Real_data/data_real_nonmove.mat'])
-
-[L,kenv.cnum] = size(X);
-DIV = 10;
+if length(size(X)) == 2
+  [L,kenv.cnum] = size(X);
+elseif length(size(X)) == 3
+  [kenv.cnum, L, TRL] = size(X);
+end
+DIV = 2;
 kDrow = floor(L/DIV);
 kenv.genLoop = L;
 kenv.Hz.video = 100;
@@ -33,7 +37,7 @@ kenv.Hz.video = 100;
 plot_I(kstatus,kgraph,kenv,X,' Firing from KIM''s neuron')
 
 fprintf('\tGenerating Matrix for DAL\n');
-[kD kpenalty] = gen_designMat(kenv,kbases,X,kDrow);
+[kD kpenalty] = gen_designMat(kenv,kbases,X,kDrow,1);
 
 %% ==< init >==
 % $$$ kpEKerWeight{1} = zeros(nbase,kenv.cnum);
@@ -46,7 +50,7 @@ end
 %% ==< init variables >==
 kDAL = init_kDAL(kDrow);
 
-tmp.kmethod = 3;
+kmethod = 'prgl';
 if strcmp('setRegFac_auto','setRegFac_auto')
   if 1 ==1
     kDAL.regFac(1) = sqrt(nbase)*10; % kDAL.regFac: group LASSO parameter.
@@ -59,13 +63,13 @@ end
 kDAL.div = 2;
 %% ==</init variables >==
 
-kDAL
+%kDAL % print env
 %% ==================================================================
 matlabpool(8);
 for ii1 = 1:kDAL.loop % search appropriate parameter.
   fprintf(1,'\n\n == Regularization factor: %f == \n',kDAL.regFac(ii1));
   for i1to = 1:kenv.cnum % ++parallelization 
-    switch  tmp.kmethod
+    switch  kmethod
       case 1
         %% logistic regression group lasso
         [kEKerWeight{i1to}, kEbias{i1to}, kEstatus{i1to}] = ...
@@ -87,7 +91,7 @@ for ii1 = 1:kDAL.loop % search appropriate parameter.
                        'blks',repmat(nbase,[1 kenv.cnum]));
         end
 
-      case 3
+      case 'prgl'
         if kDAL.speedup == 1 
           [kpEKerWeight{i1to}, kpEbias{i1to}(ii1), kpEstatus{i1to}] = ...
               dalprgl( kpEKerWeight{i1to}, kpEbias{i1to}(ii1-1), ...
@@ -108,7 +112,7 @@ for ii1 = 1:kDAL.loop % search appropriate parameter.
     kDAL.regFac(ii1+1) = kDAL.regFac(ii1)/kDAL.div;
   end
 
-  switch tmp.kmethod
+  switch kmethod
     case 1
       for i1to = 1:kenv.cnum
         for i2from = 1:kenv.cnum
@@ -116,7 +120,7 @@ for ii1 = 1:kDAL.loop % search appropriate parameter.
         end
       end
       
-    case 3
+    case 'prgl'
       for i1to = 1:kenv.cnum
         for i2from = 1:kenv.cnum
           kEalpha{ii1}{i1to}{i2from} = (kbases.ihbasis* kpEKerWeight{i1to}(:,i2from));
@@ -143,16 +147,18 @@ fprintf(1,'%s',kstatus.time.estimate_TrueKernel);
 
 fprintf(1,'\n\n Now plotting estimated kernel\n');
 
-if strcmp('plot_True','plot_True')
-  [kalpha_fig,kalpha_hash] = readTrueConnection([rootdir_ '/indir/KimFig1.con']); 
-  plot_alpha_ternary(kgraph,kenv,kalpha_hash);
-end
+
 if kgraph.PLOT_T == 1
   for i1 = 1:length(kDAL.regFac)
     plot_Ealpha(kenv,kgraph,kEalpha{i1},...
                 strcat('dallrgl:DAL regFac=  ', num2str(kDAL.regFac(i1))));
   end
 end
+%{
+plot_Ealpha(kenv,kgraph,kEalpha{2},...
+            strcat('dallrgl:DAL regFac=  ', num2str(kDAL.regFac(2))));
+
+%}
 
 kstatus.time.end = fix(clock);
 

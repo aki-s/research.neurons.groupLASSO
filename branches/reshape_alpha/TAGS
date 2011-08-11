@@ -9,9 +9,9 @@ global graph;graph;5,114
 conf/setpaths.m,32
 function setpaths(setpaths1,0
 
-conf/conf_progress.m,76
-function status = conf_progressconf_progress1,0
-global statusstatus3,66
+conf/conf_progress.m,81
+function  [status] = conf_progressconf_progress1,0
+global status;status;5,97
 
 dal_ver1.05/dallrgl.m,50
 function [ww,bias,status]=dallrgldallrgl45,1859
@@ -200,20 +200,24 @@ function varargout = loss_sqdloss_sqd8,211
 dal_mod/loss_sqp.m,48
 function [floss, gloss]=loss_sqploss_sqp5,141
 
+misc/compare/init_kDAL.m,40
+function kDAL = init_kDALinit_kDAL1,0
+
+misc/compare/demo_compare_KIM.m,114
+global kenv;kenv;3,84
+global kstatus;kstatus;5,98
+global kgraph;kgraph;13,285
+global kbases;kbases;15,323
+
+misc/compare/compare_KIM.m,200
+function  [kEKerWeight,kEbias,kEstatus,kEalpha,kDAL] = compare_KIMcompare_KIM1,0
+global kenv;kenv;7,197
+global kgraph;kgraph;8,210
+global rootdir_rootdir_9,225
+global kstatus;kstatus;10,241
+
 misc/plot_ggsimBaseFunc.m,52
 function plot_basesBaseFunc(plot_basesBaseFunc1,0
-
-misc/compare_KIM.m,179
-function  [kEKerWeight,kEbias,kEstatus,kEalpha,kDAL,kstatus] = compare_KIMcompare_KIM1,0
-global kenv;kenv;10,295
-global kgraph;kgraph;11,308
-global rootdir_rootdir_12,323
-
-misc/demo_compare_KIM.m,111
-global kenv;kenv;1,0
-global kgraph;kgraph;2,13
-global kbases;kbases;3,28
-  global rootdir_rootdir_6,64
 
 mylib/gen/gen_designMat.m,86
 function [D penalty] = gen_designMatgen_designMat1,0
@@ -280,6 +284,9 @@ global status;status;14,260
 mylib/plot/plot_alpha_ternary.m,50
 function plot_alpha_binary(plot_alpha_binary1,0
 
+mylib/comp_alpha_ternary.m,68
+function [Ealpha_hash] = comp_alpha_ternarycomp_alpha_ternary2,58
+
 mylib/check/check_conf.m,230
 function check_conf(check_conf2,45
 global envenv5,71
@@ -297,6 +304,10 @@ function [status] = check_genStatecheck_genState1,0
 mylib/mailMe.m,68
 function mailMe(mailMe1,0
 function [time_] = mydatemydate20,787
+
+mylib/estimateWeightKernel.m,127
+function [pEKerWeight,pEbias,pEstatus,Ealpha,DAL] = estimateWeightKernelestimateWeightKernel1,0
+global status;status;9,208
 
 mylib/makeSimStruct_glm.m,85
 function S = makeSimStruct_glmmakeSimStruct_glm1,0
@@ -318,15 +329,14 @@ mylib/echo_TrueValueStatus.m,81
 function echo_TrueValueStatus(echo_TrueValueStatus1,0
 global Tout;Tout;4,100
 
-mylib/estimateWeightKernel.m,127
-function [pEKerWeight,pEbias,pEstatus,Ealpha,DAL] = estimateWeightKernelestimateWeightKernel1,0
-global status;status;9,209
+mylib/judge_alpha_ternary.m,70
+function [Ealpha_hash] = judge_alpha_ternaryjudge_alpha_ternary2,58
 
 mylib/echo_initStatus.m,46
 function echo_initStatus(echo_initStatus1,0
 
-mylib/estimateFiringIntensity.m,73
-function [Elambda] = estimateFiringIntensityestimateFiringIntensity1,0
+mylib/estimateFiringIntensity.m,62
+function estimateFiringEntensity(estimateFiringEntensity1,0
 
 tools/plot_lambda_video.m,50
 function plot_lambda_video(plot_lambda_video1,0
@@ -413,6 +423,8 @@ mylib/clean.m,0
 mylib/plot/plot_TrueValues.m,0
 
 mylib/gen/gen_defaultEnv.m,0
+
+misc/compare/conf_compare_KIM_user.m,0
 
 misc/sampleScript.m,0
 

@@ -18,9 +18,9 @@ if ( graph.SAVE_EPS == 1) && (graph.PLOT_T == 0 )
 end
 
 Tout.weightKernelSec = (env.hnum*env.hwind)/env.Hz.video;
-if Tout.weightKernelSec < 10 % history kernel size [sec]
+if Tout.weightKernelSec < 0.1 % history kernel size [sec]
   fprintf(1,'Weight Kernel size seems to be small: %d [sec]\n',Tout.weightKernelSec);
-  fprintf(1,'%s > 10 seems to be appropriate.\n','(env.hnum*env.hwind)/env.Hz.video')
+  fprintf(1,'%s > 0.1 seems to be appropriate.\n','(env.hnum*env.hwind)/env.Hz.video')
 end
 
 Tout.simtime = env.genLoop/env.Hz.video;

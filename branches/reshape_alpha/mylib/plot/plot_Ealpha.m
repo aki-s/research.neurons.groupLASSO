@@ -48,9 +48,6 @@ end
 
 if strcmp('set_range','set_range')
   XSIZE = 2;
-  %  tmp1 = alpha((1:hnum)+(i2from-1)*hnum,i1to);
-  %  tmp1 = alpha((1:hnum),1);
-  %  diag_Yrange = [min(tmp1)*1.5, max(tmp1)*1.5];
   diag_Yrange = graph.prm.diag_Yrange;
   Yrange = graph.prm.Yrange;
 end
@@ -124,7 +121,7 @@ ylabel(h,'Target')
 
 %%% ===== PLOT alpha ===== END =====
 %% write out eps file
-if graph.PLOT_T == 1
+if graph.PRINT_T == 1
   print('-depsc','-tiff', [rootdir_ '/outdir/Estimated_alpha.eps'])
 end
 

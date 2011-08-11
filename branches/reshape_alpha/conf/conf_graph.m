@@ -20,16 +20,24 @@ if exist('graph')
     graph.PLOT_T = 1; % graph.PLOT_T: if (graph.PLOT_T == 1)
                       % then plot artificial (True) data.
   end
+  if ~isfield(graph,'PRINT_T') % precede user defined value.
+    graph.PRINT_T = 0; 
+  end
   if ~isfield(graph,'SAVE_EPS') % precede user defined value.
     graph.SAVE_EPS = 0; % save plotted figures as eps pictures
   end
   if ~isfield(graph,'TIGHT') % precede user defined value.
-    graph.TIGHT = 0;
+    graph.TIGHT = 0; % 0: each graph is plotted with absolute scale.
   end
-  graph.prm.Yrange      = [-1,1];
+  graph.prm.Yrange      = [-5,5];
   graph.prm.diag_Yrange = [-40,10];
 else   %% defalut:
-  graph = struct('PLOT_T',1,'PLOT_MAX_NUM_OF_NEURO',10', 'SAVE_EPS',0,'TIGHT',0);
+  graph = struct('PLOT_T',1 ...
+                 ,'PRINT_T',0 ...
+                 ,'PLOT_MAX_NUM_OF_NEURO',10' ...
+                 , 'SAVE_EPS',0 ...
+                 ,'TIGHT',0 ...
+                 );
 end
 
 %%> Free software graphviz setting

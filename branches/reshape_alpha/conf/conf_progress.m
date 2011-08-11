@@ -1,6 +1,8 @@
-function status = conf_progress(status)
+function  [status] = conf_progress()
+%function  conf_progress(status)
 %% Default configuration.
-global status
+
+global status;
 
 status.profiler = 0;
 status.save_warning = 1; %++bug: not yet implemented.

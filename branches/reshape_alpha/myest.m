@@ -17,7 +17,8 @@ run([rootdir_ '/conf/setpaths.m']);
 if strcmp('configure', 'configure') %++conf
 
   %  run([rootdir_ '/conf/conf_progress.m']);
-  status = conf_progress(status);
+  %  status = conf_progress(status);
+  conf_progress();
 
   %  run([rootdir_ '/conf/conf_graph.m']);
   graph = conf_graph();
@@ -78,7 +79,8 @@ if status.estimateConnection == 1
   %% matlabpool close force local
   matlabpool(8);
 
-  [EKerWeight,Ebias,Estatus,Ealpha,DAL] = estimateWeightKernel(env,graph,bases,I,DAL);
+  [EKerWeight,Ebias,Estatus,DAL] = estimateWeightKernel(env,graph,bases,I,DAL);
+  Ealpha = reconstruct_Ealpha(DAL,bases,EKerWeight);
   if graph.PLOT_T == 1
     fprintf(1,'\n\n Now plotting estimated kernel\n');
     for i1 = 1:length(DAL.regFac)
@@ -98,6 +100,14 @@ if status.estimateConnection == 1
   %% ==</Start estimation with DAL>==
 end
 
+
+[Ealpha_hash,threshold,Econ] = judge_alpha_ternary(env,Ealpha,Ebias,2,alpha_hash);
+
+if (graph.PLOT_T == 1)
+  plot_alpha_ternary(graph,env,Ealpha_hash,'Estimated,group LASSO');
+  plot_alpha_ternary(graph,env,alpha_hash,' True connection');
+end
+
 status.time.end = fix(clock);
 
 if status.estimateConnection == 1
@@ -105,16 +115,31 @@ if status.estimateConnection == 1
 end
 
 tmp0 = status.time.start;
+mkdirname = [date,num2str(tmp0(4)),num2str(tmp0(5))];
+mkdir( [ rootdir_ '/outdir/'],mkdirname)
+savedirname =  [ rootdir_ '/outdir/',mkdirname];
 if status.use.GUI == 1
-  uisave(who,strcat(rootdir_ , 'outdir/mat/', 'frame', num2str(sprintf('%05d',env.genLoop)), 'hwind', num2str(sprintf('%04d',env.hwind)), 'hnum' , num2str(sprintf('%02d',env.hnum))));
+  uisave(who,strcat(savedirname,'/', 'frame', num2str(sprintf('%05d',env.genLoop)), 'hwind', num2str(sprintf('%04d',env.hwind)), 'hnum' , num2str(sprintf('%02d',env.hnum))));
 else
-  save( [ rootdir_ '/outdir/',date,num2str(tmp0(4)),num2str(tmp0(5)),'.mat']);
+  save([savedirname,'/',date,num2str(tmp0(4)),num2str(tmp0(5)),'.mat']);
 end
 
 status.profile=profile('info');
 
-
-
+%% ==< save all graph >==
+if (graph.SAVE_ALL == 1)
+  figHandles = get(0,'Children');
+  fnames = {'file1', 'file2', 'file3'};
+  if length(figHandles) == length(fnames)
+    for i1 = 1:length(fnames)
+      saves(i1,[savedirname,fnames(i1)],'eps');
+    end
+  else
+  for i1 = 1:figHandles
+    save(i1, [savedirname,fnames(i1),'/',i1], 'eps');
+  end
+  end
+end
 %% ==< clean >==
 if strcmp('clean','clean')  %++conf
   run([rootdir_ '/mylib/clean.m'])

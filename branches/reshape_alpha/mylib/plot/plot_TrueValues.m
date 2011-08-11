@@ -7,17 +7,17 @@ if ( 1 == graph.PLOT_T )
   %% ++bug: func plot_alpha must be given 'env'.
   plot_alpha(graph,env,alpha,'\alpha: Spatio-temporal Kernels');
 end
-if graph.SAVE_EPS == 1
+if graph.PRINT_T == 1
   print('-depsc','-tiff',[rootdir_ '/outdir/true_alpha.eps'])
 end
 
 
 %%% ===== PLOT LAMBDA ===== START =====
 if 1 == graph.PLOT_T
-  plot_lambda(graph,env,lambda,'\lambda: Firing Rates [per frame]');
+  plot_lambda(graph,env,lambda,'\lambda: Firing Rates [sec]');
   %%% ===== PLOT LAMBDA ===== END =====
   %% write out eps file
-  if graph.SAVE_EPS == 1
+  if graph.PRINT_T == 1
     print('-depsc','-tiff',[rootdir_ '/outdir/artificial_lambda.eps'])
   end
 end
@@ -25,10 +25,10 @@ end
 
 %%% ===== PLOT I(t) ===== START =====
 if 1 == graph.PLOT_T
-  plot_I(status,graph,env,I,'I(t): Spikes [per frame]')
+  plot_I(status,graph,env,I,'I(t): Spikes [sec]')
   %%% ===== PLOT I(t) ===== END =====
   %% write out eps file
-  if graph.SAVE_EPS == 1
+  if graph.PRINT_T == 1
     print('-depsc','-tiff',[rootdir_ '/outdir/artificial_I.eps'])
   end
 end

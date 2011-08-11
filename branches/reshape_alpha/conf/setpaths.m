@@ -16,4 +16,5 @@ addpath([rundir '/mylib/plot']);
 
 %% no need to set to run myest.m
 addpath([rundir '/misc']);
+addpath([rundir '/misc/compare']);
 addpath([rundir '/tools']);

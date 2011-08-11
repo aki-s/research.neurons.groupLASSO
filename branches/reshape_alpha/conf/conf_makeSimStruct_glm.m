@@ -1,6 +1,16 @@
 %% ( Number of basis vectors for post-spike kernel )
-% <Tweek here>
-ihbasprs.nbase = 5;
+%% <Tweek here>
+if strcmp('comp_stevenson','comp_stevenson')
+  basisType = 'bar'; % ability of representatation is too much.
+  if 1 == 1
+    iht = 50; % You'd better compress time series of firing in this case.
+    iht = floor(env.video.Hz/2);
+  end
+  ihbasprs.nbase = iht;
+else
+  basisType = 'glm';
+  ihbasprs.nbase = 5;
+end
 %% ihbasprs.hpeaks: Peak location for first and last vectors.
 % To be [ihbasprs.hpeaks(1) > arg(makeSimStruct_glm)] is recommended.
 % Must be [ihbasprs.hpeaks(1) == ihbasprs.absref].
@@ -16,4 +26,4 @@ else
   ihbasprs.hpeaks = [.05 3]; % Unit of this is second.
 end
 ihbasprs.b = .4;  % How nonlinear to make spacings %??
-% <Tweek here/>
+%% <Tweek here/>

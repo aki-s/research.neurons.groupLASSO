@@ -1,5 +1,5 @@
 %function [Ealpha_hash] = judge_alpha_ternary(env,Ealpha)
-function [Ealpha_hash] = judge_alpha_ternary(env,Ealpha,varargin)
+function [Ealpha_hash] = comp_alpha_ternary(env,Ealpha,varargin)
 %%
 %function [Ealpha_hash] = judge_alpha_ternary(env,Ealpha,Ebias,FAC,alpha_hash)
 %%

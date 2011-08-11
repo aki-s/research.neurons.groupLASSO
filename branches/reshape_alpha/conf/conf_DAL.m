@@ -1,7 +1,7 @@
 function [DAL] = conf_DAL
-tmp.switch = 1;
+choice = 1;
 
-  switch tmp.switch
+  switch choice
     case 0
       opt.display = 0; %0: suppress stdout
     case 1
@@ -26,6 +26,8 @@ tmp.switch = 1;
   end
 
 DAL.opt = opt;
+DAL.div = 2; % devide regularization factor with this in loop.
+
 if 1 == 1
   DAL.method = 'prgl'; %prgl: poisson  regression group lasso
 else

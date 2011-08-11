@@ -1,4 +1,4 @@
-function S = makeSimStruct_glm(dt);
+function S = makeSimStruct_glm(dt)
 %
 %  Creates a structure with default parameters for a GLM model
 %
@@ -10,31 +10,38 @@ function S = makeSimStruct_glm(dt);
 %        'iht' - time lattice
 %        'kbasprs' - basis for stim filter 
 %        'ihbasprs' - basis for post-spike current
- 
+
 % --- Make basis for post-spike (h) current ------
-%run( './conf/conf_makeSimStruct_glm.m'); % load parameters.
+
 global rootdir_
 run( [rootdir_ '/conf/conf_makeSimStruct_glm.m']); % load parameters.
 
-% -- Nonlinearity -------
-nlinF = @exp;
-% Other natural choice:  nlinF = @(x)log(1+exp(x));
+if basisType == 'bar'
+  nlinF = NaN;
+  ih = NaN;
+  ihbasprs.hpeaks = NaN;
+  ihbasprs.b = NaN;
+  ihbas = NaN;
+  ihbasis = ones(1,iht);
+else
+  % -- Nonlinearity -------
+  nlinF = @exp;
+  % Other natural choice:  nlinF = @(x)log(1+exp(x));
 
-[iht,ihbas,ihbasis] = make_basis(ihbasprs,dt);
-%% append basis for absolute refractory period.
-if(ihbasprs.absref < dt) ihbasprs.nbase = ihbasprs.nbase-1; end 
-% $$$ if( isequal(getfield(ihbasprs,'absref'),[]) )
-% $$$  ihbasprs.nbase =  ihbasprs.nbase -1;
-% $$$ end
-ih = ihbasis*[repmat(1,[ihbasprs.nbase 1])];
-
+  [iht,ihbas,ihbasis] = make_basis(ihbasprs,dt);
+  %% append basis for absolute refractory period.
+  if (ihbasprs.absref < dt) 
+    ihbasprs.nbase = ihbasprs.nbase-1;
+  end 
+  ih = ihbasis*[repmat(1,[ihbasprs.nbase 1])];
+end
 % Place parameters in structure
 S = struct(...
-    'type', 'glm', ...
+    'type', basisType, ...
     'nlfun', nlinF, ...  % nonlinearity of x-axis
     'iht', iht, ...      % time indices
     'ih', ih, ...
     'dt', dt, ...
     'ihbasprs', ihbasprs, ... % params for ih basis
     'ihbas', ihbas, ... % orthogonalized ihbasis
-    'ihbasis', ihbasis); ... % basis for current
+    'ihbasis', ihbasis); ... % basis
