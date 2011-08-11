@@ -26,6 +26,9 @@ if exist('graph')
   if ~isfield(graph,'SAVE_EPS') % precede user defined value.
     graph.SAVE_EPS = 0; % save plotted figures as eps pictures
   end
+  if ~isfield(graph,'SAVE_ALL') % precede user defined value.
+    graph.SAVE_ALL = 0;
+  end
   if ~isfield(graph,'TIGHT') % precede user defined value.
     graph.TIGHT = 0; % 0: each graph is plotted with absolute scale.
   end
@@ -36,6 +39,7 @@ else   %% defalut:
                  ,'PRINT_T',0 ...
                  ,'PLOT_MAX_NUM_OF_NEURO',10' ...
                  , 'SAVE_EPS',0 ...
+                 , 'SAVE_ALL',0 ...
                  ,'TIGHT',0 ...
                  );
 end

@@ -7,6 +7,7 @@ graph.TIGHT = 1;
 graph.PLOT_T = 1;
 graph.PLOT_MAX_NUM_OF_NEURO = 11;
 graph.GRAPHVIZ_OUT_FIG = 1; % default: 0
+graph.SAVE_ALL = 1;
 graph.xrange = 1000;
 
 env.cnum = 9;

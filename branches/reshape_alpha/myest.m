@@ -135,11 +135,11 @@ if (graph.SAVE_ALL == 1)
       saves(i1,[savedirname,fnames(i1)],'eps');
     end
   else
-  for i1 = 1:figHandles
-    save(i1, [savedirname,fnames(i1),'/',i1], 'eps');
+    for i1 = 1:figHandles
+      save(i1, [savedirname,fnames(i1),'/',i1], 'eps');
+    end
   end
-  end
-end
+end 
 %% ==< clean >==
 if strcmp('clean','clean')  %++conf
   run([rootdir_ '/mylib/clean.m'])
