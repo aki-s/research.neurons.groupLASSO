@@ -47,7 +47,8 @@ if strcmp('set_xticks','set_xticks')
 end
 
 if strcmp('set_range','set_range')
-  XSIZE = 2;
+  %  XSIZE = 2;
+  XSIZE = 1;
   diag_Yrange = graph.prm.diag_Yrange;
   Yrange = graph.prm.Yrange;
 end

@@ -35,7 +35,9 @@ if strcmp('set_xticks','set_xticks')
   end
 end
 if strcmp('set_range','set_range')
-  XSIZE = 2;
+if strcmp('tmp','tmp')
+  XSIZE = 1;
+end
   %  tmp1 = alpha((1:hnum)+(i2from-1)*hnum,i1to);
 % $$$   tmp1 = alpha((1:hnum),1);
 % $$$   diag_Yrange = [min(tmp1)*1.5, max(tmp1)*1.5];

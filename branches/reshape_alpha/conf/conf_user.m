@@ -1,9 +1,14 @@
 %% Set freely your configuration.
 warning('DEBUG:conf','conf_user.m overrides all configuration variables set after this file.');
-DEBUG_s = 1
+DEBUG_s = 4
 
+DAL.loop = 2;
+DAL.regFac_UserDef = 1;
+DAL.regFac = [100 50 10 5];
+% DAL.Drow = [2000 20000 90000]; %++yet
+DAL.Drow = 2000;
 
-graph.TIGHT = 1;
+graph.TIGHT = 0;
 graph.PLOT_T = 1;
 graph.PLOT_MAX_NUM_OF_NEURO = 11;
 graph.GRAPHVIZ_OUT_FIG = 1; % default: 0
@@ -76,14 +81,14 @@ env.Hz.fn=;
 %env.SELF_DEPRESS_BASE = 10; % all cells always firing
 %env.SELF_DEPRESS_BASE = 8; % o.k.
 %env.SELF_DEPRESS_BASE = 7; % o.k. Hz % a little too much
-env.SELF_DEPRESS_BASE = 6.5; % o.k. Hz
+env.SELF_DEPRESS_BASE = 6.5; % good.
 %env.SELF_DEPRESS_BASE = 6; % o.k. 15Hz
 
 % log(2) == 0.7
 env.mail.to='aki-s@sys.i.kyoto-u.ac.jp';
 env.mail.smtp='hawaii.sys.i.kyoto-u.ac.jp';
 
-status.profiler = 1;
+status.profiler = 0;
 status.save_warning = 1; %++bug: not yet implemented.
 status.parfor_ = 1; %++bug: not yet implemented.
 

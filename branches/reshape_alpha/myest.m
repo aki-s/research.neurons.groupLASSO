@@ -1,4 +1,6 @@
 %% Main program.
+%% HowTo)
+%% close all; clear all; myest
 global env;
 global status;
 global Tout;
@@ -79,8 +81,10 @@ if status.estimateConnection == 1
   %% matlabpool close force local
   matlabpool(8);
 
+  DAL = setDALregFac(DAL,bases);
   [EKerWeight,Ebias,Estatus,DAL] = estimateWeightKernel(env,graph,bases,I,DAL);
-  Ealpha = reconstruct_Ealpha(DAL,bases,EKerWeight);
+  %++bug Ebias isn't correct.
+  Ealpha = reconstruct_Ealpha(env,DAL,bases,EKerWeight);
   if graph.PLOT_T == 1
     fprintf(1,'\n\n Now plotting estimated kernel\n');
     for i1 = 1:length(DAL.regFac)
@@ -90,6 +94,7 @@ if status.estimateConnection == 1
   end
   %% reconstruct lambda
   if strcmp('reconstruct','reconstruct_')
+    error('not yet implemented')
     estimateFiringIntensity(Ebias,EKerWeight);
   end
 
@@ -101,7 +106,8 @@ if status.estimateConnection == 1
 end
 
 
-[Ealpha_hash,threshold,Econ] = judge_alpha_ternary(env,Ealpha,Ebias,2,alpha_hash);
+%[Ealpha_hash,threshold,Econ] = judge_alpha_ternary(env,Ealpha,2,alpha_hash,Ebias);
+[Ealpha_hash,threshold,Econ] = judge_alpha_ternary(env,Ealpha,2, alpha_hash);
 
 if (graph.PLOT_T == 1)
   plot_alpha_ternary(graph,env,Ealpha_hash,'Estimated,group LASSO');
@@ -128,19 +134,22 @@ status.profile=profile('info');
 
 %% ==< save all graph >==
 if (graph.SAVE_ALL == 1)
-  figHandles = get(0,'Children');
-  fnames = {'file1', 'file2', 'file3'};
-  if length(figHandles) == length(fnames)
-    for i1 = 1:length(fnames)
-      saves(i1,[savedirname,fnames(i1)],'eps');
+  tmp.figHandles = get(0,'Children');
+  tmp.fnames = {''}; %++bug:not yet implemented.
+  if length(tmp.figHandles) == length(tmp.fnames)
+    for i1 = 1:length(tmp.fnames)
+      print(i1,[savedirname,tmp.fnames(i1)],'eps');
     end
   else
-    for i1 = 1:figHandles
-      save(i1, [savedirname,fnames(i1),'/',i1], 'eps');
+    for i1 = 1:length(tmp.figHandles)
+      print(tmp.figHandles(i1),'-depsc',sprintf('%s/%02d',savedirname,i1) );
     end
   end
 end 
+
 %% ==< clean >==
 if strcmp('clean','clean')  %++conf
   run([rootdir_ '/mylib/clean.m'])
 end
+
+%fin();

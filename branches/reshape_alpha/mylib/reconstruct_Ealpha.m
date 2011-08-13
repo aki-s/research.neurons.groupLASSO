@@ -1,6 +1,5 @@
-function [Ealpha] = reconstruct_Ealpha(DAL,bases,EKerWeight)
+function [Ealpha] = reconstruct_Ealpha(env,DAL,bases,EKerWeight)
 
-global env
 cnum = env.cnum;
 
 

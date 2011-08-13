@@ -13,48 +13,43 @@ cnum = env.cnum;
 nbase = bases.ihbasprs.nbase; % nbase: number of bases.
 opt = DAL.opt;
 
-if strcmp('allI','allI_')  %++conf
+if isfield(DAL,'Drow')
+  loopFrame = length(DAL.Drow);
+  if  loopFrame > 1
+    m =  max(DAL.Drow);
+  else
+    m = DAL.Drow;
+  end
+  if ( m > env.genLoop - size(bases.iht,1) +1 )
+    error('DAL.Drow > env.genLoop - size(bases.iht,1) +1' )
+  end
+elseif strcmp('auto','auto')
+  DAL.Drow = floor(env.genLoop/4);
+
+elseif strcmp('allI','allI_')  %++conf
   %%% use all available firing history.
   %% Drow: length of total frames used at loss function.
   DAL.Drow = env.genLoop - size(bases.iht,1) +1; 
-else
-  DAL.Drow = floor(env.genLoop/4);
 end
 
 %% ==< init variables >==
 method = DAL.method;
 
-DAL.speedup =0;
-DAL.loop = 3;
-DAL.regFac = zeros(1,DAL.loop); % DAL.regFac: regularization factor.
-if strcmp('setRegFac_auto','setRegFac_auto')
-  if 1==1
-    DAL.regFac(1) = sqrt(nbase)*10; % DAL.regFac: group LASSO parameter.
-  else
-    DAL.regFac(1) = sqrt(nbase); % DAL.regFac:
-  end
-  %  DAL.regFac(1) = uint32(sqrt(DAL.Drow)); % DAL.regFac:
-  %  DAL.regFac(1) = uint32(sqrt(DAL.Drow)*nbase); % DAL.regFac:
-else
-  DAL.regFac(1) = 1; % DAL.regFac: group LASSO parameter.
-end
-
-DAL.div = 2;
 %% ==</init variables >==
 
 if status.GEN_TrureValues == 1
-    %% dimension reduction to be estimated.
-    fprintf('\tGenerating Matrix for DAL\n');
-    [D] = gen_designMat(env,bases,I,DAL.Drow);
-    DAL.D = D;
+  %% dimension reduction to be estimated.
+  fprintf('\tGenerating Matrix for DAL\n');
+  [D0] = gen_designMat(env,bases,I,DAL.Drow);
+  DAL.D = D0;
 
-    if strcmp('dalprgl','dalprgl')
-      pI= I( (end - DAL.Drow +1): end,:);
-    else
-      pI =  2 * I( (end - DAL.Drow +1): end,:) - 1;
-    end
+  if strcmp('dalprgl','dalprgl')
+    pI= I( (end - DAL.Drow +1): end,:);
+  elseif strcmp('dallrgl','dallrgl')
+    pI =  2 * I( (end - DAL.Drow +1): end,:) - 1;
+  end
 
-elseif    exist('D')
+elseif    exist('D0')
   warning(BUG:status,'reused Matrix ''DAL.D'''.');
 end
 
@@ -83,7 +78,9 @@ if strcmp('calcDAL','calcDAL')
       EKerWeight{i1to}{1} = zeros(nbase,cnum);
       Ebias = cell(DAL.loop,1);
   end
-  for ii1 = 1:DAL.loop % search appropriate parameter.
+  PRMS = length(DAL.loop);
+  D = D0;
+  for ii1 = 1:PRMS % search appropriate parameter.
     fprintf(1,'\n\n == Regularization factor: %f == \n',DAL.regFac(ii1));
     for i1to = 1:cnum % ++parallelization 
       switch  method
@@ -125,7 +122,7 @@ if strcmp('calcDAL','calcDAL')
     end
     %++improve: plot lambda [title.a]={};
     DAL.speedup = 1;
-    if ii1 < DAL.loop
+    if ii1 <= PRMS && DAL.regFac_UserDef ~= 1
       %      DAL.regFac(ii1+1) = DAL.regFac(ii1)/5;
       DAL.regFac(ii1+1) = DAL.regFac(ii1)/DAL.div;
     end

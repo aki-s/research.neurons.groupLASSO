@@ -44,7 +44,7 @@ for i1 = 1:cnum
   grid on;
   %  ylim([0,10 * max(median(lambda))]);
   ylim([0,min(Tout.FiringRate)*2 ]);
-  ylabel(sprintf('%d',i1));
+  ylabel(sprintf('%d',i1),'fontsize',12);
   set(gca,'XTickLabel',TIMEL);
 end
 

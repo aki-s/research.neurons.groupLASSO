@@ -1,13 +1,13 @@
 %% ( Number of basis vectors for post-spike kernel )
 %% <Tweek here>
-if strcmp('comp_stevenson','comp_stevenson')
+if strcmp('comp_stevenson','comp_stevenson_')
   basisType = 'bar'; % ability of representatation is too much.
   if 1 == 1
     iht = 50; % You'd better compress time series of firing in this case.
     iht = floor(env.video.Hz/2);
   end
   ihbasprs.nbase = iht;
-else
+elseif strcmp('comp_kim','comp_kim')
   basisType = 'glm';
   ihbasprs.nbase = 5;
 end

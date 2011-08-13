@@ -1,4 +1,5 @@
-function  [kEKerWeight,kEbias,kEstatus,kEalpha,kDAL] = compare_KIM(kbases,data_of_firing)
+function  [kEKerWeight,kEbias,kEstatus,kDAL] = compare_KIM(kbases,data_of_firing)
+%function  [kEKerWeight,kEbias,kEstatus,kEalpha,kDAL] = compare_KIM(kbases,data_of_firing)
 
 %% Prerequisite: 
 % [kEKerWeight,kEbias,kEstatus,kEalpha,kDAL] = compare_KIM(kbases,'data_of_firing')
@@ -27,7 +28,7 @@ if length(size(X)) == 2
 elseif length(size(X)) == 3
   [kenv.cnum, L, TRL] = size(X);
 end
-DIV = 2;
+DIV = 100; %++bug: DIV must be > 1.0
 kDrow = floor(L/DIV);
 kenv.genLoop = L;
 kenv.Hz.video = 100;
@@ -37,8 +38,8 @@ kenv.Hz.video = 100;
 plot_I(kstatus,kgraph,kenv,X,' Firing from KIM''s neuron')
 
 fprintf('\tGenerating Matrix for DAL\n');
-[kD kpenalty] = gen_designMat(kenv,kbases,X,kDrow,1);
-
+[kD] = gen_designMat(kenv,kbases,X,kDrow,1);
+kpenalty = X((end+1 - kDrow):end,:);
 %% ==< init >==
 % $$$ kpEKerWeight{1} = zeros(nbase,kenv.cnum);
 % $$$ kpEbias{1} = 0;
@@ -76,7 +77,7 @@ for ii1 = 1:kDAL.loop % search appropriate parameter.
             dallrgl( zeros(nbase,kenv.kenv.cnum), 0,...
                      kD, kpenalty(:,i1to), kDAL.regFac(ii1to),...
                      kDAL.opt);
-      case 2
+      case 'prgl_provoked'
         %% poisson regression group lasso: blk
         %% Returned pEKerWeight must be [10x9], not be [90x1] %++bug
         if kDAL.speedup == 1
@@ -160,19 +161,23 @@ plot_Ealpha(kenv,kgraph,kEalpha{2},...
 
 %}
 
-kstatus.time.end = fix(clock);
 
+%% if you want to get every profile.
+%{
+kstatus.time.end = fix(clock);
 if strcmp('mailMe','mailMe')
   mailMe(kenv,kstatus,kDAL,'Finished compare_KIM.m')
 end
 
 tmp0 = kstatus.time.start;
+
 if kstatus.use.GUI == 1
   uisave(who,strcat(rootdir_ , 'outdir/Kim/'));
 else
   save( [ rootdir_ '/outdir/Kim',date,num2str(tmp0(4)), ...
           num2str(tmp0(5)),'-',regexprep(data_of_firing,'(.*/)(.*)','$2')]);
 end
+%}
 
 
 % $$$ 

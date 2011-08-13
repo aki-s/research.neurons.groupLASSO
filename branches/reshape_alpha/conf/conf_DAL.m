@@ -3,9 +3,13 @@ choice = 1;
 
   switch choice
     case 0
-      opt.display = 0; %0: suppress stdout
+      %      if ~isfield(opt,'display')
+        opt.display = 0; %0: suppress stdout
+                         %      end
     case 1
-      opt.display = 1;
+      %      if ~isfield(opt,'display')
+        opt.display = 1;
+        %      end
     case 2
       opt = struct();
     case 3
@@ -27,6 +31,10 @@ choice = 1;
 
 DAL.opt = opt;
 DAL.div = 2; % devide regularization factor with this in loop.
+DAL.speedup =0;
+DAL.loop = 3;
+DAL.regFac = zeros(1,DAL.loop); % DAL.regFac: regularization factor.
+DAL.regFac_UserDef = 0;
 
 if 1 == 1
   DAL.method = 'prgl'; %prgl: poisson  regression group lasso
