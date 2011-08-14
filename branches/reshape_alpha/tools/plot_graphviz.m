@@ -61,8 +61,8 @@ if exist('env') && isfield(env,'spar')
 
   if graph.GRAPHVIZ_OUT_FIG == 1
     filename1 = regexprep(filename,'.dot','');
-    command =    ['dot -Tpng ' filename ' -o ' filename1 '.eps' ];
-
+    %    command =    ['dot -Tpng ' filename ' -o ' filename1 '.eps' ];
+    command =    ['dot -Teps ' filename ' -o ' filename1 '.eps' ];
     system(command);
   end
 else

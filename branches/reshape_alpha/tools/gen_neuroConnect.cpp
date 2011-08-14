@@ -184,7 +184,8 @@ int main() {
 
   //    cout << " dot -Tpng" << ffname.show() << " .dot -o " << ffname.show() << ".png " << endl;
   string ostr;
-  ostr = " dot -Tpng "+ fname +  ".dot -o " + fname + ".png ";
+  //  ostr = " dot -Tpng "+ fname +  ".dot -o " + fname + ".png ";
+  ostr = " dot -Teps "+ fname +  ".dot -o " + fname + ".eps ";
   system(ostr.c_str());
 
   return 0;

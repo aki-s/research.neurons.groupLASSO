@@ -1,7 +1,7 @@
 %function [Ealpha_hash] = judge_alpha_ternary(env,Ealpha)
 function [Ealpha_hash,threshold,Econ] = judge_alpha_ternary(env,Ealpha,varargin)
 %%
-%function [Ealpha_hash] = judge_alpha_ternary(env,Ealpha,regFacindex,alpha_hash,Ebias)
+%function [Ealpha_hash] = judge_alpha_ternary(env,Ealpha,alpha_hash,regFacindex,Ebias)
 %%
 
 
@@ -9,20 +9,24 @@ if size(varargin,2) > 0
   for k = 1:size(varargin,2)
     switch k
       case 1
-        regFac = varargin{k}
-      case 2
         alpha_hash = varargin{k};
+      case 2
+        regFac = varargin{k}
       case 3
         Ebias = varargin{k};
     end
   end
 end
 
-if ~exist('regFac')
+if ~exist('regFac') %++bug
   regFac = 2;
 end
 
-cnum = env.cnum;
+if exist('env')
+  cnum = env.cnum;
+else
+  cnum = 9;
+end
 
 if ~exist('Ebias')
   for i1 = 1:env.cnum

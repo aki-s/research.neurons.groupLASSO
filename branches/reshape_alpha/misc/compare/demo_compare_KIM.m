@@ -54,7 +54,7 @@ kEalpha = reconstruct_Ealpha(kenv,kDAL,kbases,kEKerWeight);
 
 [kalpha_fig,kalpha_hash] = readTrueConnection([rootdir_ '/indir/KimFig1.con']); 
 
-[kEalpha_hash,threshold,Econ] = judge_alpha_ternary(kenv,kEalpha,2,kalpha_hash,kEbias);
+[kEalpha_hash,threshold,Econ] = judge_alpha_ternary(kenv,kEalpha,kalpha_hash,2,kEbias);
 
 plot_alpha_ternary(kgraph,kenv,kEalpha_hash,'Estimated,group LASSO');
 plot_alpha_ternary(kgraph,kenv,kalpha_hash,'Kim: True connection');

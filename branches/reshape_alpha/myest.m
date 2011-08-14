@@ -107,11 +107,13 @@ end
 
 
 %[Ealpha_hash,threshold,Econ] = judge_alpha_ternary(env,Ealpha,2,alpha_hash,Ebias);
-[Ealpha_hash,threshold,Econ] = judge_alpha_ternary(env,Ealpha,2, alpha_hash);
+[Ealpha_hash,threshold,Econ] = judge_alpha_ternary(env,Ealpha,alpha_hash,2);
 
 if (graph.PLOT_T == 1)
-  plot_alpha_ternary(graph,env,Ealpha_hash,'Estimated,group LASSO');
-  plot_alpha_ternary(graph,env,alpha_hash,' True connection');
+plot_CausalMatrix(reshape(Ealpha_hash,[],env.cnum),'');
+% $$$   plot_alpha_ternary(graph,env,Ealpha_hash,'Estimated,group LASSO');
+plot_CausalMatrix(alpha_fig,'')
+% $$$   plot_alpha_ternary(graph,env,alpha_hash,' True connection');
 end
 
 status.time.end = fix(clock);
@@ -120,6 +122,7 @@ if status.estimateConnection == 1
   mailMe(env,status,DAL,'Finished myest.m')
 end
 
+fprintf(1,'Saving variables....\n');
 tmp0 = status.time.start;
 mkdirname = [date,num2str(tmp0(4)),num2str(tmp0(5))];
 mkdir( [ rootdir_ '/outdir/'],mkdirname)

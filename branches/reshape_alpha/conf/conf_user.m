@@ -1,6 +1,6 @@
 %% Set freely your configuration.
 warning('DEBUG:conf','conf_user.m overrides all configuration variables set after this file.');
-DEBUG_s = 4
+DEBUG_s = 1
 
 DAL.loop = 2;
 DAL.regFac_UserDef = 1;

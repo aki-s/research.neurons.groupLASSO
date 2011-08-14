@@ -1,7 +1,7 @@
-function plot_basesBaseFunc(env,bases);
+function plot_ggsimBaseFunc(env,bases)
 %%
 %% Usage)
-% plot_basesBaseFunc(env,bases);
+% plot_ggsimBaseFunc(env,bases)
 %%
 
 % $$$ rootdir_ = '/home/aki-s/10/gaya/myown/ml2/my'

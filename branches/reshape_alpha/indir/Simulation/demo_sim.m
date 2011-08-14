@@ -5,6 +5,18 @@ load data_sim_9neuron.mat;     % 9-neuron network
 % load data_sim_hidden.mat;      % 5-neuron network with hidden feedback
 
 % Dimension of input data (L: length, N: number of neurons)
+use = 100000
+switch use
+  case 100000
+    X= X( (end+1-use):end,:);
+  case 90000
+    X= X( (end+1-use):end,:);
+  case 20000
+    X= X( (end+1-use):end,:);
+  case 2000
+    X= X( (end+1-use):end,:);
+end
+
 [L,N] = size(X);
 
 % To fit GLM models with different history orders
