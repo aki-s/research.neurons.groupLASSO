@@ -34,7 +34,7 @@ run([rootdir_ '/conf/conf_user.m']);
 gen_defaultEnv_ask();
 
 if status.READ_NEURO_CONNECTION == 1
-   [alpha_fig,alpha_hash] = readTrueConnection();
+   [alpha_fig,alpha_hash,env,status] = readTrueConnection(env,status);
 else 
   [alpha_fig,alpha_hash] = gen_alpha_hash();
 end
@@ -54,7 +54,8 @@ echo_initStatus(env,status,Tout)
 
 
 %% bases should be loaded from a mat file.
-bases = makeSimStruct_glm(0.01); % Create GLM structure with default params
+%% large argment make small width of basis.
+bases = makeSimStruct_glm(0.2); % Create GLM structure with default params
 
 if status.GEN_TrureValues == 1
   %% 1.  Set parameters and display for GLM % =============================
@@ -82,6 +83,7 @@ if status.estimateConnection == 1
   matlabpool(8);
 
   DAL = setDALregFac(DAL,bases);
+
   [EKerWeight,Ebias,Estatus,DAL] = estimateWeightKernel(env,graph,bases,I,DAL);
   %++bug Ebias isn't correct.
   Ealpha = reconstruct_Ealpha(env,DAL,bases,EKerWeight);
@@ -107,7 +109,9 @@ end
 
 
 %[Ealpha_hash,threshold,Econ] = judge_alpha_ternary(env,Ealpha,2,alpha_hash,Ebias);
-[Ealpha_hash,threshold,Econ] = judge_alpha_ternary(env,Ealpha,alpha_hash,2);
+for i1 = 1:length(DAL.regFac)
+  [Ealpha_hash,threshold,Econ] = judge_alpha_ternary(env,Ealpha,alpha_hash,i1,status);
+end
 
 if (graph.PLOT_T == 1)
 plot_CausalMatrix(reshape(Ealpha_hash,[],env.cnum),'');
@@ -118,22 +122,25 @@ end
 
 status.time.end = fix(clock);
 
-if status.estimateConnection == 1
-  mailMe(env,status,DAL,'Finished myest.m')
-end
-
 fprintf(1,'Saving variables....\n');
 tmp0 = status.time.start;
-mkdirname = [date,num2str(tmp0(4)),num2str(tmp0(5))];
+mkdirname = [date,'-start-',num2str(tmp0(4)),'_',num2str(tmp0(5))];
 mkdir( [ rootdir_ '/outdir/'],mkdirname)
 savedirname =  [ rootdir_ '/outdir/',mkdirname];
 if status.use.GUI == 1
   uisave(who,strcat(savedirname,'/', 'frame', num2str(sprintf('%05d',env.genLoop)), 'hwind', num2str(sprintf('%04d',env.hwind)), 'hnum' , num2str(sprintf('%02d',env.hnum))));
 else
-  save([savedirname,'/',date,num2str(tmp0(4)),num2str(tmp0(5)),'.mat']);
+status.outputfilename = [savedirname,'/',date,num2str(tmp0(4)),'_',num2str(tmp0(5)),'.mat'];
+  save(status.outputfilename);
 end
+fprintf(1,'outputfilename:\n %s/%s_%s.mat\n',savedirname,num2str(tmp0(4)),num2str(tmp0(5)));
 
 status.profile=profile('info');
+
+
+if status.estimateConnection == 1
+  mailMe(env,status,DAL,bases,'Finished myest.m')
+end
 
 %% ==< save all graph >==
 if (graph.SAVE_ALL == 1)
@@ -155,4 +162,10 @@ if strcmp('clean','clean')  %++conf
   run([rootdir_ '/mylib/clean.m'])
 end
 
+%{
 %fin();
+ t=readTrueConnection(env,status,status.inStructFile);
+ et=reshape(Ealpha_hash,[],env.cnum);
+calcCorrectNum(t,et)
+[Ealpha_hash,threshold,Econ] = judge_alpha_ternary(env,Ealpha,alpha_hash,4);
+%}

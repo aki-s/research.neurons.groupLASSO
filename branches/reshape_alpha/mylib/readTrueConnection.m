@@ -1,4 +1,4 @@
-function  [alpha_fig,alpha_hash] = readTrueConnection(varargin)
+function  [alpha_fig,alpha_hash,env,status] = readTrueConnection(env,status,varargin)
 %% ============ about: input file ============
 %% read true connection of neurons
 %% input file format)
@@ -14,9 +14,6 @@ function  [alpha_fig,alpha_hash] = readTrueConnection(varargin)
 %%   a neuron #from to #to.
 %%
 
-
-global env
-global status
 
 tmp.in = varargin; % must be absolete path
 tmp.in = char(tmp.in);
@@ -69,3 +66,4 @@ env.spar.from = sum(sum(alpha_fig ~= 0));
 env.spar.to = env.spar.to;
 end
 
+status.inStructFile = tmp.in;

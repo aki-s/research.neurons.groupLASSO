@@ -51,8 +51,9 @@ end
 
 %%% ==< check size>==
 if isempty(varargin)
-  if ~( Drow < env.genLoop)
+  if (Drow < env.genLoop)
     warning('DEBUG:fatal','4th arg ''Drow'' must be smaller than env.genLoop')
+    error('')
   end
 
   %% histSize: presume this number of frames is valid history length.
@@ -123,9 +124,12 @@ tmp0.count = 0;
 C = env.cnum; % # of cells
 K = bases.ihbasprs.nbase; % # of bases per a cell
 N = histSize; % length of each single basis
-D = zeros( Drow, C*K ); % design matrix
+use = Drow - N;
+%D = zeros( Drow, C*K ); % design matrix
+D = zeros( use, C*K ); % design matrix
 T = size( I, 1 ); % length of the time-sequence
-idx = (T-Drow+1):T; % time index to be estimated
+%%idx = (T-Drow+1):T; % time index to be estimated
+idx = (T+1 -use):T; % time index to be estimated
 y = I( idx, : );
 
 if strcmp(bases.type,'glm')
@@ -136,8 +140,10 @@ if strcmp(bases.type,'glm')
       tmp0.count = tmp0.count +1;
     end
     for k = 1:K
-      tmp1D = zeros( Drow, 1 );
-      for t = 1:Drow
+      %      tmp1D = zeros( Drow, 1 );
+      tmp1D = zeros( use, 1 );
+      %      for t = 1:Drow
+      for t = 1:use
         tmp1D( t ) = dot( bases.ihbasis( 1:N, k ), ...
                           I( idx(t)-(1:N), c ) );
       end

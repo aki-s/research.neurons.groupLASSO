@@ -33,6 +33,7 @@ end
 
 kenv  % print env
 data_of_firing = [rootdir_ '/indir/Simulation/data_sim_9neuron.mat'];
+
 %[kEKerWeight,kEbias,kEstatus,kEalpha,kDAL] = ...
 [kEKerWeight,kEbias,kEstatus,kDAL] = ...
     compare_KIM(kbases, data_of_firing);
@@ -52,12 +53,18 @@ kEalpha = reconstruct_Ealpha(kenv,kDAL,kbases,kEKerWeight);
 
 %[kEalpha_hash] = comp_alpha_ternary(kenv,kEalpha,kEbias,2,kalpha_hash);
 
-[kalpha_fig,kalpha_hash] = readTrueConnection([rootdir_ '/indir/KimFig1.con']); 
+[kalpha_fig,kalpha_hash,kenv] = readTrueConnection(kenv,kstatus,[rootdir_ '/indir/KimFig1.con']); 
 
-[kEalpha_hash,threshold,Econ] = judge_alpha_ternary(kenv,kEalpha,kalpha_hash,2,kEbias);
+[kEalpha_hash,threshold,Econ] = judge_alpha_ternary(kenv,kEalpha,kalpha_hash,2,kstatus,kEbias);
 
+%{
 plot_alpha_ternary(kgraph,kenv,kEalpha_hash,'Estimated,group LASSO');
 plot_alpha_ternary(kgraph,kenv,kalpha_hash,'Kim: True connection');
+%}
+if (kgraph.PLOT_T == 1)
+plot_CausalMatrix(reshape(kEalpha_hash,[],kenv.cnum),'');
+plot_CausalMatrix(kalpha_fig,'')
+end
 
 kEalpha_fig = reshape(kEalpha_hash,[],9);
 
@@ -66,11 +73,13 @@ kEalpha_fig = reshape(kEalpha_hash,[],9);
 kstatus.time.end = fix(clock);
 
 if kstatus.estimateConnection == 1
-  mailMe(kenv,kstatus,kDAL,'Finished demo_compare_KIM.m')
+  %  mailMe(kenv,kstatus,kDAL,'Finished demo_compare_KIM.m')
 end
 
+
+fprintf(1,'Saving variables....\n');
 tmp0 = kstatus.time.start;
-mkdirname = [date,num2str(tmp0(4)),num2str(tmp0(5))];
+mkdirname = [date,'-start-',num2str(tmp0(4)),num2str(tmp0(5))];
 mkdir( [ rootdir_ '/outdir/Kim'],mkdirname)
 savedirname =  [ rootdir_ '/outdir/Kim/',mkdirname];
 if kstatus.use.GUI == 1
@@ -82,6 +91,7 @@ end
 kstatus.profile=profile('info');
 
 %% ==< save all graph >==
+%% takes long time.
 if (kgraph.SAVE_ALL == 1)
   figHandles = get(0,'Children');
   fnames = {''}; %++bug:not yet implemented.

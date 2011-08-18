@@ -11,8 +11,10 @@ if size(varargin,2) > 0
       case 1
         alpha_hash = varargin{k};
       case 2
-        regFac = varargin{k}
+        regFac = varargin{k};
       case 3
+        status = varargin{k};        
+      case 4
         Ebias = varargin{k};
     end
   end
@@ -85,26 +87,31 @@ if iscell(Ealpha)
           Etype = -1; % inhibitory
         end
         Tact = alpha_hash( (i1to-1)*cnum + i2from) ;
+        if status.DEBUG.level > 3
 
-        fprintf(1,'#%2d<-%2d M%10f V%10f Etype %2d Tact %2d Eact %2d\n' ...
-                , i1to ...
-                , i2from ...
-                , Mmat(i1to,i2from) ...
-                , Vmat(i1to,i2from) ...
-                , Etype ...
-                , Tact ...
-                , Eact ...
-                );
+          fprintf(1,'#%2d<-%2d M%10f V%10f Etype %2d Tact %2d Eact %2d\n' ...
+                  , i1to ...
+                  , i2from ...
+                  , Mmat(i1to,i2from) ...
+                  , Vmat(i1to,i2from) ...
+                  , Etype ...
+                  , Tact ...
+                  , Eact ...
+                  );
+        end
         Tcount = Tcount + kdelta(Tact,Eact);
         rateZero(i1to) = rateZero(i1to) + kdelta(0,Eact);
         Ealpha_hash((i1to-1)*cnum+i2from,1) = Eact;
         Rmean = Rmean + Mmat(i1to,i2from);
         RVmean = RVmean + Vmat(i1to,i2from);
       end
-      fprintf(1,'\tRmean%6f RVmean%6f\n',Rmean/cnum,RVmean/cnum);
-      fprintf(1,'\tPthreshold %6f Nthreshold %6f\n ',threshold(1,i1to),threshold(2,i1to));
-      fprintf(1,'\t\t\t\t\t\t\t\tCorrect_Rate: %f\n',Tcount/cnum);
-      fprintf(1,'\n');
+      if status.DEBUG.level > 3
+
+        fprintf(1,'\tRmean%6f RVmean%6f\n',Rmean/cnum,RVmean/cnum);
+        fprintf(1,'\tPthreshold %6f Nthreshold %6f\n ',threshold(1,i1to),threshold(2,i1to));
+        fprintf(1,'\t\t\t\t\t\t\t\tCorrect_Rate: %f\n',Tcount/cnum);
+        fprintf(1,'\n');
+      end
       TcountTotal = TcountTotal + Tcount;
       rateZeroEach(i1to) = sum(rateZero)/cnum;
     end
@@ -112,7 +119,7 @@ if iscell(Ealpha)
     Econ.rateT = TcountTotal/(cnum*cnum);
     Econ.rateZero = sum(rateZero)/cnum;
     Econ.rateZeroEach = rateZeroEach;
-    fprintf(1,'\t\t\t\t\t\t\t\tCorrect_Rate(Total): %f\n',Econ.rateT);
+    fprintf(1,'regFac%f \t\t\t\t\t\tCorrect_Rate(Total): %f\n',regFac,Econ.rateT);
   end
 end
 

@@ -3,13 +3,15 @@
 if strcmp('comp_stevenson','comp_stevenson_')
   basisType = 'bar'; % ability of representatation is too much.
   if 1 == 1
-    iht = 50; % You'd better compress time series of firing in this case.
-    iht = floor(env.video.Hz/2);
+    iht = 50;
+  else
+    % You'd better compress time series of firing in this case.
+    iht = floor(env.Hz.video/2);
   end
   ihbasprs.nbase = iht;
 elseif strcmp('comp_kim','comp_kim')
   basisType = 'glm';
-  ihbasprs.nbase = 5;
+  ihbasprs.nbase = 6;
 end
 %% ihbasprs.hpeaks: Peak location for first and last vectors.
 % To be [ihbasprs.hpeaks(1) > arg(makeSimStruct_glm)] is recommended.
@@ -23,7 +25,7 @@ if strcmp('makeAbsRef','makeAbsRef_')
   end
 else
   ihbasprs.absref = []; % absolute refractory period 
-  ihbasprs.hpeaks = [.05 3]; % Unit of this is second.
+  ihbasprs.hpeaks = [.2 ihbasprs.nbase+2];
 end
 ihbasprs.b = .4;  % How nonlinear to make spacings %??
 %% <Tweek here/>

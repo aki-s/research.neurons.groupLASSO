@@ -22,11 +22,13 @@ if strcmp('show_basis','show_basis')
   plot(bases.ihbasis);
   axis tight;
   %xlabel('history index (frames) ');
-  xlabel('fOLD ');
+  xlabel('m ');
   title('cosine basis function');
 
+  %{
   figure;
   %  plot(bases.iht*env.Hz.video, bases.ihbas);
   plot(bases.ihbas);
   title('orthogonalized basis');
+  %}
 end

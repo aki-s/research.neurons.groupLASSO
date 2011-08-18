@@ -9,7 +9,7 @@ global kenv;
 global kgraph;
 global rootdir_
 global kstatus;
-
+global kDAL
 tic
 
 %% ==< local var >==
@@ -28,8 +28,21 @@ if length(size(X)) == 2
 elseif length(size(X)) == 3
   [kenv.cnum, L, TRL] = size(X);
 end
-DIV = 100; %++bug: DIV must be > 1.0
-kDrow = floor(L/DIV);
+
+%% ==< init variables >==
+%kDAL = init_kDAL(kDrow);
+
+if kDAL.regFac_UserDef ~=1
+  DIV = 100; %++bug: DIV must be > 1.0
+  kDrow = floor(L/DIV);
+else 
+  DIV =NaN;
+  if isfield(kDAL,'Drow')
+    kDrow = kDAL.Drow;
+  else
+    error('set kDAL.Drow');
+  end
+end
 kenv.genLoop = L;
 kenv.Hz.video = 100;
 
@@ -39,35 +52,45 @@ plot_I(kstatus,kgraph,kenv,X,' Firing from KIM''s neuron')
 
 fprintf('\tGenerating Matrix for DAL\n');
 [kD] = gen_designMat(kenv,kbases,X,kDrow,1);
-kpenalty = X((end+1 - kDrow):end,:);
+kpenalty = X((end+1 - kDrow +length(kbases.iht)):end,:);
 %% ==< init >==
 % $$$ kpEKerWeight{1} = zeros(nbase,kenv.cnum);
 % $$$ kpEbias{1} = 0;
 %% ==</init >==
 
 if strcmp('dalprgl','dalprgl')
-  pI= X((end - kDrow +1): end,:);
+  pI= X((end - kDrow +1 +length(kbases.iht)): end,:);
 end
-%% ==< init variables >==
-kDAL = init_kDAL(kDrow);
 
 kmethod = 'prgl';
-if strcmp('setRegFac_auto','setRegFac_auto')
-  if 1 ==1
-    kDAL.regFac(1) = sqrt(nbase)*10; % kDAL.regFac: group LASSO parameter.
-  else
-    kDAL.regFac(1) = sqrt(nbase); % kDAL.regFac:
-  end                                %  kDAL.regFac(1) = uint32(sqrt(kDAL.Drow)); % kDAL.regFac:
-else
-  kDAL.regFac(1) = 1; % kDAL.regFac: group LASSO parameter.
-end
-kDAL.div = 2;
+% $$$ if isfield(DAL,'Drow')
+% $$$   loopFrame = length(DAL.Drow);
+% $$$   if  loopFrame > 1
+% $$$     m =  max(DAL.Drow);
+% $$$   else
+% $$$     m = DAL.Drow;
+% $$$   end
+% $$$   if ( m > env.genLoop - size(bases.iht,1) -1 )
+% $$$     error('DAL.Drow > env.genLoop - size(bases.iht,1) +1' )
+% $$$   end
+% $$$ 
+% $$$ elseif strcmp('setRegFac_auto','setRegFac_auto_')
+% $$$   if 1 ==1
+% $$$     kDAL.regFac(1) = sqrt(nbase)*10; % kDAL.regFac: group LASSO parameter.
+% $$$   else
+% $$$     kDAL.regFac(1) = sqrt(nbase); % kDAL.regFac:
+% $$$   end                                %  kDAL.regFac(1) = uint32(sqrt(kDAL.Drow)); % kDAL.regFac:
+% $$$ else
+% $$$   kDAL.regFac(1) = 1; % kDAL.regFac: group LASSO parameter.
+% $$$ end
+% $$$ kDAL.div = 2;
 %% ==</init variables >==
 
 %kDAL % print env
 %% ==================================================================
+PRMS = length(kDAL.regFac);
 matlabpool(8);
-for ii1 = 1:kDAL.loop % search appropriate parameter.
+for ii1 = 1:PRMS % search appropriate parameter.
   fprintf(1,'\n\n == Regularization factor: %f == \n',kDAL.regFac(ii1));
   for i1to = 1:kenv.cnum % ++parallelization 
     switch  kmethod
@@ -108,7 +131,7 @@ for ii1 = 1:kDAL.loop % search appropriate parameter.
   end
 
   kDAL.speedup = 1;
-  if ii1 < kDAL.loop
+  if ii1 <= PRMS && kDAL.regFac_UserDef ~= 1
     %        kDAL.regFac(ii1+1) = kDAL.regFac(ii1)/5;
     kDAL.regFac(ii1+1) = kDAL.regFac(ii1)/kDAL.div;
   end

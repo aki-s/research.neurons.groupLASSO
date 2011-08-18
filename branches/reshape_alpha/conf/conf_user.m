@@ -1,12 +1,19 @@
 %% Set freely your configuration.
 warning('DEBUG:conf','conf_user.m overrides all configuration variables set after this file.');
-DEBUG_s = 1
+DEBUG_s = 4
 
-DAL.loop = 2;
+DAL.loop = 2; % ?
 DAL.regFac_UserDef = 1;
-DAL.regFac = [100 50 10 5];
+
+% KFAM reflects DAL.regFac
+%DAL.regFac = [10 1 0.1 0.01] 
+%DAL.regFac = [ 100 50 10];
+DAL.regFac = [ 10 3 1];
+%DAL.regFac = [ exp(3) exp(2) exp(1)];
+%DAL.regFac = [3000  1000 300 ];
+
 % DAL.Drow = [2000 20000 90000]; %++yet
-DAL.Drow = 2000;
+DAL.Drow = 20000;
 
 graph.TIGHT = 0;
 graph.PLOT_T = 1;
@@ -15,16 +22,19 @@ graph.GRAPHVIZ_OUT_FIG = 1; % default: 0
 graph.SAVE_ALL = 1;
 graph.xrange = 1000;
 
-env.cnum = 9;
-env.spar.level.from= .9;
-env.spar.level.to  = .8;
-
 switch DEBUG_s
+  case 0
+    env.genLoop = 100000;
+    status.GEN_TrureValues = 0;
+    
+    env.hnum = 50;
+    env.hwind = 1; % large hwind cause continuous firing of each neuron.
+    env.Hz.video = 100;
   case 1
     %kim 
     env.genLoop = 100000;
     status.GEN_TrureValues = 1;
-
+    
     env.hnum = 50;
     env.hwind = 1; % large hwind cause continuous firing of each neuron.
     env.Hz.video = 100;
@@ -42,9 +52,9 @@ switch DEBUG_s
     env.hwind = 1; % large hwind cause continuous firing of each neuron.
     env.Hz.video=1000;
     status.estimateConnection = 1;
-  case 4
+  case 4 % compare aki and stevenson
     env.genLoop =  20000;
-    status.GEN_TrureValues = 1;
+    status.GEN_TrureValues = 0;
 
     if 1 == 0
       % load to plot() is heavy. && one neuron depress firing of others.
@@ -82,7 +92,7 @@ env.Hz.fn=;
 %env.SELF_DEPRESS_BASE = 8; % o.k.
 %env.SELF_DEPRESS_BASE = 7; % o.k. Hz % a little too much
 env.SELF_DEPRESS_BASE = 6.5; % good.
-%env.SELF_DEPRESS_BASE = 6; % o.k. 15Hz
+                             %env.SELF_DEPRESS_BASE = 6; % o.k. 15Hz
 
 % log(2) == 0.7
 env.mail.to='aki-s@sys.i.kyoto-u.ac.jp';
@@ -94,7 +104,12 @@ status.parfor_ = 1; %++bug: not yet implemented.
 
 if 1 == 0
   status.READ_NEURO_CONNECTION = 0;
+
+  env.cnum = 9;
+  env.spar.level.from= .9;
+  env.spar.level.to  = .8;
 else
+
   status.READ_NEURO_CONNECTION = 1;
 end
 status.mail = 1;

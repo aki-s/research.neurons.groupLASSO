@@ -209,15 +209,19 @@ global kstatus;kstatus;6,141
 global kgraph;kgraph;14,328
 global kbases;kbases;16,366
 
-misc/compare/compare_KIM.m,193
+misc/compare/compare_KIM.m,217
 function  [kEKerWeight,kEbias,kEstatus,kDAL] = compare_KIMcompare_KIM1,0
 global kenv;kenv;8,280
 global kgraph;kgraph;9,293
 global rootdir_rootdir_10,308
 global kstatus;kstatus;11,324
+global kDALkDAL12,340
+
+misc/compare/conf_compare_KIM_user.m,24
+global kDALkDAL13,301
 
 misc/plot_ggsimBaseFunc.m,52
-function plot_basesBaseFunc(plot_basesBaseFunc1,0
+function plot_ggsimBaseFunc(plot_ggsimBaseFunc1,0
 
 mylib/gen/gen_designMat.m,78
 function [D] = gen_designMatgen_designMat1,0
@@ -284,11 +288,15 @@ global status;status;14,260
 mylib/plot/plot_alpha_ternary.m,52
 function plot_alpha_ternary(plot_alpha_ternary1,0
 
-mylib/plot/plotCausalMatrix.m,48
-function plotCausalMatrix(plotCausalMatrix1,0
+mylib/plot/plot_CausalMatrix.m,50
+function plot_CausalMatrix(plot_CausalMatrix1,0
 
 mylib/comp_alpha_ternary.m,68
 function [Ealpha_hash] = comp_alpha_ternarycomp_alpha_ternary2,58
+
+mylib/mailMe.m,68
+function mailMe(mailMe1,0
+function [time_] = mydatemydate23,950
 
 mylib/check/check_conf.m,230
 function check_conf(check_conf2,45
@@ -304,10 +312,6 @@ global graphgraph13,161
 mylib/check/check_genState.m,54
 function [status] = check_genStatecheck_genState1,0
 
-mylib/mailMe.m,68
-function mailMe(mailMe1,0
-function [time_] = mydatemydate20,787
-
 mylib/estimateWeightKernel.m,117
 function [EKerWeight,Ebias,Estatus,DAL] = estimateWeightKernelestimateWeightKernel1,0
 global status;status;9,191
@@ -319,18 +323,15 @@ global rootdir_rootdir_16,490
 mylib/make_basis.m,59
 function [iht, ihbas, ihbasis] = make_basismake_basis1,0
 
-mylib/readTrueConnection.m,127
-function  [alpha_fig,alpha_hash] = readTrueConnectionreadTrueConnection1,0
-global envenv18,637
-global statusstatus19,648
+mylib/readTrueConnection.m,81
+function  [alpha_fig,alpha_hash,env] = readTrueConnectionreadTrueConnection1,0
 
 mylib/get_neuronType.m,72
 function  get_neuronType(get_neuronType1,0
   global Tout;Tout;6,157
 
-mylib/reconstruct_Ealpha.m,82
+mylib/reconstruct_Ealpha.m,62
 function [Ealpha] = reconstruct_Ealphareconstruct_Ealpha1,0
-global envenv3,62
 
 mylib/echo_TrueValueStatus.m,81
 function echo_TrueValueStatus(echo_TrueValueStatus1,0
@@ -338,7 +339,10 @@ global Tout;Tout;4,100
 
 mylib/judge_alpha_ternary.m,160
 function [Ealpha_hash,threshold,Econ] = judge_alpha_ternaryjudge_alpha_ternary2,58
-function [ Pthreshold, Nthreshold] =  calcThresholdcalcThreshold124,3375
+function [ Pthreshold, Nthreshold] =  calcThresholdcalcThreshold137,3628
+
+mylib/calcCorrectNum.m,51
+function [sum] = calcCorrectNumcalcCorrectNum1,0
 
 mylib/setDALregFac.m,48
 function DALout = setDALregFacsetDALregFac1,0
@@ -349,11 +353,47 @@ function echo_initStatus(echo_initStatus1,0
 mylib/estimateFiringIntensity.m,62
 function estimateFiringEntensity(estimateFiringEntensity1,0
 
+mylib/calcCorrectRateLax_zero.m,76
+function [rate0,num0] = calcCorrectRateLax_zerocalcCorrectRateLax_zero1,0
+
+mylib/calcCorrectRateStrict.m,66
+function [rate] = calcCorrectRateStrictcalcCorrectRateStrict1,0
+
+mylib/calcCorrectRateLax_IE.m,72
+function [rate0,num0] = calcCorrectRateLax_IEcalcCorrectRateLax_IE1,0
+
+mylib/debug_formEAlpha.m,104
+function [] = debug_formEAlphadebug_formEAlpha1,0
+global rootdir_rootdir_4,113
+global envenv5,129
+
+mylib/debug_formTAlpha.m,78
+function debug_formTAlpha(debug_formTAlpha1,0
+global rootdir_rootdir_3,59
+
+mylib/calcCorrectRate_I.m,15
+function 1,0
+
 tools/plot_lambda_video.m,50
 function plot_lambda_video(plot_lambda_video1,0
 
 tools/plot_loglambda.m,44
 function plot_loglambda(plot_loglambda1,0
+
+tools/plot_Ealpha_forPapr.m,31
+global rootdir_rootdir_7,134
+
+tools/plot_Ealpha_forPaper2.m,58
+function plot_Ealpha_forPaper2(plot_Ealpha_forPaper21,0
+
+outdir/check_110814/evaluateAlpha.m,47
+function Phi = evaluateAlphaevaluateAlpha1,0
+
+outdir/check_110814/evaluatePhi.m,63
+function [recn, recr, thresh0] = evalulatePhievalulatePhi1,0
+
+outdir/check_110814/plotalpha.m,34
+function plotalpha(plotalpha1,0
 
 indir/Simulation/FDR.m,31
 function [GCMAP] = FDRFDR1,0
@@ -425,6 +465,30 @@ indir/Simulation/demo_sim.m,0
 
 indir/Simulation/CausalTest.m,0
 
+outdir/check_110814/._FigAkiSequence.m,0
+
+outdir/check_110814/FigAkiSequence.m,0
+
+outdir/check_110814/._FigKimSequence.m,0
+
+outdir/check_110814/FigKimSequence.m,0
+
+outdir/check_110814/EvalAll20110814Kim.m,0
+
+outdir/check_110814/._plotalpha.m,0
+
+outdir/check_110814/._evaluatePhi.m,0
+
+outdir/check_110814/._evaluateAlpha.m,0
+
+outdir/check_110814/EvalAll20110814.m,0
+
+tools/plot_CiC_rate2.m,0
+
+tools/._EvalAll20110814.m,0
+
+tools/plot_CiC_rate.m,0
+
 tools/plot_graphviz.m,0
 
 tools/plot_loglambda_video.m,0
@@ -436,8 +500,6 @@ mylib/clean.m,0
 mylib/plot/plot_TrueValues.m,0
 
 mylib/gen/gen_defaultEnv.m,0
-
-misc/compare/conf_compare_KIM_user.m,0
 
 misc/sampleScript.m,0
 

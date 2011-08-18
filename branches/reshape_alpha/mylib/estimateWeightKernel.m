@@ -20,8 +20,8 @@ if isfield(DAL,'Drow')
   else
     m = DAL.Drow;
   end
-  if ( m > env.genLoop - size(bases.iht,1) +1 )
-    error('DAL.Drow > env.genLoop - size(bases.iht,1) +1' )
+  if ( m > env.genLoop)%++bug -1?
+    error('DAL.Drow > env.genLoop' )
   end
 elseif strcmp('auto','auto')
   DAL.Drow = floor(env.genLoop/4);
@@ -37,18 +37,21 @@ method = DAL.method;
 
 %% ==</init variables >==
 
-if status.GEN_TrureValues == 1
+%if (status.GEN_TrureValues == 1)
+  % && ~exist('D')
+if 1 == 1
   %% dimension reduction to be estimated.
   fprintf('\tGenerating Matrix for DAL\n');
   [D0] = gen_designMat(env,bases,I,DAL.Drow);
   DAL.D = D0;
+  D = D0;
+  %  DAL.Drow = Drow.Drow - length(bases.iht);
 
-  if strcmp('dalprgl','dalprgl')
-    pI= I( (end - DAL.Drow +1): end,:);
-  elseif strcmp('dallrgl','dallrgl')
-    pI =  2 * I( (end - DAL.Drow +1): end,:) - 1;
+  if strcmp(method,'prgl')
+    pI= I( (end - DAL.Drow+ length(bases.iht) +1): end,:);
+  elseif strcmp(method,'lrgl')
+    pI =  2 * I( (end - DAL.Drow+ length(bases.iht) +1): end,:) - 1;
   end
-
 elseif    exist('D0')
   warning(BUG:status,'reused Matrix ''DAL.D'''.');
 end
@@ -78,8 +81,9 @@ if strcmp('calcDAL','calcDAL')
       EKerWeight{i1to}{1} = zeros(nbase,cnum);
       Ebias = cell(DAL.loop,1);
   end
-  PRMS = length(DAL.loop);
-  D = D0;
+  %  PRMS = length(DAL.loop);%++bug sericous?
+  PRMS = length(DAL.regFac);
+  %  D = D0;
   for ii1 = 1:PRMS % search appropriate parameter.
     fprintf(1,'\n\n == Regularization factor: %f == \n',DAL.regFac(ii1));
     for i1to = 1:cnum % ++parallelization 
