@@ -1,2 +1,2 @@
 warning('DEBUG:conf','');
-    status.GEN_TrureValues = 1;
+    status.GEN_TrueValues = 1;

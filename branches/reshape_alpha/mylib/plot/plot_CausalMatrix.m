@@ -20,4 +20,5 @@ set(gca, 'YDir', 'reverse')
 ylabel('To')
 xlabel('From')
 grid on
-text(.4,1,title,'fontsize',25,'LineWidth',3);
+
+set(gcf, 'Name', title)

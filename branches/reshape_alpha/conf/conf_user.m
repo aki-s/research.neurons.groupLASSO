@@ -1,6 +1,15 @@
 %% Set freely your configuration.
 warning('DEBUG:conf','conf_user.m overrides all configuration variables set after this file.');
-DEBUG_s = 4
+DEBUG_s = 3
+
+if 1 == 1
+  status.READ_NEURO_CONNECTION = 0;
+  env.cnum = 5;
+  env.spar.level.from= .9;
+  env.spar.level.to  = .8;
+else
+  status.READ_NEURO_CONNECTION = 1;
+end
 
 DAL.loop = 2; % ?
 DAL.regFac_UserDef = 1;
@@ -8,7 +17,7 @@ DAL.regFac_UserDef = 1;
 % KFAM reflects DAL.regFac
 %DAL.regFac = [10 1 0.1 0.01] 
 %DAL.regFac = [ 100 50 10];
-DAL.regFac = [ 10 3 1];
+DAL.regFac = [ 50 ];
 %DAL.regFac = [ exp(3) exp(2) exp(1)];
 %DAL.regFac = [3000  1000 300 ];
 
@@ -25,7 +34,7 @@ graph.xrange = 1000;
 switch DEBUG_s
   case 0
     env.genLoop = 100000;
-    status.GEN_TrureValues = 0;
+    status.GEN_TrueValues = 0;
     
     env.hnum = 50;
     env.hwind = 1; % large hwind cause continuous firing of each neuron.
@@ -33,28 +42,28 @@ switch DEBUG_s
   case 1
     %kim 
     env.genLoop = 100000;
-    status.GEN_TrureValues = 1;
+    status.GEN_TrueValues = 1;
     
     env.hnum = 50;
     env.hwind = 1; % large hwind cause continuous firing of each neuron.
     env.Hz.video = 100;
   case 2
     env.genLoop = 400000;
-    status.GEN_TrureValues = 1;
+    status.GEN_TrueValues = 1;
     env.hnum=1000;
     env.hwind=1;
     env.Hz.video=100;
   case 3
-    env.genLoop = 200000;
-    status.GEN_TrureValues = 1;
-
-    env.hnum=50;
+    env.genLoop = 20000;
+    status.GEN_TrueValues = 0;
+    status.READ_FIRING =1; % read kim FIRING.
+    env.hnum = 50;
     env.hwind = 1; % large hwind cause continuous firing of each neuron.
     env.Hz.video=1000;
     status.estimateConnection = 1;
   case 4 % compare aki and stevenson
     env.genLoop =  20000;
-    status.GEN_TrureValues = 0;
+    status.GEN_TrueValues = 0;
 
     if 1 == 0
       % load to plot() is heavy. && one neuron depress firing of others.
@@ -73,7 +82,7 @@ switch DEBUG_s
     graph.GRAPHVIZ_OUT_FIG = 1;
   case 5
     env.genLoop =  2000;
-    status.GEN_TrureValues = 1;
+    status.GEN_TrueValues = 1;
 
     env.hnum=50;
     env.hwind= 1; % large hwind cause continuous firing of each neuron.
@@ -102,16 +111,6 @@ status.profiler = 0;
 status.save_warning = 1; %++bug: not yet implemented.
 status.parfor_ = 1; %++bug: not yet implemented.
 
-if 1 == 0
-  status.READ_NEURO_CONNECTION = 0;
-
-  env.cnum = 9;
-  env.spar.level.from= .9;
-  env.spar.level.to  = .8;
-else
-
-  status.READ_NEURO_CONNECTION = 1;
-end
 status.mail = 1;
 status.DEBUG.plot = 1; %++bug: not yet implemented.
 status.DEBUG.level = 0; %++bug: not yet implemented.

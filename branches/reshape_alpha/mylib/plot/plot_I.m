@@ -9,7 +9,7 @@ function plot_I(status,graph,env,I,title)
 %% arg6 : 
 %%
 %% Example)
-% plot_I(graph,env,I,'title')
+% plot_I(status,graph,env,I,'title')
 %%
 
 %%
@@ -49,16 +49,17 @@ for i1 = 1: cnum
   grid off;
   ylim([0,1]);
   %%if status.DEBUG.plot == 1
-  if genLoop > 100000
-    warning('plot:xrange',['graph.xrange is too large. I''ve tweeked to appropriate ' ...
-                        'range.']);
-    bar( I((end+1 -graph.xrange):end,i1));
-  else
+% $$$   if genLoop < 100000
+% $$$     warning('plot:xrange',['graph.xrange is too large. I''ve tweeked to appropriate ' ...
+% $$$                         'range.']);
+% $$$     bar( I((end+1 -graph.xrange):end,i1));
+% $$$     set(gca,'XTickLabel' , (-xrange:200:0)+genLoop);
+% $$$   else
     bar( I((end+1 -xrange):end,i1));
     set(gca,'XTick' , 1:dh:xrange);
     set(gca,'XTickLabel',TIMEL);
     set(gca,'YTick',[]);
-  end
+% $$$   end
 % $$$   end
   ylabel(sprintf('%d',i1));
 end

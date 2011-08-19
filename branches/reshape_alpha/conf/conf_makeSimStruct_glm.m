@@ -3,12 +3,12 @@
 if strcmp('comp_stevenson','comp_stevenson_')
   basisType = 'bar'; % ability of representatation is too much.
   if 1 == 1
-    iht = 50;
+    nbase = 50;
   else
     % You'd better compress time series of firing in this case.
-    iht = floor(env.Hz.video/2);
+    nbase = floor(env.Hz.video/2);
   end
-  ihbasprs.nbase = iht;
+  ihbasprs.nbase = nbase;
 elseif strcmp('comp_kim','comp_kim')
   basisType = 'glm';
   ihbasprs.nbase = 6;

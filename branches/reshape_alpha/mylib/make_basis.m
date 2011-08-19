@@ -1,28 +1,5 @@
 function [iht, ihbas, ihbasis] = make_basis(ihbasprs,dt);
 % [iht, ihbas, ihbasis] = make_basis(ihbasprs,dt,iht);
-%
-% Make nonlinearly stretched basis consisting of raised cosines
-% Inputs: 
-%     ihbasprs = param structure with fields:
-%            nbase = # of basis vectors
-%            hpeaks = 2-vector containg [1st_peak  last_peak], the peak 
-%                      location of first and last raised cosine basis vectors
-%            b = offset for nonlinear stretching of x axis:  y = log(x+b) 
-%                 (larger b -> more nearly linear stretching)
-%            absref = absolute refractory period (optional)
-%     dt = grid of time points for representing basis
-%
-%  Outputs:  iht = time lattice on which basis is defined
-%            ihbas = orthogonalized basis
-%            ihbasis = original (non-orthogonal) basis 
-%
-%  Example call:
-%
-%  ihbasprs.nbase = 5;  
-%  ihbasprs.hpeaks = [.1 2];  
-%  ihbasprs.b = .5;  
-%  ihbasprs.absref = .1;  %% (optional)
-%  [iht,ihbas,ihbasis] = make_basis(ihbasprs,dt);
 
 nbase = ihbasprs.nbase;
 b = ihbasprs.b;

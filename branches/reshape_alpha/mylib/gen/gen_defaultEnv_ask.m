@@ -18,6 +18,9 @@ if exist('status') && ( status.READ_NEURO_CONNECTION ~= 1 )
   else
     spar.level.to = str2num(input('env.spar.level.to (0< <1):= ','s'));
   end
+  if isfield(env,'cnum')
+    cnum = env.cnum;
+  end
   spar.from = randperm(cnum); % spar.from: connenction from
   spar.from = spar.from(1:floor(spar.level.from*cnum));
   spar.to = randperm(cnum); % spar.to: connection to
@@ -27,7 +30,6 @@ if exist('status') && ( status.READ_NEURO_CONNECTION ~= 1 )
   spar.level.dup = sum(spar.from == spar.to); %++bug: incorrect value.
 
   env.spar = spar;
-  clear spar;
 
 end
 

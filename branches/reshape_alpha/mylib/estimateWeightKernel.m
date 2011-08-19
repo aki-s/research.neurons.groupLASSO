@@ -20,7 +20,7 @@ if isfield(DAL,'Drow')
   else
     m = DAL.Drow;
   end
-  if ( m > env.genLoop)%++bug -1?
+  if ( m > env.genLoop-1)
     error('DAL.Drow > env.genLoop' )
   end
 elseif strcmp('auto','auto')
@@ -29,7 +29,7 @@ elseif strcmp('auto','auto')
 elseif strcmp('allI','allI_')  %++conf
   %%% use all available firing history.
   %% Drow: length of total frames used at loss function.
-  DAL.Drow = env.genLoop - size(bases.iht,1) +1; 
+  DAL.Drow = env.genLoop - size(bases.iht,1) -1; 
 end
 
 %% ==< init variables >==
@@ -37,7 +37,7 @@ method = DAL.method;
 
 %% ==</init variables >==
 
-%if (status.GEN_TrureValues == 1)
+%if (status.GEN_TrueValues == 1)
   % && ~exist('D')
 if 1 == 1
   %% dimension reduction to be estimated.

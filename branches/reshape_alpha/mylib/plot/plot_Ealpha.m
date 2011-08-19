@@ -14,12 +14,12 @@ end
 global rootdir_
 
 cnum = env.cnum;
-if isfield(env,'hnum')
+if isfield(env,'hnum') && ~isnan(env.hnum)
   hnum = env.hnum;
 else
   hnum = 1000;
 end
-if isfield(env,'hwind')
+if isfield(env,'hwind') && ~isnan(env.hwind)
   hwind = env.hwind;
 else
   hwind = 1;
@@ -92,7 +92,6 @@ if cnum < MAX
     %% < from-to cell label >
     if (i2to == 1)     % When in the topmost margin.
       xlabel(i3from);
-      %      xlim([0,hnum*hwind*XSIZE]);
     end
     if (i3from == 1) % When in the leftmost margin.
       ylabel(i2to); 

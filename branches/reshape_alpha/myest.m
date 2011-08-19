@@ -14,19 +14,13 @@ run([rootdir_ '/conf/setpaths.m']);
 %% ==< configure >==
 %% read user custom configuration.
 %% This overrides all configurations below.
-%run([rootdir_ '/conf/conf_user.m']);
 
 if strcmp('configure', 'configure') %++conf
-
-  %  run([rootdir_ '/conf/conf_progress.m']);
-  %  status = conf_progress(status);
   conf_progress();
-
-  %  run([rootdir_ '/conf/conf_graph.m']);
+  [env status ] = conf_IO(env,status);
   graph = conf_graph();
   run([rootdir_ '/conf/conf_rand.m']);
   [DAL] = conf_DAL(); % configuration for solver 'DAL'.
-
   run([rootdir_ '/conf/conf_mail.m']);% notify the end of program via mail.
 end
 
@@ -34,47 +28,38 @@ run([rootdir_ '/conf/conf_user.m']);
 gen_defaultEnv_ask();
 
 if status.READ_NEURO_CONNECTION == 1
-   [alpha_fig,alpha_hash,env,status] = readTrueConnection(env,status);
+  [alpha_fig,alpha_hash,env,status] = readTrueConnection(env,status);
 else 
-  [alpha_fig,alpha_hash] = gen_alpha_hash();
+  if  (status.READ_FIRING == 1)
+    [env I Tout] = readI(env,status,Tout);
+  end
+  [alpha_fig,alpha_hash,status] = gen_alpha_hash(env,status);
 end
 get_neuronType(env,status,alpha_fig);
 
 %% ==</ configure >==
 
-% check configuration
-if 1== 0
-  check_conf(env,status,Tout,graph);
-else
-  check_conf();
-end
-status = check_genState(status);
-
-echo_initStatus(env,status,Tout)
-
-
 %% bases should be loaded from a mat file.
 %% large argment make small width of basis.
 bases = makeSimStruct_glm(0.2); % Create GLM structure with default params
+%% 0.2 : 118
 
-if status.GEN_TrureValues == 1
+[env status Tout graph] = check_conf(env,status,Tout,graph,bases);
+status = check_genState(status);
+echo_initStatus(env,status,Tout)
+if ( status.GEN_TrueValues == 1 ) 
   %% 1.  Set parameters and display for GLM % =============================
-  if strcmp('genTrueVale','genTrueVale') %++conf
-    %% prepare 'TrueValues'.
-    tic;
-    if 1 == 1
-      [alpha ] = gen_TrueWeightKernel(env,status,alpha_hash);
-      [alpha0] = gen_TrueWeightSelf(env);
-      [I,lambda,loglambda] = gen_TrueI(env,alpha0,alpha);
-      %      Tout = get_neuronType(env,status,alpha_fig);
-      echo_TrueValueStatus(env,status,lambda,I);
+  %% prepare 'TrueValues'.
+  tic;
+  [alpha ] = gen_TrueWeightKernel(env,status,alpha_hash);
+  [alpha0] = gen_TrueWeightSelf(env);
+  [I,lambda,loglambda] = gen_TrueI(env,alpha0,alpha);
+  echo_TrueValueStatus(env,status,lambda,I);
 
-      run([rootdir_ '/mylib/plot/plot_TrueValues']);
-    end
-    status.time.gen_TrueValue = toc;
-
-  end
+  run([rootdir_ '/mylib/plot/plot_TrueValues']);
+  status.time.gen_TrueValue = toc;
 end
+
 
 %% ==< Start estimation with DAL>==
 
@@ -90,8 +75,8 @@ if status.estimateConnection == 1
   if graph.PLOT_T == 1
     fprintf(1,'\n\n Now plotting estimated kernel\n');
     for i1 = 1:length(DAL.regFac)
-    plot_Ealpha(env,graph,Ealpha{i1},...
-                strcat(['dallrgl:DAL regFac=  '], num2str(DAL.regFac(i1))));
+      plot_Ealpha(env,graph,Ealpha{i1},...
+                  strcat(['dallrgl:DAL regFac=  '], num2str(DAL.regFac(i1))));
     end
   end
   %% reconstruct lambda
@@ -100,24 +85,18 @@ if status.estimateConnection == 1
     estimateFiringIntensity(Ebias,EKerWeight);
   end
 
-  %% compare results from group LASSO and GCM by KIM
-% $$$ [kEKerWeight,kEbias,kEstatus,kEalpha,kDAL] = compare_KIM(env,status,graph,bases,DAL);
-
   matlabpool close
   %% ==</Start estimation with DAL>==
 end
 
 
-%[Ealpha_hash,threshold,Econ] = judge_alpha_ternary(env,Ealpha,2,alpha_hash,Ebias);
 for i1 = 1:length(DAL.regFac)
   [Ealpha_hash,threshold,Econ] = judge_alpha_ternary(env,Ealpha,alpha_hash,i1,status);
 end
 
 if (graph.PLOT_T == 1)
-plot_CausalMatrix(reshape(Ealpha_hash,[],env.cnum),'');
-% $$$   plot_alpha_ternary(graph,env,Ealpha_hash,'Estimated,group LASSO');
-plot_CausalMatrix(alpha_fig,'')
-% $$$   plot_alpha_ternary(graph,env,alpha_hash,' True connection');
+  plot_CausalMatrix(reshape(Ealpha_hash,[],env.cnum),'Estimated,group LASSO');
+  plot_CausalMatrix(alpha_fig,'True connection')
 end
 
 status.time.end = fix(clock);
@@ -130,10 +109,10 @@ savedirname =  [ rootdir_ '/outdir/',mkdirname];
 if status.use.GUI == 1
   uisave(who,strcat(savedirname,'/', 'frame', num2str(sprintf('%05d',env.genLoop)), 'hwind', num2str(sprintf('%04d',env.hwind)), 'hnum' , num2str(sprintf('%02d',env.hnum))));
 else
-status.outputfilename = [savedirname,'/',date,num2str(tmp0(4)),'_',num2str(tmp0(5)),'.mat'];
+  status.outputfilename = [savedirname,'/',date,'-',num2str(tmp0(4)),'_',num2str(tmp0(5)),'.mat'];
   save(status.outputfilename);
 end
-fprintf(1,'outputfilename:\n %s/%s_%s.mat\n',savedirname,num2str(tmp0(4)),num2str(tmp0(5)));
+fprintf(1,'outputfilename:\n %s\n',status.outputfilename)
 
 status.profile=profile('info');
 
@@ -164,8 +143,8 @@ end
 
 %{
 %fin();
- t=readTrueConnection(env,status,status.inStructFile);
- et=reshape(Ealpha_hash,[],env.cnum);
+t=readTrueConnection(env,status,status.inStructFile);
+et=reshape(Ealpha_hash,[],env.cnum);
 calcCorrectNum(t,et)
 [Ealpha_hash,threshold,Econ] = judge_alpha_ternary(env,Ealpha,alpha_hash,4);
 %}

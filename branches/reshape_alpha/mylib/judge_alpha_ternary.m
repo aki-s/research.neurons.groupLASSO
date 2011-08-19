@@ -24,11 +24,7 @@ if ~exist('regFac') %++bug
   regFac = 2;
 end
 
-if exist('env')
-  cnum = env.cnum;
-else
-  cnum = 9;
-end
+cnum = env.cnum;
 
 if ~exist('Ebias')
   for i1 = 1:env.cnum
@@ -39,13 +35,12 @@ Eb_threshold = 5;
 
 var_threshold = 0.1;
 
-Ealpha_hash = zeros(cnum,1);
+Ealpha_hash = zeros(cnum*cnum,1);
 rateZeroEach = zeros(cnum,1);
 
 kdelta = inline('a1 == a2','a1','a2'); % kronecker's delta
 
 %% == ==
-
 %% == ==
 % large variance to 0 has high confident if regFac is large enough.
 % so, pull out the cell intern as regFac become small.
@@ -55,7 +50,7 @@ Vmat = zeros(cnum); % Vmat: matrix of valiance
 threshold = zeros(2,cnum);
 if iscell(Ealpha)
   [garbage, num ] = size(Ealpha);
-  if num > 1
+  if num > 0
     TcountTotal = 0;
     rateZero = zeros(cnum,1); 
     for i1to = 1:cnum
@@ -87,8 +82,7 @@ if iscell(Ealpha)
           Etype = -1; % inhibitory
         end
         Tact = alpha_hash( (i1to-1)*cnum + i2from) ;
-        if status.DEBUG.level > 3
-
+        if ( status.DEBUG.level > 3 )
           fprintf(1,'#%2d<-%2d M%10f V%10f Etype %2d Tact %2d Eact %2d\n' ...
                   , i1to ...
                   , i2from ...
@@ -105,8 +99,7 @@ if iscell(Ealpha)
         Rmean = Rmean + Mmat(i1to,i2from);
         RVmean = RVmean + Vmat(i1to,i2from);
       end
-      if status.DEBUG.level > 3
-
+      if ( status.DEBUG.level > 3 )
         fprintf(1,'\tRmean%6f RVmean%6f\n',Rmean/cnum,RVmean/cnum);
         fprintf(1,'\tPthreshold %6f Nthreshold %6f\n ',threshold(1,i1to),threshold(2,i1to));
         fprintf(1,'\t\t\t\t\t\t\t\tCorrect_Rate: %f\n',Tcount/cnum);

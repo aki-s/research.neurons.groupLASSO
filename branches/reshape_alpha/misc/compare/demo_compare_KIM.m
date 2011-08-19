@@ -7,7 +7,7 @@ global kstatus;
 kstatus = conf_progress();
 kstatus.mail = 1;
 kstatus.use.GUI = 0;
-kstatus.GEN_TrureValues = NaN;
+kstatus.GEN_TrueValues = NaN;
 kstatus.GEN_Neuron_individuality = NaN;
 kstatus.time.start = fix(clock);
 
