@@ -1,10 +1,33 @@
 %% generate figure
+DAL.regFac = [1000 100 50 10 1];
+env.useFrame = [
+    1000 % 1 
+    2000 % 2 
+    5000 % 3
+    10000 % 4
+    20000 % 5
+    50000 % 6
+    90000 % 7
+    %      100000 % 8
+               ];
+status.method = 'Aki';
+status.inFiring = '/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/indir/Simulation/data_sim_9neuron.mat';
 
-N000 = {'2000', '20000', '90000'}
-L000 = {'5', '10', '50', '100','1','1.000000e-01','1.000000e-02'}
+load('/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/indir/sim_kim_ans.mat') % M_ans, env, status
+
+for i1 =1:length(env.useFrame)
+  N000{i1} = num2str(sprintf('%07d',env.useFrame(i1)));
+end
+for i1 =1:length(DAL.regFac)
+  L000{i1} = num2str(sprintf('%07d',DAL.regFac(i1)));
+end
+
 L0 = [5,2,2]
 
-load('M_ans.mat') % M_ans
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 AkiAcc = zeros(3,4);
 for N1 = 1:3
   filename =sprintf('Aki_%s_Aki%s.mat', L000{L0(N1)}, N000{N1});

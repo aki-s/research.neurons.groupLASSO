@@ -52,7 +52,7 @@ for N1 = 1:length(N000)
 % $$$         else
 % $$$             L11 = L1;
 % $$$         end
-        filename =sprintf('Aki_%s_Aki%s.mat', L000{L11}, N000{N1});
+        filename =sprintf('Aki-%s-Aki-%s.mat', L000{L1}, N000{N1});
         load( filename ); %Alpha
         Phi = evaluateAlpha( Alpha );
         [recn, recr, thresh0] = evaluatePhi(Phi, M_ans);
