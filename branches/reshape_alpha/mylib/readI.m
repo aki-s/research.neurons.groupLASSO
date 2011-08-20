@@ -20,6 +20,10 @@ Oenv.hwind = NaN;
 Oenv.SELF_DEPRESS_BASE = NaN;
 
 [Oenv.genLoop Oenv.cnum] = size(I);
+%{
+flag = (Oenv.genLoop > env.useFrame);
+Oenv.useFrame = env.useFrame.*flag;
+%}
 
 if isfield(Oenv,'Hz') && isfield(Oenv.Hz,'video') 
   OTout.simtime = Oenv.genLoop/Oenv.Hz.video;

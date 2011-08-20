@@ -1,9 +1,10 @@
-function [Oenv Ostatus OTout Ograph] = check_conf(env,status,Tout,graph,bases)
+function [Oenv Ostatus OTout Ograph ODAL] = check_conf(env,status,Tout,graph,bases,DAL)
 
 Oenv    = env    ;
 Ostatus = status ;
 OTout   = Tout   ;
 Ograph  = graph  ;
+ODAL    = DAL    ;
 
 if ( graph.SAVE_EPS == 1) && (graph.PLOT_T == 0 )
   warning('DEBUG:conf','configuration error. graph.SAVE_EPS=1 was deactivated.');
@@ -30,4 +31,10 @@ if isfield(env,'Hz') && isfield(env.Hz,'video') % check ability of expression.
   if (bases.ihbasprs.NumFrame/env.Hz.video) < 0.1 
     warning(DEBUG:estimate,'range of bases seems to be small');
   end
+end
+
+if isfield(DAL,'Drow')
+  Oenv.useFrame = DAL.Drow;
+else
+  ODAL.Drow = env.useFrame;
 end

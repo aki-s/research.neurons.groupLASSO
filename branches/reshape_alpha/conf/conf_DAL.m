@@ -1,5 +1,5 @@
 function [DAL] = conf_DAL
-choice = 1;
+choice = 0;
 
   switch choice
     case 0
@@ -32,8 +32,11 @@ choice = 1;
 DAL.opt = opt;
 DAL.div = 2; % devide regularization factor with this in loop.
 DAL.speedup =0;
+%{
 DAL.loop = 3;
 DAL.regFac = zeros(1,DAL.loop); % DAL.regFac: regularization factor.
+
+%}
 DAL.regFac_UserDef = 0;
 
 if 1 == 1

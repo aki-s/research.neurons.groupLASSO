@@ -1,14 +1,15 @@
 function setpaths(rootdir_);
 if exist('rootdir_')
-rundir = rootdir_;
+  rundir = rootdir_;
 else
-rundir = pwd;
-rundir = regexprep(rundir,'(.*/)(.*$)','$1');
+  rundir = pwd;
+  rundir = regexprep(rundir,'(.*/)(.*$)','$1');
 end
 
 addpath([rundir '/conf/']);
 addpath([rundir '/dal_mod/']);
 addpath([rundir '/dal_ver1.05/']);
+addpath([rundir '/mylib/eval']);
 addpath([rundir '/mylib/']);
 addpath([rundir '/mylib/check']);
 addpath([rundir '/mylib/gen']);

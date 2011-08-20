@@ -32,8 +32,9 @@ if exist('graph')
   if ~isfield(graph,'TIGHT') % precede user defined value.
     graph.TIGHT = 0; % 0: each graph is plotted with absolute scale.
   end
-  graph.prm.Yrange      = [-5,5];
-  graph.prm.diag_Yrange = [-40,10];
+  graph.prm.Xrange      = [0,0.2];
+  graph.prm.Yrange      = [-2,2];
+  graph.prm.diag_Yrange = [-10,3];
 else   %% defalut:
   graph = struct('PLOT_T',1 ...
                  ,'PRINT_T',0 ...

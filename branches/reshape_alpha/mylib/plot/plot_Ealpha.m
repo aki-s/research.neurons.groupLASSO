@@ -1,4 +1,4 @@
-function plot_Ealpha(env,graph,Ealpha,title)
+function plot_Ealpha(env,graph,Ealpha,DAL,regFacIndex,titleIn)
 %%
 %% USAGE)
 %% Example:
@@ -8,7 +8,7 @@ function plot_Ealpha(env,graph,Ealpha,title)
 DEBUG = 0;
 
 if DEBUG == 1
-  title = 'DEBUG';
+  title = 'DEBUG:';
 end
 
 global rootdir_
@@ -17,7 +17,7 @@ cnum = env.cnum;
 if isfield(env,'hnum') && ~isnan(env.hnum)
   hnum = env.hnum;
 else
-  hnum = 1000;
+  hnum = 100;
 end
 if isfield(env,'hwind') && ~isnan(env.hwind)
   hwind = env.hwind;
@@ -31,7 +31,8 @@ else
 end
 
 MAX = graph.PLOT_MAX_NUM_OF_NEURO;
-
+title = sprintf('dal%s:DAL regFac=%4d frame=%6d  ',DAL.method,DAL.regFac(regFacIndex),DAL.Drow );
+strcat(title,titleIn);
 %%% == useful func ==
 %kdelta = inline('n == 0'); % kronecker's delta
 %%% ===== PLOT alpha ===== START =====
@@ -58,7 +59,7 @@ if cnum < MAX
   i3from = 1; % cell from
   for i1 = 1:cnum*cnum % subplot select
     subplot(cnum,cnum,i1);
-    tmp1 = Ealpha{i2to}{i3from};
+    tmp1 = Ealpha{regFacIndex}{i2to}{i3from};
     %% <  chage color ploted according to cell type >
     if i2to == i3from
       %      ylim(diag_Yrange)
@@ -121,7 +122,8 @@ ylabel(h,'Target')
 
 %%% ===== PLOT alpha ===== END =====
 %% write out eps file
+%{
 if graph.PRINT_T == 1
   print('-depsc','-tiff', [rootdir_ '/outdir/Estimated_alpha.eps'])
 end
-
+%}

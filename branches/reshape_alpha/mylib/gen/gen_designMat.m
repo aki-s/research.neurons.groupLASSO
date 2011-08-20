@@ -50,15 +50,9 @@ if strcmp('debug','debug')
 end
 
 %%% ==< check size>==
-if isempty(varargin)
-  if (Drow < env.genLoop)
+if (status.READ_FIRING ~= 1)
+  if (Drow > env.genLoop)
     warning('DEBUG:fatal','4th arg ''Drow'' must be smaller than env.genLoop')
-    error('')
-  end
-
-  %% histSize: presume this number of frames is valid history length.
-  if ( env.genLoop < ( histSize + Drow ))
-    warning('DEBUG:fatal','The number of history windows is too large.');
     if status.DEBUG.level > 0
       fprintf(1,...
               [ ...
@@ -77,9 +71,9 @@ if isempty(varargin)
               '))'...
               );
     end
-    %  error('choose appropriate number of basis.'); %++debug:important
+    error('choose appropriate number of basis.'); %++debug:important
     %%+improve: auto select appropriate number of  basis used.
-  elseif ( ( env.genLoop  / prs.gen_designMat ) < ( histSize + Drow )) ...
+  elseif ( ( env.genLoop  / prs.gen_designMat ) < (  Drow )) ...
     % ++debug.1
     %{
     disp(['Number of basis used to estimate, and number of frames ' ...
@@ -135,9 +129,11 @@ y = I( idx, : );
 if strcmp(bases.type,'glm')
   fprintf(1,'%s : %% ',bases.type);
   for c = 1:C
-    if ~mod(c,tmp0.showProg) %% show progress.
-      fprintf(1,'%d ',tmp0.count*10)
-      tmp0.count = tmp0.count +1;
+    if status.parfor_ == 1
+      if ~mod(c,tmp0.showProg) %% show progress.
+        fprintf(1,'%d ',tmp0.count*10)
+        tmp0.count = tmp0.count +1;
+      end
     end
     for k = 1:K
       %      tmp1D = zeros( Drow, 1 );

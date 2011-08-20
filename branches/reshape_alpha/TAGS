@@ -11,7 +11,7 @@ function setpaths(setpaths1,0
 
 conf/conf_progress.m,81
 function  [status] = conf_progressconf_progress1,0
-global status;status;5,97
+global status;status;4,64
 
 conf/conf_IO.m,80
 function [envOut statusOut] = conf_IOconf_IO1,0
@@ -299,10 +299,10 @@ function [Ealpha_hash] = comp_alpha_ternarycomp_alpha_ternary2,58
 
 mylib/mailMe.m,69
 function mailMe(mailMe1,0
-function [time_] = mydatemydate30,1069
+function [time_] = mydatemydate30,1052
 
-mylib/check/check_conf.m,66
-function [Oenv Ostatus OTout Ograph] = check_confcheck_conf2,45
+mylib/check/check_conf.m,70
+function [Oenv Ostatus OTout Ograph ODAL] = check_confcheck_conf1,0
 
 mylib/check/check_genState.m,54
 function [status] = check_genStatecheck_genState1,0
@@ -310,13 +310,28 @@ function [status] = check_genStatecheck_genState1,0
 mylib/eval/evaluatePhi.m,63
 function [recn, recr, thresh0] = evalulatePhievalulatePhi1,0
 
+mylib/eval/evaluateAlpha.m,47
+function Phi = evaluateAlphaevaluateAlpha1,0
+
+mylib/eval/plotalpha.m,34
+function plotalpha(plotalpha1,0
+
+mylib/eval/transform_Ealpha.m,100
+function transform_Ealpha(transform_Ealpha1,0
+global rootdir_rootdir_4,133
+global envenv5,149
+
+mylib/eval/transform_Talpha.m,78
+function debug_formTAlpha(debug_formTAlpha1,0
+global rootdir_rootdir_3,59
+
 mylib/estimateWeightKernel.m,117
 function [EKerWeight,Ebias,Estatus,DAL] = estimateWeightKernelestimateWeightKernel1,0
 global status;status;9,191
 
-mylib/makeSimStruct_glm.m,85
+mylib/makeSimStruct_glm.m,83
 function S = makeSimStruct_glmmakeSimStruct_glm1,0
-global rootdir_rootdir_16,490
+global rootdir_rootdir_4,41
 
 mylib/make_basis.m,59
 function [iht, ihbas, ihbasis] = make_basismake_basis1,0
@@ -324,9 +339,8 @@ function [iht, ihbas, ihbasis] = make_basismake_basis1,0
 mylib/readTrueConnection.m,88
 function  [alpha_fig,alpha_hash,env,status] = readTrueConnectionreadTrueConnection1,0
 
-mylib/get_neuronType.m,72
-function  get_neuronType(get_neuronType1,0
-  global Tout;Tout;6,157
+mylib/get_neuronType.m,53
+function [OTout] = get_neuronTypeget_neuronType1,0
 
 mylib/reconstruct_Ealpha.m,62
 function [Ealpha] = reconstruct_Ealphareconstruct_Ealpha1,0
@@ -335,8 +349,8 @@ mylib/echo_TrueValueStatus.m,81
 function echo_TrueValueStatus(echo_TrueValueStatus1,0
 global Tout;Tout;4,100
 
-mylib/judge_alpha_ternary.m,160
-function [Ealpha_hash,threshold,Econ] = judge_alpha_ternaryjudge_alpha_ternary2,58
+mylib/judge_alpha_ternary.m,170
+function [Ealpha_hash,Ealpha_fig,threshold,Econ] = judge_alpha_ternaryjudge_alpha_ternary1,0
 function [ Pthreshold, Nthreshold] =  calcThresholdcalcThreshold130,3599
 
 mylib/calcCorrectNum.m,51
@@ -345,9 +359,9 @@ function [sum] = calcCorrectNumcalcCorrectNum1,0
 mylib/setDALregFac.m,48
 function DALout = setDALregFacsetDALregFac1,0
 
-mylib/readI.m,68
-function [ Oenv I ] = readIreadI1,0
-global rootdir_rootdir_3,41
+mylib/readI.m,73
+function [ Oenv I OTout] = readIreadI1,0
+global rootdir_rootdir_3,51
 
 mylib/echo_initStatus.m,46
 function echo_initStatus(echo_initStatus1,0
@@ -363,15 +377,6 @@ function [rate] = calcCorrectRateStrictcalcCorrectRateStrict1,0
 
 mylib/calcCorrectRateLax_IE.m,72
 function [rate0,num0] = calcCorrectRateLax_IEcalcCorrectRateLax_IE1,0
-
-mylib/debug_formEAlpha.m,104
-function [] = debug_formEAlphadebug_formEAlpha1,0
-global rootdir_rootdir_4,113
-global envenv5,129
-
-mylib/debug_formTAlpha.m,78
-function debug_formTAlpha(debug_formTAlpha1,0
-global rootdir_rootdir_3,59
 
 mylib/calcCorrectRate_I.m,15
 function 1,0
@@ -511,6 +516,14 @@ tools/plot_graphviz.m,0
 tools/plot_loglambda_video.m,0
 
 mylib/fin.m,0
+
+mylib/eval/FigKimSequence.m,0
+
+mylib/eval/FigAkiSequence.m,0
+
+mylib/eval/EvalAll20110814Kim.m,0
+
+mylib/eval/EvalAll20110814.m,0
 
 mylib/clean.m,0
 

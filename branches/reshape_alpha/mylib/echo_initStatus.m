@@ -5,8 +5,10 @@ disp(env);
 fprintf(1,'\t== status ==\n'); 
 disp(status);
 % $$$ if status.READ_FIRING == 0
+if env.cnum < 15
   fprintf(1,'\t== Tout ==\n'); 
   disp(Tout);
+end
 % $$$ end
 
 %fprintf(1,'Total history width %f[sec]\n',hnum*hwind/Hz.video);

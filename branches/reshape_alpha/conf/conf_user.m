@@ -1,8 +1,8 @@
 %% Set freely your configuration.
 warning('DEBUG:conf','conf_user.m overrides all configuration variables set after this file.');
-DEBUG_s = 3
+DEBUG_s = 0
 
-if 1 == 1
+if 1 == 0
   status.READ_NEURO_CONNECTION = 0;
   env.cnum = 5;
   env.spar.level.from= .9;
@@ -11,34 +11,37 @@ else
   status.READ_NEURO_CONNECTION = 1;
 end
 
-DAL.loop = 2; % ?
-DAL.regFac_UserDef = 1;
-
-% KFAM reflects DAL.regFac
-%DAL.regFac = [10 1 0.1 0.01] 
-%DAL.regFac = [ 100 50 10];
-DAL.regFac = [ 50 ];
-%DAL.regFac = [ exp(3) exp(2) exp(1)];
-%DAL.regFac = [3000  1000 300 ];
-
-% DAL.Drow = [2000 20000 90000]; %++yet
-DAL.Drow = 20000;
+if 1 == 1
+  DAL.regFac_UserDef = 1;
+  %%
+  % KFAM reflects DAL.regFac
+  %DAL.regFac = [10 1 0.1 0.01] 
+  DAL.regFac = [1000 100 50 10 1];
+  %  DAL.regFac = [10 100000];
+  %  DAL.regFac = [ 100000 10];
+  %  DAL.regFac = [ 50 ];
+  %DAL.regFac = [ exp(3) exp(2) exp(1)];
+  %DAL.regFac = [3000  1000 300 ];
+  % DAL.Drow = [2000 20000 90000]; %++yet
+end
+%DAL.Drow = 2000;
 
 graph.TIGHT = 0;
 graph.PLOT_T = 1;
 graph.PLOT_MAX_NUM_OF_NEURO = 11;
 graph.GRAPHVIZ_OUT_FIG = 1; % default: 0
-graph.SAVE_ALL = 1;
+graph.SAVE_ALL = 0;
 graph.xrange = 1000;
 
 switch DEBUG_s
   case 0
-    env.genLoop = 100000;
+    env.genLoop = 110000;
     status.GEN_TrueValues = 0;
     
-    env.hnum = 50;
+    env.hnum = 100;
     env.hwind = 1; % large hwind cause continuous firing of each neuron.
-    env.Hz.video = 100;
+    env.Hz.video = 1000;
+    status.estimateConnection = 1;
   case 1
     %kim 
     env.genLoop = 100000;
@@ -107,11 +110,11 @@ env.SELF_DEPRESS_BASE = 6.5; % good.
 env.mail.to='aki-s@sys.i.kyoto-u.ac.jp';
 env.mail.smtp='hawaii.sys.i.kyoto-u.ac.jp';
 
-status.profiler = 0;
+status.profiler = 1;
 status.save_warning = 1; %++bug: not yet implemented.
 status.parfor_ = 1; %++bug: not yet implemented.
 
 status.mail = 1;
 status.DEBUG.plot = 1; %++bug: not yet implemented.
-status.DEBUG.level = 0; %++bug: not yet implemented.
+status.DEBUG.level = 1; %++bug: not yet implemented.
 status.use.GUI = 0; %++bug: not yet implemented.

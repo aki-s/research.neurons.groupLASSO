@@ -1,4 +1,4 @@
-function [recn, recr, thresh0] = evalulatePhi( Phi, Answer )
+function [recn, recr, thresh0] = evaluatePhi( Phi, Answer )
 
 [N,dum] = size(Phi);
 
@@ -7,14 +7,9 @@ Phi = Phi + eye(N)*1e100;
 idx = find( Phi(:) < 1e90 );
 Phi = Phi( idx );
 Answer = Answer( idx );
-switch 'V2'
-    case 'V1'
-    tmp = std( abs( Phi(:) ) );
-    thresh0 = tmp * (1:1000)/100;
-    case 'V2'
-    tmp = [min(abs(Phi(:))), max(abs(Phi(:)))]
-    thresh0 = tmp(1):( (tmp(2)-tmp(1))/1000 ):tmp(2);
-end
+tmp = std( abs( Phi(:) ) );
+thresh0 = tmp * (1:1000)/100;
+
 N0 = sum( Answer == 0 );
 Np = sum( Answer == 1 );
 Nn = sum( Answer == -1 );

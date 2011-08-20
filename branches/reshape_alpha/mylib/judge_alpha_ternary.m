@@ -1,5 +1,4 @@
-%function [Ealpha_hash] = judge_alpha_ternary(env,Ealpha)
-function [Ealpha_hash,threshold,Econ] = judge_alpha_ternary(env,Ealpha,varargin)
+function [Ealpha_hash,Ealpha_fig,threshold,Econ] = judge_alpha_ternary(env,Ealpha,varargin)
 %%
 %function [Ealpha_hash] = judge_alpha_ternary(env,Ealpha,alpha_hash,regFacindex,Ebias)
 %%
@@ -126,6 +125,7 @@ end
 Econ.Mmat = Mmat;
 Econ.Vmat = Vmat;
 Econ.filter = filter; % valid under high regFac. (Econ.Mmat).*(Econ.filter);
+Ealpha_fig = reshape(Ealpha_hash,[],env.cnum);
 
 function [ Pthreshold, Nthreshold] =  calcThreshold(cnum, Ealpha,regFac, i1to )
 Pthreshold = 0;
