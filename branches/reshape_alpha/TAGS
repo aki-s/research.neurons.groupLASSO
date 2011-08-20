@@ -251,7 +251,7 @@ global statusstatus5,58
 
 mylib/gen/gen_TrueWeightSelf.m,91
 function      [alpha0] = gen_TrueWeightSelfgen_TrueWeightSelf1,0
-global Tout;Tout;3,51
+global Tout;Tout;3,57
 
 mylib/gen/loren.m,31
 function [L] = lorenloren1,0
@@ -273,7 +273,7 @@ function [L] = lorentzlorentz1,0
 
 mylib/plot/plot_Ealpha.m,70
 function plot_Ealpha(plot_Ealpha1,0
-global rootdir_rootdir_14,170
+global rootdir_rootdir_14,189
 
 mylib/plot/plot_alpha.m,68
 function plot_alpha(plot_alpha1,0
@@ -299,7 +299,7 @@ function [Ealpha_hash] = comp_alpha_ternarycomp_alpha_ternary2,58
 
 mylib/mailMe.m,69
 function mailMe(mailMe1,0
-function [time_] = mydatemydate30,1052
+function [time_] = mydatemydate40,1339
 
 mylib/check/check_conf.m,70
 function [Oenv Ostatus OTout Ograph ODAL] = check_confcheck_conf1,0
@@ -307,8 +307,8 @@ function [Oenv Ostatus OTout Ograph ODAL] = check_confcheck_conf1,0
 mylib/check/check_genState.m,54
 function [status] = check_genStatecheck_genState1,0
 
-mylib/eval/evaluatePhi.m,63
-function [recn, recr, thresh0] = evalulatePhievalulatePhi1,0
+mylib/eval/evaluatePhi.m,61
+function [recn, recr, thresh0] = evaluatePhievaluatePhi1,0
 
 mylib/eval/evaluateAlpha.m,47
 function Phi = evaluateAlphaevaluateAlpha1,0
@@ -318,8 +318,8 @@ function plotalpha(plotalpha1,0
 
 mylib/eval/transform_Ealpha.m,100
 function transform_Ealpha(transform_Ealpha1,0
-global rootdir_rootdir_4,133
-global envenv5,149
+global rootdir_rootdir_4,100
+global envenv5,116
 
 mylib/eval/transform_Talpha.m,78
 function debug_formTAlpha(debug_formTAlpha1,0
@@ -402,15 +402,6 @@ function [recn, recr, thresh0] = evalulatePhievalulatePhi1,0
 outdir/check_110814/plotalpha.m,34
 function plotalpha(plotalpha1,0
 
-outdir/check_110818/evaluateAlpha.m,47
-function Phi = evaluateAlphaevaluateAlpha1,0
-
-outdir/check_110818/evaluatePhi.m,63
-function [recn, recr, thresh0] = evalulatePhievalulatePhi1,0
-
-outdir/check_110818/plotalpha.m,34
-function plotalpha(plotalpha1,0
-
 indir/Simulation/FDR.m,31
 function [GCMAP] = FDRFDR1,0
 
@@ -480,14 +471,6 @@ indir/Real_data/CausalTest.m,0
 indir/Simulation/demo_sim.m,0
 
 indir/Simulation/CausalTest.m,0
-
-outdir/check_110818/FigKimSequence.m,0
-
-outdir/check_110818/FigAkiSequence.m,0
-
-outdir/check_110818/EvalAll20110814Kim.m,0
-
-outdir/check_110818/EvalAll20110814.m,0
 
 outdir/check_110814/._FigAkiSequence.m,0
 

@@ -6,18 +6,18 @@ Oenv = env;
 infile = status.inFiring;
 
 %% ==< conf >==
-%%Oenv.Hz = NaN; % if you know, set this.
-Oenv.Hz.video = 1000; % Kim
+Ostatus.GEN_Neuron_individuality = NaN;
+Ostatus.GEN_TrueValues = NaN;
+Oenv.spar = NaN;
+Oenv.hnum = NaN;
+Oenv.hwind = NaN;
+Oenv.SELF_DEPRESS_BASE = NaN;
+
 %% ==</conf >==
 %%
 load(infile); % load time serise of firing 'X'
 I = X;
 %%
-
-Oenv.spar = NaN;
-Oenv.hnum = NaN;
-Oenv.hwind = NaN;
-Oenv.SELF_DEPRESS_BASE = NaN;
 
 [Oenv.genLoop Oenv.cnum] = size(I);
 %{

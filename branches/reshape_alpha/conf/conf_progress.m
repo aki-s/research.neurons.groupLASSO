@@ -9,9 +9,10 @@ status.parfor_ = 1; %++bug: not yet implemented.
 
 status.READ_NEURO_CONNECTION = 1;
 status.READ_FIRING = 0;
-status.GEN_TrueValues = 1;
 status.GEN_Neuron_individuality = 1; %++bug: not yet implemented.
 if strcmp('Default','Default')
+  status.GEN_TrueValues = 1;
+  status.inFiring = 'Aki';
   status.method = 'Aki';
 else
   status.method = 'Kim';

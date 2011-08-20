@@ -25,13 +25,18 @@ if strcmp('configure', 'configure') %++conf
 end
 
 run([rootdir_ '/conf/conf_user.m']);
-gen_defaultEnv_ask();
-
 
 if  (status.READ_FIRING == 1)
   [env I Tout] = readI(env,status,Tout);
 end
-if status.READ_NEURO_CONNECTION == 1
+
+gen_defaultEnv_ask();
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%<
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%>
+if (status.READ_NEURO_CONNECTION == 1) % (status.READ_FIRING ~= 1)
   [alpha_fig,alpha_hash,env,status] = readTrueConnection(env,status);
 else 
   [alpha_fig,alpha_hash,status] = gen_alpha_hash(env,status);
@@ -42,6 +47,7 @@ Tout = get_neuronType(env,status,alpha_fig,Tout);
 
 %% bases should be loaded from a mat file.
 %% large argment make small width of basis.
+
 bases = makeSimStruct_glm(0.2); % Create GLM structure with default params
 %% 0.2 : 118
 
@@ -53,7 +59,7 @@ if ( status.GEN_TrueValues == 1 )
   %% prepare 'TrueValues'.
   tic;
   [alpha ] = gen_TrueWeightKernel(env,status,alpha_hash);
-  [alpha0] = gen_TrueWeightSelf(env);
+  [alpha0] = gen_TrueWeightSelf(env,status);
   [I,lambda,loglambda] = gen_TrueI(env,alpha0,alpha);
   echo_TrueValueStatus(env,status,lambda,I);
 

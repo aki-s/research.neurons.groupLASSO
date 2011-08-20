@@ -20,11 +20,11 @@ tmp.in = char(tmp.in);
 
 if ~isempty(tmp.in)
 elseif status.use.GUI == 1
-fprintf('Which file describing neuronal connections do you want to use?');
-tmp.in = uigetfile('*.con');
+  fprintf('Which file describing neuronal connections do you want to use?');
+  tmp.in = uigetfile('*.con');
 else
-tmp.in  = input(['Which file describing neuronal connections do you ' ...
-                'want to use?\n>> >> ']);
+  tmp.in  = input(['Which file describing neuronal connections do you ' ...
+                   'want to use?\n>> >> ']);
 end
 tmp.fid = fopen(tmp.in,'rt');
 
@@ -59,11 +59,11 @@ fclose(tmp.fid);
 
 %% calculate env.spar %++todo ++bug
 if 1 == 1
-env.spar.from = NaN;
-env.spar.to   = NaN;
+  env.spar.from = NaN;
+  env.spar.to   = NaN;
 else
-env.spar.from = sum(sum(alpha_fig ~= 0));
-env.spar.to = env.spar.to;
+  env.spar.from = sum(sum(alpha_fig ~= 0));
+  env.spar.to = env.spar.to;
 end
 
 status.inStructFile = tmp.in;

@@ -1,6 +1,7 @@
 %% Set freely your configuration.
+%% Please overload default configuration explicitly by writing here.
 warning('DEBUG:conf','conf_user.m overrides all configuration variables set after this file.');
-DEBUG_s = 0
+DEBUG_s = 3
 
 if 1 == 0
   status.READ_NEURO_CONNECTION = 0;
@@ -27,21 +28,26 @@ end
 %DAL.Drow = 2000;
 
 graph.TIGHT = 0;
-graph.PLOT_T = 1;
 graph.PLOT_MAX_NUM_OF_NEURO = 11;
 graph.GRAPHVIZ_OUT_FIG = 1; % default: 0
 graph.SAVE_ALL = 0;
 graph.xrange = 1000;
 
 switch DEBUG_s
-  case 0
+  case 0    %Aki method Aki firing
     env.genLoop = 110000;
-    status.GEN_TrueValues = 0;
-    
+    status.GEN_TrueValues = 1;
+    status.estimateConnection = 1;
     env.hnum = 100;
     env.hwind = 1; % large hwind cause continuous firing of each neuron.
     env.Hz.video = 1000;
-    status.estimateConnection = 1;
+    graph.PLOT_T = 0;
+  case 3 % Aki method Kim firing
+    status.GEN_TrueValues = 0;
+    status.inFiring = [ rootdir_ '/indir/Simulation/data_sim_9neuron.mat'];
+    status.READ_FIRING =1; % read kim FIRING.
+    env.Hz.video=1000;
+    graph.PLOT_T = 0;
   case 1
     %kim 
     env.genLoop = 100000;
@@ -56,14 +62,6 @@ switch DEBUG_s
     env.hnum=1000;
     env.hwind=1;
     env.Hz.video=100;
-  case 3
-    env.genLoop = 20000;
-    status.GEN_TrueValues = 0;
-    status.READ_FIRING =1; % read kim FIRING.
-    env.hnum = 50;
-    env.hwind = 1; % large hwind cause continuous firing of each neuron.
-    env.Hz.video=1000;
-    status.estimateConnection = 1;
   case 4 % compare aki and stevenson
     env.genLoop =  20000;
     status.GEN_TrueValues = 0;
