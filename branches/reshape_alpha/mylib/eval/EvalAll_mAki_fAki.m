@@ -11,8 +11,7 @@ env.useFrame = [
                ];
 status.method = 'Aki';
 status.inFiring = '/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/indir/Simulation/data_sim_9neuron.mat';
-
-load('M_ans.mat') % M_ans, env, status
+load('/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/indir/sim_kim_ans.mat') % M_ans
 
 for i1 =1:length(env.useFrame)
   N000{i1} = num2str(sprintf('%07d',env.useFrame(i1)));
@@ -45,6 +44,8 @@ for N1 = 1:length(N000)
   end
 end
 
+%% used firing.
+% /home/aki-s/svn.d/art_repo2/branches/reshape_alpha/outdir/20-Aug-2011-start-20_44/20-Aug-2011-20_44.mat
 for N1 = 1:length(N000)
     for L1 = 1:length(L000)
 % $$$         if N1 == 1

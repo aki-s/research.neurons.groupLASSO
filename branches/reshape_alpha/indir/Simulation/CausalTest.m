@@ -1,7 +1,10 @@
+%{
 clear all;
 
 % Load data
 load data_sim_9neuron.mat;     % 9-neuron network
+
+%}
 % load data_sim_hidden.mat;      % 5-neuron network with hidden feedback
 load result_sim.mat;
 

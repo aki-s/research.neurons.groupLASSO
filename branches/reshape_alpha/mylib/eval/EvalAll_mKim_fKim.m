@@ -1,8 +1,25 @@
+DAL.regFac = [1000 100 50 10 1];
+env.useFrame = [
+    1000 % 1 
+    2000 % 2 
+    5000 % 3
+    10000 % 4
+    20000 % 5
+    50000 % 6
+    90000 % 7
+    100000 % 8
+               ];
+status.method = 'Aki';
+status.inFiring = '/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/indir/Simulation/data_sim_9neuron.mat';
+load('/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/indir/sim_kim_ans.mat') % M_ans, env, status
 
-
-N000 = {'1000', '2000', '5000','10000','20000','50000','90000'}
-L000 = {'5', '10', '50', '100','1','1.000000e-01','1.000000e-02'}
-load('M_ans.mat') % M_ans
+uF = length(env.useFrame);
+for i1 =1:uF
+  N000{i1} = num2str(sprintf('%07d',env.useFrame(i1)));
+end
+for i1 =1:length(DAL.regFac)
+  L000{i1} = num2str(sprintf('%07d',DAL.regFac(i1)));
+end
 
 if 1 == 0
   for N1 = 1:3
