@@ -56,6 +56,7 @@ if cnum < MAX
         %        graph.param.alphaY = max(tmp1);
       end
       hold on;
+      set(gcf,'color','white')
 
       if tmp1 > 0
         plot( 1:hnum, tmp1,'r','LineWidth',3);
@@ -96,8 +97,10 @@ if cnum < MAX
   h = axes('Position',[0 0 1 1],'Visible','off'); 
   set(gcf,'CurrentAxes',h)
   text(.4,.95,title,'FontSize',12,'LineWidth',4)
+  %{
   text(.12,.90,'Triggers')
   text(.08,.85,'Targets')
+  %}
 
   %{
   xlabel(h,'Trigger')

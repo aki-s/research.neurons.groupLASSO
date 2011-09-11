@@ -29,3 +29,6 @@ end
 
 recn = recn(idx,:);
 recr = recr(idx,:);
+
+%%
+thresh0 = thresh0(idx);

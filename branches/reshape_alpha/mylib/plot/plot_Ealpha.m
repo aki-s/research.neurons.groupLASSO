@@ -2,7 +2,7 @@ function plot_Ealpha(env,graph,Ealpha,DAL,regFacIndex,titleIn)
 %%
 %% USAGE)
 %% Example:
-% plot_Ealpha(env,graph,alpha,Ealpha,'title')
+% plot_Ealpha(env,graph,Ealpha,DAL,regFacIndex,'title')
 %%
 
 DEBUG = 0;

@@ -17,18 +17,21 @@ load('/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/indir/sim_kim_ans.mat')
 %==</ conf >==
 
 uF = length(env.useFrame);
+uR = length(DAL.regFac);
 for i1 =1:uF
   N000{i1} = num2str(sprintf('%07d',env.useFrame(i1)));
 end
-for i1 =1:length(DAL.regFac)
+for i1 =1:uR
   L000{i1} = num2str(sprintf('%07d',DAL.regFac(i1)));
 end
 
-L0 = repmat(2,[1 uF] );
+%L0 = repmat(2,[1 uF] );
+%L0 = repmat(5,[1 uF] );
+L0 = [4 4 4 5 4 4 4 4];
 
 FNAMEf = regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2');
 %%%%%%%%%%%%%%%%%%%%%%%%
-AkiAcc = zeros(3,4);
+AkiAcc = zeros(uF,4);
 for N1 = 1:uF
   %Aki method Aki firing
   filename =sprintf('Aki-%s-%s-%s.mat', L000{L0(N1)}, FNAMEf, N000{N1});
@@ -40,8 +43,24 @@ for N1 = 1:uF
   AkiAcc(N1,:) = recr*100;
 end
 
+fprintf(1,'\n');
 
-KimAcc = zeros(3,4)
+%% ==< test >==
+for N1 = 1:uF
+  for reg = 1:uR
+    filename =sprintf('Aki-%s-%s-%s.mat', L000{reg}, FNAMEf, N000{N1});
+    load( filename ); %Alpha
+    Phi = evaluateAlpha( Alpha );
+    [recn, recr, thresh00] = evaluatePhi(Phi, M_ans);
+    disp( sprintf( '%20s: %3d, %3d, %3d, %3d,: %5.1f, %5.1f, %5.1f, %5.1f, :%f',...
+                   filename, recn, recr*100, thresh00 ) );
+    %    AkiAcc(N1,:) = recr*100;
+  end
+  fprintf(1,'=====================================\n');
+end
+%% ==</test>==
+
+KimAcc = zeros(uF,4);
 for N1 = 1:uF
   filename = sprintf('Kim-%s-%s.mat', FNAMEf, N000{N1});
   load( filename ); % Phi
@@ -55,11 +74,10 @@ end
 % recn( t1, : ) = [TP0, TPp, TPn, TPtotal];
 % recr( t1, : ) = [TP0/N0, TPp/Np, TPn/Nn, TPtotal/length(Phi)];
 
-figure
-A0 = [4,1,2,3]
+A0 = [4,1,2,3];
 ylabels ={'Total', 'Specificity', 'Excitatory', 'Inhibitory'};
-%for i=1:4
 N = 4;
+%{
 for i=1:N
   subplot(N,1,i)
  plot(1:uF, AkiAcc(:, A0(i) ),'o-',...
@@ -70,4 +88,25 @@ for i=1:N
   axis([0 uF 0 105])
 end
 set(gcf, 'Color', 'White', 'Position',[100,100,400,800])
+%}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+div2 = 2;
+
+NN = N/div2;
+div = 0;
+for ii = 1:(div2)
+  figure
+  for i = 1:NN
+    subplot(NN,1,i)
+    hold on;
+    plot(1:uF, AkiAcc(:, A0(i+div) ),'o-',...
+         1:uF, KimAcc(:, A0(i+div) ), '^--')
+    ylabel( ylabels{i+div})
+    xlabel( '# Frames' )
+    set(gca, 'XTick', 1:uF, 'XTickLabel', N000L)
+    axis([0 uF 0 105])
+  end
+  set(gcf, 'Color', 'White', 'Position',[200,200,400,800/div2])
+  div = div + div2;
+end
 
