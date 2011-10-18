@@ -1,7 +1,7 @@
 function [OTout] = get_neuronType(env,status,alpha_fig,Tout)
 
 OTout = Tout;
-if ( status.READ_NEURO_CONNECTION == 1 )
+%if ( status.READ_NEURO_CONNECTION == 1 )
   %if 1 == 1
   %% ==< get neuron type >==
   tmp_alpha_fig = alpha_fig;
@@ -42,4 +42,4 @@ if ( status.READ_NEURO_CONNECTION == 1 )
 
   %  clear inhibitory excitatory hybrid zeroConnection;
   %% ==</ get neuron type >==
-end
+  %end

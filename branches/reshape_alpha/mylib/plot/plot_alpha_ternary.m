@@ -17,15 +17,15 @@ if cnum < MAX
     base = [1 cnum-i1to 0 0]/(cnum+2);
     for i2from = 1:cnum;
       %% subplot() delete existing Axes property.
-if 1 == 0
-      subplot(cnum,cnum,(i1to-1)*cnum+i2from)
-else
-      %      norm = [.0 .01 0 0];
-      %      norm = norm + [i2from*S i1to*S .9 .9]/cnum;
-      %      norm = [i2from*SS (cnum-i1to)*S SS SS]/cnum
-      norm = base + [i2from*SS SS SS SS]/cnum;
-      subplot('Position',norm);
-end
+      if 1 == 0
+        subplot(cnum,cnum,(i1to-1)*cnum+i2from)
+      else
+        %      norm = [.0 .01 0 0];
+        %      norm = norm + [i2from*S i1to*S .9 .9]/cnum;
+        %      norm = [i2from*SS (cnum-i1to)*S SS SS]/cnum
+        norm = base + [i2from*SS SS SS SS]/cnum;
+        subplot('Position',norm);
+      end
       tmp1 = N* (alpha_hash((i1to-1)*cnum+i2from) +1 );
       %% < chage color ploted according to cell type >
       if i1to == i2from

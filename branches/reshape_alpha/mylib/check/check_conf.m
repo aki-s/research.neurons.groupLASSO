@@ -24,6 +24,11 @@ if (status.READ_FIRING == 1)
                         'status.READ_FIRING was deactivated.']);
     error(' check your conf')
   end
+  if ( status.realData == 1)
+    Ostatus.GEN_Neuron_individuality = '';
+    Ostatus.GEN_TrueValues = '';
+    Ostatus.READ_NEURO_CONNECTION = '';
+  end
 elseif (status.GEN_TrueValues == 1)
   Tout.weightKernelSec = (env.hnum*env.hwind)/env.Hz.video;
   SEC = 0.05;

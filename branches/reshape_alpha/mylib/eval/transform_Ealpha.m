@@ -1,4 +1,4 @@
-function transform_Ealpha(Ealpha,DAL,status,fire)
+function  transform_Ealpha(Ealpha,DAL,status,fire)
 %
 % transform_Ealpha(Ealpha,DAL,status,'fire_by')
 global rootdir_
@@ -30,6 +30,5 @@ for i1 = 1:N
   Alpha = Alpha_{i1};
   save([rootdir_  checkDirname,'/',method,'-', ...
         sprintf('%07d',regFac(i1)),'-',fire, ...
-        sprintf('-%07d',frame),'.mat' ],'Alpha' );
+        sprintf('-%07d',frame),'.mat' ],'Alpha');
 end
-

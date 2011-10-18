@@ -32,9 +32,22 @@ if exist('graph')
   if ~isfield(graph,'TIGHT') % precede user defined value.
     graph.TIGHT = 0; % 0: each graph is plotted with absolute scale.
   end
-  graph.prm.Xrange      = [0,0.2];
-  graph.prm.Yrange      = [-2,2];
-  graph.prm.diag_Yrange = [-10,3];
+  if isfield(graph,'prm') & ~isfield(graph.prm,'Xrange')
+    graph.prm.Xrange      = [0,0.2];
+  end
+  if isfield(graph,'prm') & ~isfield(graph.prm,'Yrange')
+    graph.prm.Yrange      = [-2,2];
+  end
+  if isfield(graph,'prm') & ~isfield(graph.prm,'diag_Yrange')
+    graph.prm.diag_Yrange = [-10,3];
+  end
+  if isfield(graph,'prm') & ~isfield(graph.prm,'Yrange_auto')
+    graph.prm.Yrange_auto = graph.prm.Yrange;
+  end
+  if isfield(graph,'prm') & ~isfield(graph.prm,'diag_Yrange_auto')
+    graph.prm.diag_Yrange_auto = graph.prm.diag_Yrange;
+  end
+
 else   %% defalut:
   graph = struct('PLOT_T',1 ...
                  ,'PRINT_T',0 ...
@@ -42,6 +55,11 @@ else   %% defalut:
                  , 'SAVE_EPS',0 ...
                  , 'SAVE_ALL',0 ...
                  ,'TIGHT',0 ...
+                 ,'prm.Xrange',[0,0.3] ...
+                 ,'prm.Yrange',[-2,2] ...
+                 ,'prm.diag_Yrange',[0,0] ...
+                 ,'prm.Yrange_auto',[0,0] ...
+                 ,'prm.diag_Yrange_auto',[0,0] ...
                  );
 end
 

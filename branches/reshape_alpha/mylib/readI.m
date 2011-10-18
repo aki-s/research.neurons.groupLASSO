@@ -1,4 +1,7 @@
-function [ Oenv I OTout] = readI(env,status,Tout)
+function [ Oenv I OTout] = readI(env,status,Tout,X,direction)
+
+%% X: name of spike train to be loaded.
+%% direction: direction of sequence of X
 
 global rootdir_
 Oenv = env;
@@ -15,14 +18,35 @@ Oenv.SELF_DEPRESS_BASE = NaN;
 
 %% ==</conf >==
 %%
-load(infile); % load time serise of firing 'X'
-I = X;
+S = load(infile,X);
+%% load time serise of firing 'X'
+%% from Kim's data
+%CHN:channel, SMP:number of flame, TRL:number of trial
+[CHN SMP TRL] = size(S.X);
+
+I = zeros(CHN,SMP*TRL);
+
+if (direction == 2) % concatenate all firing data
+  for i1 = 1: TRL
+    I(1:CHN,(1:SMP) + (i1-1) * SMP) = S.X(1:CHN,1:SMP,i1);
+  end
+elseif (direction == 1)
+  tmp = CHN;
+  CHN = SMP;
+  SMP = tmp;
+  for i1 = 1: TRL
+    I(1:CHN,(1:SMP) + (i1-1) * SMP) = S.X(1:SMP,1:CHN,i1);
+  end
+end
+I = transpose(I); % set I's sequence (direction == 1 ).
+
+
 %%
 
 [Oenv.genLoop Oenv.cnum] = size(I);
 %{
-flag = (Oenv.genLoop > env.useFrame);
-Oenv.useFrame = env.useFrame.*flag;
+direction = (Oenv.genLoop > env.useFrame);
+Oenv.useFrame = env.useFrame.*direction;
 %}
 
 if isfield(Oenv,'Hz') && isfield(Oenv.Hz,'video') 

@@ -1,4 +1,4 @@
-function [D] = gen_designMat(env,bases,I,Drow,varargin)
+function [D] = gen_designMat(env,status,bases,I,Drow,varargin)
 %% 
 %% Reduce dimension to be estimated 
 %% from raw large dimension (number of frames which are coverd with
@@ -41,7 +41,7 @@ function [D] = gen_designMat(env,bases,I,Drow,varargin)
 %[D ] = gen_designMat(env,bases,I,Drow);
 %%
 
-global status;
+%global status;
 
 
 prs.gen_designMat = 2; % prs: parameters
@@ -129,12 +129,12 @@ y = I( idx, : );
 if strcmp(bases.type,'glm')
   fprintf(1,'%s : %% ',bases.type);
   for c = 1:C
-    if status.parfor_ == 1
+    %    if status.parfor_ ~= 1
       if ~mod(c,tmp0.showProg) %% show progress.
-        fprintf(1,'%d ',tmp0.count*10)
+        fprintf(1,'%3.0f ',(tmp0.count/C)*100)
         tmp0.count = tmp0.count +1;
       end
-    end
+      %    end
     for k = 1:K
       %      tmp1D = zeros( Drow, 1 );
       tmp1D = zeros( use, 1 );
@@ -159,5 +159,5 @@ elseif strcmp(bases.type,'bar')
   end
   D = double(D);
 end
-fprintf(1,': past time %d\n',toc);
+fprintf(1,': elapsed %7.2f\n',toc);
 %%% ==</calc matrix D >==

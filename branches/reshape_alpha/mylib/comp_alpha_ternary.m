@@ -4,7 +4,7 @@ function [Ealpha_hash] = comp_alpha_ternary(env,Ealpha,varargin)
 %function [Ealpha_hash] = judge_alpha_ternary(env,Ealpha,Ebias,FAC,alpha_hash)
 %%
 
-if optargin > 0
+if nargin > 0
   Ebias = varargin{1};
   FAC = varargin{2};
   alpha_hash = varargin{3};

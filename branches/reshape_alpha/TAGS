@@ -227,9 +227,8 @@ global kDALkDAL13,301
 misc/plot_ggsimBaseFunc.m,52
 function plot_ggsimBaseFunc(plot_ggsimBaseFunc1,0
 
-mylib/gen/gen_designMat.m,78
+mylib/gen/gen_designMat.m,47
 function [D] = gen_designMatgen_designMat1,0
-global status;status;44,1541
 
 mylib/gen/gen_alpha_hash.m,78
 function [alpha_fig,alpha_hash,statusOut] = gen_alpha_hashgen_alpha_hash1,0
@@ -273,7 +272,7 @@ function [L] = lorentzlorentz1,0
 
 mylib/plot/plot_Ealpha.m,70
 function plot_Ealpha(plot_Ealpha1,0
-global rootdir_rootdir_14,189
+global rootdir_rootdir_16,283
 
 mylib/plot/plot_alpha.m,68
 function plot_alpha(plot_alpha1,0
@@ -281,7 +280,10 @@ global rootdir_rootdir_14,188
 
 mylib/plot/plot_I.m,52
 function plot_I(plot_I1,0
-global ToutTout16,180
+global ToutTout18,193
+
+mylib/plot/plot_crossVal.m,46
+function [] = plot_crossValplot_crossVal1,0
 
 mylib/plot/plot_lambda.m,94
 function plot_lambda(plot_lambda1,0
@@ -297,9 +299,10 @@ function plot_CausalMatrix(plot_CausalMatrix1,0
 mylib/comp_alpha_ternary.m,68
 function [Ealpha_hash] = comp_alpha_ternarycomp_alpha_ternary2,58
 
-mylib/mailMe.m,69
+mylib/mailMe.m,128
 function mailMe(mailMe1,0
-function [time_] = mydatemydate40,1339
+function [time_] = mydatemydate63,2127
+function [ ret ] = tidyElapsedTimetidyElapsedTime74,2385
 
 mylib/check/check_conf.m,70
 function [Oenv Ostatus OTout Ograph ODAL] = check_confcheck_conf1,0
@@ -307,27 +310,32 @@ function [Oenv Ostatus OTout Ograph ODAL] = check_confcheck_conf1,0
 mylib/check/check_genState.m,54
 function [status] = check_genStatecheck_genState1,0
 
-mylib/eval/evaluatePhi.m,61
-function [recn, recr, thresh0] = evaluatePhievaluatePhi1,0
-
 mylib/eval/evaluateAlpha.m,47
 function Phi = evaluateAlphaevaluateAlpha1,0
 
 mylib/eval/plotalpha.m,34
 function plotalpha(plotalpha1,0
 
-mylib/eval/transform_Ealpha.m,100
-function transform_Ealpha(transform_Ealpha1,0
-global rootdir_rootdir_4,100
-global envenv5,116
+mylib/eval/transform_Ealpha.m,101
+function  transform_Ealpha(transform_Ealpha1,0
+global rootdir_rootdir_4,101
+global envenv5,117
 
 mylib/eval/transform_Talpha.m,78
 function debug_formTAlpha(debug_formTAlpha1,0
 global rootdir_rootdir_3,59
 
-mylib/estimateWeightKernel.m,117
-function [EKerWeight,Ebias,Estatus,DAL] = estimateWeightKernelestimateWeightKernel1,0
-global status;status;9,191
+mylib/eval/fptp2auc.m,37
+function AUC = fptp2aucfptp2auc1,0
+
+mylib/eval/evaluatePhi_old.m,61
+function [recn, recr, thresh0] = evaluatePhievaluatePhi1,0
+
+mylib/eval/evaluatePhi.m,66
+function [recn, recr, thresh0, auc] = evaluatePhievaluatePhi1,0
+
+mylib/estimateWeightKernel.m,98
+function [EKerWeight,Ebias,DALstatus,DAL,Ostatus] = estimateWeightKernelestimateWeightKernel1,0
 
 mylib/makeSimStruct_glm.m,83
 function S = makeSimStruct_glmmakeSimStruct_glm1,0
@@ -342,8 +350,9 @@ function  [alpha_fig,alpha_hash,env,status] = readTrueConnectionreadTrueConnect
 mylib/get_neuronType.m,53
 function [OTout] = get_neuronTypeget_neuronType1,0
 
-mylib/reconstruct_Ealpha.m,62
+mylib/reconstruct_Ealpha.m,86
 function [Ealpha] = reconstruct_Ealphareconstruct_Ealpha1,0
+global graphgraph5,80
 
 mylib/echo_TrueValueStatus.m,81
 function echo_TrueValueStatus(echo_TrueValueStatus1,0
@@ -359,9 +368,9 @@ function [sum] = calcCorrectNumcalcCorrectNum1,0
 mylib/setDALregFac.m,48
 function DALout = setDALregFacsetDALregFac1,0
 
-mylib/readI.m,73
+mylib/readI.m,74
 function [ Oenv I OTout] = readIreadI1,0
-global rootdir_rootdir_3,51
+global rootdir_rootdir_6,145
 
 mylib/echo_initStatus.m,46
 function echo_initStatus(echo_initStatus1,0
@@ -378,8 +387,23 @@ function [rate] = calcCorrectRateStrictcalcCorrectRateStrict1,0
 mylib/calcCorrectRateLax_IE.m,72
 function [rate0,num0] = calcCorrectRateLax_IEcalcCorrectRateLax_IE1,0
 
+mylib/crossVal.m,38
+function [cv] = crossValcrossVal1,0
+
+mylib/calcLikelihood.m,47
+function L = calcLikelihoodcalcLikelihood1,0
+
+mylib/Ealpha2Mat.m,49
+function [ Ealpha_ ] = Ealpha2MatEalpha2Mat1,0
+
 mylib/calcCorrectRate_I.m,15
 function 1,0
+
+mylib/Ebias2Mat.m,44
+function [Ebias_] = Ebias2MatEbias2Mat1,0
+
+mylib/init_crossVal.m,42
+function init_crossVal(init_crossVal1,0
 
 tools/plot_lambda_video.m,50
 function plot_lambda_video(plot_lambda_video1,0
@@ -387,11 +411,11 @@ function plot_lambda_video(plot_lambda_video1,0
 tools/plot_loglambda.m,44
 function plot_loglambda(plot_loglambda1,0
 
-tools/plot_Ealpha_forPaper.m,31
-global rootdir_rootdir_7,134
-
 tools/plot_Ealpha_forPaper2.m,58
 function plot_Ealpha_forPaper2(plot_Ealpha_forPaper21,0
+
+tools/plot_Ealpha_forPaper.m,31
+global rootdir_rootdir_7,134
 
 outdir/check_110814/evaluateAlpha.m,47
 function Phi = evaluateAlphaevaluateAlpha1,0
@@ -504,9 +528,9 @@ mylib/eval/FigKimSequence.m,0
 
 mylib/eval/FigAkiSequence.m,0
 
-mylib/eval/EvalAll20110814Kim.m,0
+mylib/eval/EvalAll_mKim_fKim.m,0
 
-mylib/eval/EvalAll20110814.m,0
+mylib/eval/EvalAll_mAki_fAki.m,0
 
 mylib/clean.m,0
 

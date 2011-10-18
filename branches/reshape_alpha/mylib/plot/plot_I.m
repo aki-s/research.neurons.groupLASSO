@@ -12,6 +12,8 @@ function plot_I(status,graph,env,I,title)
 % plot_I(status,graph,env,I,'title')
 %%
 
+PRESEN = 0;
+
 %%
 global Tout
 
@@ -47,6 +49,7 @@ figure;
 for i1 = 1: cnum
   subplot( cnum, 1,i1)
   grid off;
+  set(gcf,'color','white')
   ylim([0,1]);
   %%if status.DEBUG.plot == 1
 % $$$   if genLoop < 100000
@@ -57,11 +60,15 @@ for i1 = 1: cnum
 % $$$   else
     bar( I((end+1 -xrange):end,i1));
     set(gca,'XTick' , 1:dh:xrange);
+if PRESEN == 1
+    set(gca,'XTickLabel','');
+else
     set(gca,'XTickLabel',TIMEL);
+    ylabel(sprintf('%d',i1));
+end
     set(gca,'YTick',[]);
 % $$$   end
 % $$$   end
-  ylabel(sprintf('%d',i1));
 end
 
 %% ==< set xlabel >==

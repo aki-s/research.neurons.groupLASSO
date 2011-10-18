@@ -6,7 +6,8 @@ global status
 
 run([rootdir_ '/mylib/gen/gen_defaultEnv.m']);
 
-if exist('status') && ( status.READ_NEURO_CONNECTION ~= 1 )
+%if exist('status') && ( status.READ_NEURO_CONNECTION ~= 1 )
+if exist('status') && ( status.GEN_TrueValues == 1 )
   if isfield(env,'spar') && isfield(env.spar,'level') && isfield(env.spar.level,'from')
     spar.level.from = env.spar.level.from; % don't overwrite user defined env.spar.level.from
   else
@@ -33,13 +34,13 @@ if exist('status') && ( status.READ_NEURO_CONNECTION ~= 1 )
 
 end
 
-if status.READ_NEURO_CONNECTION == 0
-  if isfield(env,'cnum')
-    cnum = env.cnum; % don't overwrite user defined env.cnum.
-  else
-    cnum = str2num(input('env.cnum:= ','s'));
-  end
+%if status.READ_NEURO_CONNECTION == 0 % for realData
+if isfield(env,'cnum')
+  cnum = env.cnum; % don't overwrite user defined env.cnum.
+else
+  cnum = str2num(input('env.cnum:= ','s'));
 end
+%end
 
 if isfield(env,'genLoop')
   genLoop = env.genLoop; % don't overwrite user defined env.genLoop.

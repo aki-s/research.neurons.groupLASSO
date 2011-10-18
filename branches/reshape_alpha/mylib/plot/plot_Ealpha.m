@@ -1,4 +1,5 @@
-function plot_Ealpha(env,graph,Ealpha,DAL,regFacIndex,titleIn)
+function plot_Ealpha(env,graph,DAL,bases,EKerWeight,regFacIndex,titleIn)
+%function plot_Ealpha(env,graph,Ealpha,DAL,regFacIndex,titleIn)
 %%
 %% USAGE)
 %% Example:
@@ -6,6 +7,7 @@ function plot_Ealpha(env,graph,Ealpha,DAL,regFacIndex,titleIn)
 %%
 
 DEBUG = 0;
+LIM = 15;
 
 if DEBUG == 1
   title = 'DEBUG:';
@@ -31,12 +33,16 @@ else
 end
 
 MAX = graph.PLOT_MAX_NUM_OF_NEURO;
-title = sprintf('dal%s:DAL regFac=%4d frame=%6d  ',DAL.method,DAL.regFac(regFacIndex),DAL.Drow );
-strcat(title,titleIn);
+if MAX > LIM
+  warning(['It take too much time.Not giving cell array to plot() may ' ...
+           'speed up this function'])
+  %plot by thining out may best answer.
+end
 %%% == useful func ==
 %kdelta = inline('n == 0'); % kronecker's delta
-%%% ===== PLOT alpha ===== START =====
 
+Ealpha = reconstruct_Ealpha(env,DAL,bases,EKerWeight);
+%%% ===== PLOT alpha ===== START =====
 if strcmp('set_xticks','set_xticks')
   Lnum = 2;
   dh = floor((hnum*hwind)/Lnum); %dh: width of each tick.
@@ -47,18 +53,27 @@ if strcmp('set_xticks','set_xticks')
   end
 end
 
-if strcmp('set_range','set_range')
   %  XSIZE = 2;
   XSIZE = 1;
+if strcmp('set_range','set_range')
   diag_Yrange = graph.prm.diag_Yrange;
-  Yrange = graph.prm.Yrange;
+  Yrange      = graph.prm.Yrange;
+else % you'd better collect max and min range of response functions
+     % in advance.
+  diag_Yrange = graph.prm.diag_Yrange_auto;
+  Yrange      = graph.prm.Yrange_auto;     
 end
-if cnum < MAX
+if cnum <= MAX
   figure;
   i2to = 1; % cell to
   i3from = 1; % cell from
+  pos = [ .5 (cnum) 0 0 ]/(cnum+2);
   for i1 = 1:cnum*cnum % subplot select
-    subplot(cnum,cnum,i1);
+    if 1 == 0
+      subplot(cnum,cnum,i1);
+    else
+      subplot('position',pos + [i3from -i2to 1 1 ]/(cnum+3) );
+    end
     tmp1 = Ealpha{regFacIndex}{i2to}{i3from};
     %% <  chage color ploted according to cell type >
     if i2to == i3from
@@ -88,7 +103,11 @@ if cnum < MAX
     end
     set(gca,'XAxisLocation','top');
     set(gca,'XTick' , 1:dh:hnum*hwind);
-    set(gca,'XTickLabel',TIMEL);
+    if cnum > LIM
+      set(gca,'xticklabel',[])
+    else
+      set(gca,'XTickLabel',TIMEL);
+    end
 
     %% < from-to cell label >
     if (i2to == 1)     % When in the topmost margin.
@@ -106,15 +125,27 @@ if cnum < MAX
     i3from = i3from +1;
     %% </ index config >
   end
+  set(gcf,'color','white')
 end
 
 %% h: description about outer x-y axis
+title = sprintf('dal%s:DAL regFac=%4d frame=%6d  ',DAL.method,DAL.regFac(regFacIndex),DAL.Drow );
+if cnum > LIM
+  strcat(title,TIMEL);
+end
+strcat(title,titleIn);
 h = axes('Position',[0 0 1 1],'Visible','off'); 
 set(gcf,'CurrentAxes',h)
 text(.4,.95,title,'FontSize',12)
-text(.12,.90,'Triggers')
-text(.08,.85,'Targets')
 
+if 1 == 0
+  text(.12,.90,'Triggers')
+  text(.08,.85,'Targets')
+else
+  pos = [ .1 cnum ]/(cnum+2);
+  text(pos(1)+.1,pos(2) +.03,'Triggers')
+  text(pos(1)+.02,pos(2) -.01,'Targets')
+end
 %{
 xlabel(h,'Trigger')
 ylabel(h,'Target')

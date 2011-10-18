@@ -1,4 +1,4 @@
-function plot_Ealpha_forPaper2(Ealpha_s,alpha,varargin)
+function plot_Ealpha_forPaper2(alpha,varargin)
 %Usage)
 %  plot_Ealpha_forPaper2(bar.Ealpha,alpha,glm.Ealpha)
 % 
@@ -15,6 +15,7 @@ function plot_Ealpha_forPaper2(Ealpha_s,alpha,varargin)
 
 if length(varargin) > 0
   Ealpha_a = varargin{1};
+  Ealpha_s = varargin{2};
 end
 %Ealpha_s = Ealpha{1};
 to__Choice = [ 1 2 3];
@@ -42,14 +43,20 @@ for i1to = 1:numto
     set(gca,'Ylim',[-1,1]*1.2);
 
     if strcmp('new','new_')
-      plot(Ealpha_s{to__Choice(i1to)}{fromChoice(i2from)},'--k','LineWidth',1)
+      if exist('Ealpha_s')
+      plot(Ealpha_s{to__Choice(i1to)}{fromChoice(i2from)},'--k', ...
+           'LineWidth',1)
+      end
       plot(alpha((1:hnum) +(fromChoice(i2from)-1)*hnum,to__Choice(i1to)),'b','LineWidth',3)
       if exist('Ealpha_a')
         plot(Ealpha_a{to__Choice(i1to)}{fromChoice(i2from)},'r', ...
              'LineWidth',1)
       end
     else
-      plot(Ealpha_s{to__Choice(i1to)}{fromChoice(i2from)},'k','LineWidth',1)
+      if exist('Ealpha_s')
+      plot(Ealpha_s{to__Choice(i1to)}{fromChoice(i2from)},'k', ...
+           'LineWidth',1)
+      end
       if exist('Ealpha_a')
         plot(Ealpha_a{to__Choice(i1to)}{fromChoice(i2from)},'r', ...
              'LineWidth',3)
