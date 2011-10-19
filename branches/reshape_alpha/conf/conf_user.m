@@ -25,7 +25,8 @@ if 1 == 1
   % KFAM reflects DAL.regFac
   %DAL.regFac = [10 1 0.1 0.01] 
   %  DAL.regFac = [1000 100 50 10 1];
-  DAL.regFac = [300 100 30 10 3];
+  %  DAL.regFac = [1000 300 100 30 10 3];
+ DAL.regFac = [3000 2000 1500 1000 900 800 700 600 500 400 300];
   %  DAL.regFac = [ 100 10];
   %  DAL.regFac = [ 50 ];
   %DAL.regFac = [ exp(3) exp(2) exp(1)]; %++improve
@@ -132,7 +133,7 @@ env.mail.smtp='hawaii.sys.i.kyoto-u.ac.jp';
 
 status.profiler = 1;
 status.save_warning = 1; %++bug: not yet implemented.
-status.parfor_ = 0; %++bug: not yet implemented.
+status.parfor_ = 1; %++bug: not yet implemented.
 
 status.mail = 1;
 status.DEBUG.plot = 1; %++bug: not yet implemented.

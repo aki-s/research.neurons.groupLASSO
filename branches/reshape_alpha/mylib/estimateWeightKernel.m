@@ -2,7 +2,7 @@ function [EKerWeight,Ebias,DALstatus,DAL,Ostatus] = estimateWeightKernel(env,gra
 %%
 %%
 %% return)
-%% DAL: DAL.Drow
+%% DAL: DAL.Drow, DAL.regFac
 %% Ostatus: Ostatus.time.regFac
 % [KerWeight,Ebias,DALstatus,DAL] = ...
 % estimateWeightKernel(env,status,graph,bases,I,DAL);
@@ -88,7 +88,7 @@ if strcmp('calcDAL','calcDAL')
       EKerWeight{i1to}{1} = zeros(nbase,cnum);
       %      Ebias = cell(DAL.loop,1);
   end
-  fprintf(1,'\n');
+  %  fprintf(1,'\n');
   DAL.speedup = 0;
   for ii1 = 1:PRMS % search appropriate parameter.
     cost2 = tic;
@@ -122,7 +122,7 @@ if strcmp('calcDAL','calcDAL')
 
         case 'prgl'
           %% poisson regression group lasso: 
-          if status.parfor_ == 1 %++notyet
+          if status.parfor_ == 1 %++notyet?
             if DAL.speedup == 1
               [EKerWeight{ii1}{i1to}, Ebias(ii1,i1to), DALstatus{i1to}] = ...
                   dalprgl( EKerWeight{ii1-1}{i1to}, Ebias(ii1-1,i1to), ...

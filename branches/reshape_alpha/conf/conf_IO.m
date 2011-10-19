@@ -25,7 +25,7 @@ else
     envOut.useFrame = [
         3000
                       ];
-  elseif 1 == 1
+  elseif 1 == 0
     envOut.useFrame = [
         3000
         10000 
@@ -33,10 +33,9 @@ else
         100000
         150000
                       ];
-  elseif 1 == 0
+  elseif 1 == 1
     envOut.useFrame = [
-        3000
-        150000
+        100000
                       ];
   end
 

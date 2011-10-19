@@ -1,11 +1,10 @@
-function [Ealpha] = reconstruct_Ealpha(env,DAL,bases,EKerWeight)
+function [Ealpha, Ograph] = reconstruct_Ealpha(env,graph,DAL,bases,EKerWeight)
 
 %% Ealpha:
 %%
-global graph
+Ograph = graph;
 
 cnum = env.cnum;
-
 
 Ealpha = cell(zeros(1,length(DAL.regFac)));
 
@@ -48,5 +47,5 @@ elseif  strcmp(bases.type,'glm')
     end
   end
 end
-graph.prm.diag_Yrange_auto = [md,Md];
-graph.prm.Yrange_auto = [mt,Mt];
+Ograph.prm.diag_Yrange_auto = [md,Md];
+Ograph.prm.Yrange_auto = [mt,Mt];

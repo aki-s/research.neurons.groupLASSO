@@ -10,7 +10,7 @@ global rootdir_;   rootdir_ = pwd;
 status.time.start = fix(clock);
 
 run([rootdir_ '/conf/setpaths.m']);
-
+[status.savedirname] = setSavedirName(rootdir_,status);
 %% ==< configure >==
 %% read user custom configuration.
 %% This overrides all configurations below.
@@ -88,26 +88,30 @@ if status.estimateConnection == 1
   status.time.regFac = zeros(useFrameLen,regFacLen);
   
   CVwhole = zeros(useFrameLen,1);
-  idxRfWhole = zeros(useFrameLen,1); %Rf: regularization factor
+  RfWholeIdx = zeros(useFrameLen,1); %Rf: regularization factor
   CVeach = zeros(useFrameLen,env.cnum);
-  idxRfEach = zeros(useFrameLen,env.cnum);
-  for i1 =1:length(env.useFrame)  % ( %++parallel? not practical.)
+  RfEachIdx = zeros(useFrameLen,env.cnum);
+  for i1 =1:useFrameLen
+    %% ( %++parallel? not practical for biological real data.)
     if env.useFrame(i1) <= env.genLoop
       DAL.Drow = env.useFrame(i1);
       if strcmp('crossValidation','crossValidation')
         %% ==< choose appropriate regFac >==
-        %        CVE(i1,1:regFacLen) =
-        %        crossVal(env,graph,status.crossVal,DAL,bases,I,i1);
         if status.parfor_ == 1
-        [ CVE(1:regFacLen,1:env.cnum,i1) ] =...
-            crossVal_parfor(env,graph,status,DAL,bases,I,i1);
-else
-        [ CVE(1:regFacLen,1:env.cnum,i1), status ] =...
-            crossVal(env,graph,status,DAL,bases,I,i1);
-end
+          [ CVE(1:regFacLen,1:env.cnum,i1), cost, EKerWeight, Ebias ] =...
+              crossVal_parfor(env,graph,status,DAL,bases,I,i1);
+          status.time.regFac(i1,:) = cost;
+        else %++imcomplete
+          [ CVE(1:regFacLen,1:env.cnum,i1), status ] =...
+              crossVal(env,graph,status,DAL,bases,I,i1);
+        end
         %% ==</choose appropriate regFac >==
-        [CVwhole(i1),idxRfWhole(i1)]             = min(sum(CVE(:,:,i1),2),[],1);
-        [CVeach(i1,1:env.cnum),idxRfEach(i1,1:env.cnum)] = min(CVE(:,:,i1),[],1); % each neuron
+        [CVwhole(i1),RfWholeIdx(i1)]             = min(sum(CVE(:,:,i1),2),[],1);
+        %% corresponding regularization factor: DAL.regFac(RfWholeIdx)
+        [CVeach(i1,1:env.cnum),RfEachIdx(i1,1:env.cnum)] = min(CVE(:,:,i1),[],1); % each neuron
+        if ( graph.PLOT_T == 1 ) && ( i1 == useFrameLen )
+          plot_CVEwhole(env,graph,DAL,CVE,RfWholeIdx);
+        end
 
       else
 
@@ -119,7 +123,6 @@ end
         if graph.PLOT_T == 1
           fprintf(1,'\n\n Now plotting estimated kernel\n');
           for i2 = 1:regFacLen
-            %          plot_Ealpha(env,graph,Ealpha,DAL,i2,sprintf('elapsed:%s',num2str(status.time.regFac(i1,i2))) )
             plot_Ealpha(env,graph,DAL,bases,EKerWeight,i2,... 
                         sprintf('elapsed:%s',num2str(status.time.regFac(i1,i2))) )
           end
@@ -135,6 +138,30 @@ end
       warning('DEBUG:NOTICE','env.useFrame > env.genLoop')
     end
   end
+  if (status.parfor_ == 1 ) && strcmp('crossValidation','crossValidation')
+        %% ==< Estimate best response func >==
+        %        %{
+        validUseFrameNum = sum(~isnan(CVwhole));
+        tDAL = cell(1,validUseFrameNum );
+        ttDAL = cell(1,validUseFrameNum );
+        parfor i2 = 1:validUseFrameNum %++parallel
+          tDAL{i2} = DAL;
+          tDAL{i2}.Drow = env.useFrame(i2);
+          tDAL{i2}.regFac = DAL.regFac(RfWholeIdx(i2));
+          [EKerWeight,Ebias,Estatus,ttDAL{i2}] = estimateWeightKernel(env,graph,status,bases,I,tDAL{i2},i2);
+%{
+          [Ealpha,tgraph] = reconstruct_Ealpha(env,graph,ttDAL{i2},bases,EKerWeight);
+          transform_Ealpha(Ealpha,tDAL{i2},status,regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2'));
+%}
+          if graph.PLOT_T == 1
+            fprintf(1,' Now writing out estimated kernel\n');
+            plot_Ealpha_parfor(env,graph,status,ttDAL{i2},bases,EKerWeight,1,... 
+                        sprintf('elapsed:%s',num2str(status.time.regFac(i2,RfWholeIdx(i2)))) )
+          end
+        end
+        %        %}
+        %% ==</Estimate best response func >==
+end
   if status.parfor_ == 1
     matlabpool close
   end
@@ -157,16 +184,12 @@ end
 status.time.end = fix(clock);
 
 if status.save_vars == 1
-  fprintf(1,'Saving variables....\n');
-  tmp0 = status.time.start;
-  mkdirname = [date,'-start-',num2str(tmp0(4)),'_',num2str(tmp0(5))];
-  mkdir( [ rootdir_ '/outdir/'],mkdirname)
-  savedirname =  [ rootdir_ '/outdir/',mkdirname];
+fprintf(1,'Saving variables....\n');
   if status.use.GUI == 1
-    uisave(who,strcat(savedirname,'/', 'frame', num2str(sprintf('%05d',env.genLoop)), 'hwind', num2str(sprintf('%04d',env.hwind)), 'hnum' , num2str(sprintf('%02d',env.hnum))));
+    uisave(who,strcat(status.savedirname,'/', 'frame', num2str(sprintf('%05d',env.genLoop)), 'hwind', num2str(sprintf('%04d',env.hwind)), 'hnum' , num2str(sprintf('%02d',env.hnum))));
   else
     tmp.v = datevec(date);
-    status.outputfilename = [savedirname,'/',num2str(tmp.v(3)),'_',num2str(tmp.v(2)),'_',num2str(tmp.v(1)),'__',num2str(tmp0(4)),'_',num2str(tmp0(5)),'.mat'];
+    status.outputfilename = [status.savedirname,'/',num2str(tmp.v(3)),'_',num2str(tmp.v(2)),'_',num2str(tmp.v(1)),'__',num2str(tmp0(4)),'_',num2str(tmp0(5)),'.mat'];
     save(status.outputfilename);
   end
   fprintf(1,'outputfilename:\n %s\n',status.outputfilename)
@@ -185,11 +208,13 @@ if (graph.SAVE_ALL == 1)
   tmp.fnames = {'garbage'}; %++bug:not yet implemented.
   if length(tmp.figHandles) == length(tmp.fnames)
     for i1 = 1:length(tmp.fnames)
-      print(i1,'-depsc',sprintf('%s/%s',savedirname,tmp.fnames{i1}));
+      %      print(i1,'-depsc',sprintf('%s/%s',status.savedirname,tmp.fnames{i1}));
+      print(i1,'-dpng',sprintf('%s/%s',status.savedirname,tmp.fnames{i1}));
     end
   else
     for i1 = 1:length(tmp.figHandles)
-      print(tmp.figHandles(i1),'-depsc',sprintf('%s/%02d',savedirname,i1) );
+      %      print(tmp.figHandles(i1),'-depsc',sprintf('%s/%02d',status.savedirname,i1) );
+      print(tmp.figHandles(i1),'-dpng',sprintf('%s/%02d',status.savedirname,i1) );
     end
   end
 end 

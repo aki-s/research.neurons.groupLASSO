@@ -1,4 +1,4 @@
-function plot_Ealpha(env,graph,DAL,bases,EKerWeight,regFacIndex,titleIn)
+function plot_Ealpha_parfor(env,graph,status,DAL,bases,EKerWeight,regFacIndex,titleIn)
 %function plot_Ealpha(env,graph,Ealpha,DAL,regFacIndex,titleIn)
 %%
 %% USAGE)
@@ -12,8 +12,6 @@ LIM = 10;
 if DEBUG == 1
   title = 'DEBUG:';
 end
-
-global rootdir_
 
 cnum = env.cnum;
 if isfield(env,'hnum') && ~isnan(env.hnum)
@@ -149,8 +147,8 @@ ylabel(h,'Target')
 
 %%% ===== PLOT alpha ===== END =====
 %% write out eps file
-%{
-if graph.PRINT_T == 1
-  print('-depsc','-tiff', [rootdir_ '/outdir/Estimated_alpha.eps'])
+title2 = sprintf('_regFac=%04d_frame=%06d  ',DAL.regFac(regFacIndex),DAL.Drow );
+if ( graph.PRINT_T == 1 ) || ( status.parfor_ == 1 )
+  fprintf(1,'%s', [status.savedirname '/Estimated_alpha' title2 '.png']);
+  print('-dpng', [status.savedirname '/Estimated_alpha' title2 '.png'])
 end
-%}

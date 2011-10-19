@@ -296,6 +296,12 @@ function plot_alpha_ternary(plot_alpha_ternary1,0
 mylib/plot/plot_CausalMatrix.m,50
 function plot_CausalMatrix(plot_CausalMatrix1,0
 
+mylib/plot/plot_Ealpha_parfor.m,52
+function plot_Ealpha_parfor(plot_Ealpha_parfor1,0
+
+mylib/plot/plot_CVEwhole.m,42
+function plot_CVEwhole(plot_CVEwhole1,0
+
 mylib/comp_alpha_ternary.m,68
 function [Ealpha_hash] = comp_alpha_ternarycomp_alpha_ternary2,58
 
@@ -350,9 +356,11 @@ function  [alpha_fig,alpha_hash,env,status] = readTrueConnectionreadTrueConnect
 mylib/get_neuronType.m,53
 function [OTout] = get_neuronTypeget_neuronType1,0
 
-mylib/reconstruct_Ealpha.m,86
-function [Ealpha] = reconstruct_Ealphareconstruct_Ealpha1,0
-global graphgraph5,80
+mylib/reconstruct_Ealpha.m,70
+function [Ealpha, Ograph] = reconstruct_Ealphareconstruct_Ealpha1,0
+
+mylib/crossVal_parfor.m,74
+function [cv,cost,EKerWeight,Ebias] = crossVal_parforcrossVal_parfor1,0
 
 mylib/echo_TrueValueStatus.m,81
 function echo_TrueValueStatus(echo_TrueValueStatus1,0
@@ -387,8 +395,8 @@ function [rate] = calcCorrectRateStrictcalcCorrectRateStrict1,0
 mylib/calcCorrectRateLax_IE.m,72
 function [rate0,num0] = calcCorrectRateLax_IEcalcCorrectRateLax_IE1,0
 
-mylib/crossVal.m,38
-function [cv] = crossValcrossVal1,0
+mylib/crossVal.m,45
+function [cv,status] = crossValcrossVal1,0
 
 mylib/calcLikelihood.m,47
 function L = calcLikelihoodcalcLikelihood1,0
@@ -404,6 +412,9 @@ function [Ebias_] = Ebias2MatEbias2Mat1,0
 
 mylib/init_crossVal.m,42
 function init_crossVal(init_crossVal1,0
+
+mylib/setSavedirName.m,59
+function [savedirname] = setSavedirNamesetSavedirName1,0
 
 tools/plot_lambda_video.m,50
 function plot_lambda_video(plot_lambda_video1,0
@@ -485,6 +496,8 @@ function  mainGenerateData(mainGenerateData1,0
 
 confidential/yoshimoto/transVoltageToSpike.m,54
 function transVoltageToSpike(transVoltageToSpike1,0
+
+gomi.m,0
 
 indir/Real_data/ksplotting.m,0
 

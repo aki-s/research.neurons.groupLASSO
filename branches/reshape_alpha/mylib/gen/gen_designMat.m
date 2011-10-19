@@ -107,51 +107,71 @@ end
 
 %%% ==< calc matrix D >==
 reportEvery = 10;
-tmp0.showProg=floor(env.cnum/reportEvery);
-if tmp0.showProg == 0
-  tmp0.showProg = 1;
+showProg=floor(env.cnum/reportEvery);
+if showProg == 0
+  showProg = 1;
 end
 
 tic
-tmp0.count = 0;
+count = 0;
 
 C = env.cnum; % # of cells
 K = bases.ihbasprs.nbase; % # of bases per a cell
 N = histSize; % length of each single basis
 use = Drow - N;
-%D = zeros( Drow, C*K ); % design matrix
+if 1 == 1
 D = zeros( use, C*K ); % design matrix
+else
+
+end
 T = size( I, 1 ); % length of the time-sequence
 %%idx = (T-Drow+1):T; % time index to be estimated
 idx = (T+1 -use):T; % time index to be estimated
-y = I( idx, : );
-
+%%y = I( idx, : );
+Dcell = cell(1,K);
 if strcmp(bases.type,'glm')
   fprintf(1,'%s : %% ',bases.type);
-  for c = 1:C
-    %    if status.parfor_ ~= 1
-      if ~mod(c,tmp0.showProg) %% show progress.
-        fprintf(1,'%3.0f ',(tmp0.count/C)*100)
-        tmp0.count = tmp0.count +1;
+  parforFlag = status.parfor_;
+  parfor c = 1:C %++bug:test
+    if parforFlag ~= 1
+      if ~mod(c,showProg) %% show progress.
+        fprintf(1,'%3.0f ',(count/C)*100)
+        %count = count +1;
+        tmp = count +1;
+        count = tmp;
       end
-      %    end
+    else
+
+    end
+    %{
     for k = 1:K
-      %      tmp1D = zeros( Drow, 1 );
       tmp1D = zeros( use, 1 );
-      %      for t = 1:Drow
       for t = 1:use
         tmp1D( t ) = dot( bases.ihbasis( 1:N, k ), ...
                           I( idx(t)-(1:N), c ) );
       end
       D( :, (c-1)*K + k ) = tmp1D;
+      %      D( :, (c-1)*K + k ) = D( :, (c-1)*K + k )  + tmp1D;
     end
+    %}
+    tmp1D = zeros( use, K );
+    for k = 1:K
+      for t = 1:use
+        tmp1D( t,k ) = dot( bases.ihbasis( 1:N, k ), ...
+                          I( idx(t)-(1:N), c ) );
+      end
+    end
+    Dcell{c} = tmp1D;
+  end
+  for c = 1:C
+    D(:, (c-1)*K + (1:K) ) = Dcell{c};
   end
 elseif strcmp(bases.type,'bar')
   fprintf(1,'%s : %% ',bases.type);
   for c = 1:C
-    if ~mod(c,tmp0.showProg) %% show progress.
-      fprintf(1,'%d ',tmp0.count*10)
-      tmp0.count = tmp0.count +1;
+    if ~mod(c,showProg) %% show progress.
+      fprintf(1,'%d ',count*10)
+      count = count +1;
     end
     for k = 1:K
       D( :, (c-1)*K + k ) = I( idx -k, c );
@@ -159,5 +179,6 @@ elseif strcmp(bases.type,'bar')
   end
   D = double(D);
 end
-fprintf(1,': elapsed %7.2f\n',toc);
+%fprintf(1,': elapsed %7.2f\n',toc);
+fprintf(1,': elapsed %7.2f',toc);
 %%% ==</calc matrix D >==
