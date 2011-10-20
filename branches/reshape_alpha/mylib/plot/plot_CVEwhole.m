@@ -1,6 +1,6 @@
-function plot_CVEwhole(env,graph,DAL,CVE,RfWholeIdx,varargin)
+function plot_CVLwhole(env,graph,DAL,CVL,RfWholeIdx,varargin)
 
-a = sum(CVE,2);
+a = sum(CVL,2);
 
 nargin_NUM = 5;
 if nargin > nargin_NUM
@@ -10,7 +10,7 @@ if nargin > nargin_NUM
 else
   ALL = 1;
   FROM = 1;
-  %  [dum1 dum2 fnum] = size(CVE);
+  %  [dum1 dum2 fnum] = size(CVL);
   fnum = sum( ~isnan(sum(a)) );
 end
 
@@ -54,4 +54,4 @@ end
 
 legend(LGDT,'FontSize',14,'LineWidth',3);
 xlabel( 'regularization factor' )
-ylabel( 'CVE' )
+ylabel( 'CVL' )

@@ -40,7 +40,6 @@ end
 %}
 %%% == useful func ==
 %kdelta = inline('n == 0'); % kronecker's delta
-
 [Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EKerWeight);
 %%% ===== PLOT alpha ===== START =====
 if strcmp('set_xticks','set_xticks')
@@ -62,6 +61,7 @@ else % you'd better collect max and min range of response functions
      % in advance.
   diag_Yrange = graph.prm.diag_Yrange_auto;
   Yrange      = graph.prm.Yrange_auto;     
+  newYrange = [ min(Yrange(1),diag_Yrange(1)) max(Yrange(2),diag_Yrange(2)) ];
 end
 if cnum <= MAX
   figure;
@@ -86,7 +86,9 @@ if cnum <= MAX
     grid on;
     %% </ chage color ploted according to cell type >
     xlim([0,hnum*hwind*XSIZE]);  
+    %{
     newYrange = round([ Yrange(1) diag_Yrange(2) ]*100)/100;
+    %}
     ylim(newYrange)
 
     if  graph.TIGHT == 1;
@@ -137,8 +139,8 @@ if 1 == 0
   text(.08,.85,'Targets')
 else
   pos = [ .1 cnum ]/(cnum+2);
-  text(pos(1)+.1,pos(2) +.03,'Triggers')
-  text(pos(1)+.02,pos(2) -.01,'Targets')
+  text(pos(1)+.02,pos(2) +.03,'Triggers')
+  text(pos(1)+.01,pos(2) -.00,'Targets')
 end
 %{
 xlabel(h,'Trigger')

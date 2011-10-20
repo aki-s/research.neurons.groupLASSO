@@ -12,7 +12,7 @@ function [cv,status] = crossVal(env,graph,status_cvDiv,DAL,bases,varargin)
 
 status = status_cvDiv;
 k = status_cvDiv.crossVal;
-parfor_flag = status.parfor_;
+%parfor_flag = status.parfor_;
 
 tmpEnv = env;
 baseN = 5;

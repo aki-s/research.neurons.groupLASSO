@@ -141,7 +141,7 @@ if strcmp(bases.type,'glm')
         count = tmp;
       end
     else
-
+            fprintf('parfor: gen_designMat...,  ')
     end
     %{
     for k = 1:K
@@ -179,6 +179,5 @@ elseif strcmp(bases.type,'bar')
   end
   D = double(D);
 end
-%fprintf(1,': elapsed %7.2f\n',toc);
 fprintf(1,': elapsed %7.2f',toc);
 %%% ==</calc matrix D >==

@@ -20,7 +20,9 @@ if (nargin >= baseN+1 )
   if ismatrix(varargin{1})
     %% varargin{1} is 'I'. 
     I = varargin{1};
-  elseif ischar(varargin{1})
+  elseif ischar(varargin{1}) %++bug:notyet
+    %% read a fire or directory, then use the contents of it for
+    %% cross validation.
     infile = varargin{1};
 
     %inRoot_ = '/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/indir'

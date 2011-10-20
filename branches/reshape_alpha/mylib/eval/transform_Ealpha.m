@@ -1,6 +1,6 @@
-function  transform_Ealpha(Ealpha,DAL,status,fire)
+function  saveResponseFunc(Ealpha,DAL,status,fire)
 %
-% transform_Ealpha(Ealpha,DAL,status,'fire_by')
+% saveResponseFunc(Ealpha,DAL,status,'fire_by')
 global rootdir_
 global env
 
@@ -10,7 +10,8 @@ frame = DAL.Drow;
 regFac = DAL.regFac;
 N = length(regFac);
 method = status.method;
-checkDirname = status.checkDirname;
+%checkDirname = status.checkDirname;
+saveDirName = status.saveDirName;
 %%
 SIZE = 500; % SIZE > bases.ihbas.iht
 Alpha_ = cell(1,N);
@@ -28,7 +29,8 @@ end
 %%
 for i1 = 1:N
   Alpha = Alpha_{i1};
-  save([rootdir_  checkDirname,'/',method,'-', ...
+  %  save([rootdir_  checkDirname,'/',method,'-', ...
+  save([rootdir_  saveDirName,'/',method,'-', ...
         sprintf('%07d',regFac(i1)),'-',fire, ...
         sprintf('-%07d',frame),'.mat' ],'Alpha');
 end

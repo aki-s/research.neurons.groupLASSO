@@ -300,7 +300,7 @@ mylib/plot/plot_Ealpha_parfor.m,52
 function plot_Ealpha_parfor(plot_Ealpha_parfor1,0
 
 mylib/plot/plot_CVEwhole.m,42
-function plot_CVEwhole(plot_CVEwhole1,0
+function plot_CVLwhole(plot_CVLwhole1,0
 
 mylib/comp_alpha_ternary.m,68
 function [Ealpha_hash] = comp_alpha_ternarycomp_alpha_ternary2,58
@@ -323,7 +323,7 @@ mylib/eval/plotalpha.m,34
 function plotalpha(plotalpha1,0
 
 mylib/eval/transform_Ealpha.m,101
-function  transform_Ealpha(transform_Ealpha1,0
+function  saveResponseFunc(saveResponseFunc1,0
 global rootdir_rootdir_4,101
 global envenv5,117
 
@@ -376,9 +376,8 @@ function [sum] = calcCorrectNumcalcCorrectNum1,0
 mylib/setDALregFac.m,48
 function DALout = setDALregFacsetDALregFac1,0
 
-mylib/readI.m,74
+mylib/readI.m,43
 function [ Oenv I OTout] = readIreadI1,0
-global rootdir_rootdir_6,145
 
 mylib/echo_initStatus.m,46
 function echo_initStatus(echo_initStatus1,0
@@ -558,6 +557,10 @@ misc/plot_poisson_loss.m,0
 dal_mod/job051_TestPR.m,0
 
 dal_ver1.05/s_test_hsgl.m,0
+
+conf/conf_user_kim.m,0
+
+conf/conf_user_gaya.m,0
 
 conf/conf_makeSimStruct_glm.m,0
 

@@ -1,11 +1,25 @@
-function [ Oenv I OTout] = readI(env,status,Tout,X,direction)
+function [ Oenv I OTout] = readI(env,status,Tout,varargin)
+%% option)
+%% X = varargin{1}: name of spike train to be loaded.
+%% direction = varargin{2};: direction of sequence of X
+argin_NUM = 3;
+if varargin >= (argin_NUM + 1)
+  X = varargin{1};
+elseif isfield(status,'inFiringLabel')
+  X = status.inFiringLabel;
+else 
+  error('set label of firing');
+end
+if varargin >= (argin_NUM + 2)
+  direction = varargin{2};
+elseif isfield(status,'inFiringDirect')
+  direction = status.inFiringDirect;
+else
+  error('set direction of firing time serise.')
+end
 
-%% X: name of spike train to be loaded.
-%% direction: direction of sequence of X
-
-global rootdir_
 Oenv = env;
-%OTout = Tout;
+OTout = Tout; %?
 infile = status.inFiring;
 
 %% ==< conf >==
@@ -23,7 +37,7 @@ S = load(infile,X);
 %% from Kim's data
 %CHN:channel, SMP:number of flame, TRL:number of trial
 [CHN SMP TRL] = size(S.X);
-
+%if isfield(env,'inFiringUSE')
 I = zeros(CHN,SMP*TRL);
 
 if (direction == 2) % concatenate all firing data
