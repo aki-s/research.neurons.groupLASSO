@@ -39,7 +39,6 @@ if MAX > LIM
 end
 %}
 %%% == useful func ==
-%kdelta = inline('n == 0'); % kronecker's delta
 [Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EKerWeight);
 %%% ===== PLOT alpha ===== START =====
 if strcmp('set_xticks','set_xticks')
@@ -57,13 +56,21 @@ end
 if strcmp('set_range','set_range_')
   diag_Yrange = graph.prm.diag_Yrange;
   Yrange      = graph.prm.Yrange;
+    zeroFlag = 0;
 else % you'd better collect max and min range of response functions
      % in advance.
   diag_Yrange = graph.prm.diag_Yrange_auto;
-  Yrange      = graph.prm.Yrange_auto;     
+  Yrange      = graph.prm.Yrange_auto; 
   newYrange = [ min(Yrange(1),diag_Yrange(1)) max(Yrange(2),diag_Yrange(2)) ];
+  if newYrange == 0
+    newYrange = [-0.1 0.1 ];
+    zeroFlag = 1;
+else
+    zeroFlag = 0;
+  end
 end
-if cnum <= MAX
+%if cnum <= MAX
+if 1 == 1
   figure;
   i2to = 1; % cell to
   i3from = 1; % cell from
@@ -96,11 +103,14 @@ if cnum <= MAX
     end
     set(gca,'XAxisLocation','top');
     set(gca,'XTick' , 1:dh:hnum*hwind);
+    set(gca,'xticklabel',[])
+    %{
     if cnum > LIM
       set(gca,'xticklabel',[])
     else
       set(gca,'XTickLabel',TIMEL);
     end
+    %}
     Y_LABEL = get(gca,'yTickLabel');
     set(gca,'yticklabel',[]);
     %% < from-to cell label >
@@ -109,8 +119,10 @@ if cnum <= MAX
       set(gca,'XTickLabel',TIMEL);
     end
     if (i3from == 1) % When in the leftmost margin.
-      ylabel(i2to); 
-    set(gca,'yticklabel',Y_LABEL);
+      ylabel(i2to);
+      if zeroFlag == 0
+        set(gca,'yticklabel',Y_LABEL);
+      end
     end
     %% </ from-to cell label >
 
@@ -122,17 +134,21 @@ if cnum <= MAX
     %% </ index config >
   end
   set(gcf,'color','white')
+else
+  warning('DEBUG:notice','too much of neurons to be plotted.');
 end
 
 %% h: description about outer x-y axis
-title = sprintf('dal%s:DAL regFac=%4d frame=%6d  ',DAL.method,DAL.regFac(regFacIndex),DAL.Drow );
+title = sprintf('dal%s:DAL regFac=%4d frame=%6d  #%4d',DAL.method,DAL.regFac(regFacIndex),DAL.Drow,cnum );
+%{
 if cnum > LIM
   strcat(title,TIMEL);
 end
+%}
 strcat(title,titleIn);
 h = axes('Position',[0 0 1 1],'Visible','off'); 
 set(gcf,'CurrentAxes',h)
-text(.4,.95,title,'FontSize',12)
+text(.2,.95,title,'FontSize',12)
 
 if 1 == 0
   text(.12,.90,'Triggers')
@@ -149,7 +165,7 @@ ylabel(h,'Target')
 
 %%% ===== PLOT alpha ===== END =====
 %% write out eps file
-title2 = sprintf('_regFac=%04d_frame=%06d  ',DAL.regFac(regFacIndex),DAL.Drow );
+title2 = sprintf('_regFac=%07d_frame=%07d_N=%04d',DAL.regFac(regFacIndex),DAL.Drow,cnum );
 if ( graph.PRINT_T == 1 ) || ( status.parfor_ == 1 )
   fprintf(1,'%s', [status.savedirname '/Estimated_alpha' title2 '.png']);
   print('-dpng', [status.savedirname '/Estimated_alpha' title2 '.png'])

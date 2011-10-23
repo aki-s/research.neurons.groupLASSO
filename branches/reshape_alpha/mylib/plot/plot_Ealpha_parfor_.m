@@ -1,9 +1,9 @@
-function plot_Ealpha(env,graph,DAL,bases,EKerWeight,regFacIndex,titleAddMemo)
-%function plot_Ealpha(env,graph,Ealpha,DAL,regFacIndex,titleAddMemo)
+function plot_Ealpha_parfor_(env,graph,status,DAL,bases,Ealpha,regFacIndex,titleIn)
+%function plot_Ealpha(env,graph,Ealpha,DAL,regFacIndex,titleIn)
 %%
 %% USAGE)
 %% Example:
-% plot_Ealpha(env,graph,DAL,bases,EKerWeight,regFacIndex,'titleAddMemo')
+% plot_Ealpha(env,graph,Ealpha,DAL,regFacIndex,'title')
 %%
 
 DEBUG = 0;
@@ -12,8 +12,6 @@ LIM = 10;
 if DEBUG == 1
   title = 'DEBUG:';
 end
-
-global rootdir_
 
 cnum = env.cnum;
 if isfield(env,'hnum') && ~isnan(env.hnum)
@@ -41,9 +39,7 @@ if MAX > LIM
 end
 %}
 %%% == useful func ==
-%kdelta = inline('n == 0'); % kronecker's delta
-
-[Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EKerWeight);
+%[Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EKerWeight);
 %%% ===== PLOT alpha ===== START =====
 if strcmp('set_xticks','set_xticks')
   Lnum = 2;
@@ -63,16 +59,20 @@ if strcmp('set_range','set_range_')
 else % you'd better collect max and min range of response functions
      % in advance.
   diag_Yrange = graph.prm.diag_Yrange_auto;
-  Yrange      = graph.prm.Yrange_auto;     
+  Yrange      = graph.prm.Yrange_auto; 
+  newYrange = [ min(Yrange(1),diag_Yrange(1)) max(Yrange(2),diag_Yrange(2)) ];
+if newYrange == 0
+  newYrange = [-0.1 0.1 ];
 end
-%if cnum <= MAX
-if 1 == 1
+end
+if cnum <= MAX
   figure;
   i2to = 1; % cell to
   i3from = 1; % cell from
-  pos = [ .5 (cnum) 0 0 ]/(cnum+2);
+              %  pos = [ .5 (cnum) 0 0 ]/(cnum+2);
+  pos = [ .5 (cnum+.5) 0 0 ]/(cnum+2);
   for i1 = 1:cnum*cnum % subplot select
-    subplot('position',pos + [i3from -i2to 1 1 ]/(cnum+3) );
+    subplot('position',pos + [i3from -(i2to+.5) 1 1 ]/(cnum+3) );
     tmp1 = Ealpha{regFacIndex}{i2to}{i3from};
     %% <  chage color ploted according to cell type >
     hold on;
@@ -89,7 +89,9 @@ if 1 == 1
     grid on;
     %% </ chage color ploted according to cell type >
     xlim([0,hnum*hwind*XSIZE]);  
+    %{
     newYrange = round([ Yrange(1) diag_Yrange(2) ]*100)/100;
+    %}
     ylim(newYrange)
 
     if  graph.TIGHT == 1;
@@ -126,22 +128,22 @@ if 1 == 1
 end
 
 %% h: description about outer x-y axis
-title = sprintf('dal%s:DAL regFac=%4d frame=%6d  ',DAL.method,DAL.regFac(regFacIndex),DAL.Drow );
+title = sprintf('dal%s:DAL regFac=%4d frame=%6d  #%4d',DAL.method,DAL.regFac(regFacIndex),DAL.Drow,cnum );
 if cnum > LIM
   strcat(title,TIMEL);
 end
-title = strcat(title,titleAddMemo);
+strcat(title,titleIn);
 h = axes('Position',[0 0 1 1],'Visible','off'); 
 set(gcf,'CurrentAxes',h)
-text(.2,.95,title,'FontSize',12)
+text(.4,.95,title,'FontSize',12)
 
 if 1 == 0
   text(.12,.90,'Triggers')
   text(.08,.85,'Targets')
 else
   pos = [ .1 cnum ]/(cnum+2);
-  text(pos(1)+.1,pos(2) +.03,'Triggers')
-  text(pos(1)+.02,pos(2) -.01,'Targets')
+  text(pos(1)+.02,pos(2) +.03,'Triggers')
+  text(pos(1)+.01,pos(2) -.00,'Targets')
 end
 %{
 xlabel(h,'Trigger')
@@ -150,8 +152,8 @@ ylabel(h,'Target')
 
 %%% ===== PLOT alpha ===== END =====
 %% write out eps file
-%{
-if graph.PRINT_T == 1
-  print('-depsc','-tiff', [rootdir_ '/outdir/Estimated_alpha.eps'])
+title2 = sprintf('_regFac=%08d_frame=%010d',DAL.regFac(regFacIndex),DAL.Drow );
+if ( graph.PRINT_T == 1 ) || ( status.parfor_ == 1 )
+  fprintf(1,'%s\n', [status.savedirname '/Estimated_alpha' title2 '.png']);
+  print('-dpng', [status.savedirname '/Estimated_alpha' title2 '.png'])
 end
-%}

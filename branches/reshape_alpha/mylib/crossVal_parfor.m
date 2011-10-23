@@ -81,8 +81,8 @@ if( nargin >= (baseN + 2) ) %++needless?
   end
   Tlen = tmp;
   if ( len ~= Tlen )
-    fprintf(1,'To make equally dividable, not all firng was used.');
-    fprintf(1,'(%10d <- %10d) <- %10d',Tlen,DAL.Drow,env.genLoop); 
+    fprintf(1,'To make equally dividable, not all firng was used.\n');
+    fprintf(1,'(use %10d out of %10d) <- Original%10d\n',DAL.Drow,Tlen,env.genLoop); 
   end
   useFrameIdx = varargin{2};
 else
@@ -97,9 +97,14 @@ if( nargin > (baseN + 2) ) %++needless?
 end
 
 Width = Tlen/k;
-tmpEnv.genLoop = env.genLoop - Width;
+tmpEnv.genLoop = Tlen - Width;
 regFacLen = length(DAL.regFac);
-cnum = env.cnum;
+if isfield(env,'inFiringUSE')
+  cnum = size(I,2);
+  tmpEnv.cnum = cnum;
+else
+  cnum = env.cnum;
+end
 loglambda = zeros(tmpEnv.genLoop,cnum);
 EKerWeight = cell(1,k);
 Ebias  = cell(1,k);
@@ -118,6 +123,7 @@ cv = nan(regFacLen,cnum);
 cost = nan(1,regFacLen);
 else
   parfor i1 = 1:k % crossValidation ( %++parallel)
+    %%for i1 = 1:k % crossValidation ( %++parallel)
     fprintf(1,'crossValidation index:%2d',i1);
     omit = zeros(1,Tlen);
     omit( (1 + (i1-1)*Width ) : (i1*Width) ) = ( (1 + (i1-1)*Width ) : (i1*Width) ) ;
@@ -126,12 +132,15 @@ else
     USE = USE(USE >0);
     [EKerWeight{i1},Ebias{i1},Estatus{i1},dum1,status_tmp{i1}] =...
         estimateWeightKernel(tmpEnv,graph,status,bases,I(USE,:),DAL,useFrameIdx);
-    %    tic;fprintf(1,'Eapha2Mat:\t');
     cost = cost + status_tmp{i1}.time.regFac(useFrameIdx,:);
-    Ealpha = reconstruct_Ealpha(tmpEnv,graph,DAL,bases,EKerWeight{i1});
+    [Ealpha Ograph] = reconstruct_Ealpha(tmpEnv,graph,DAL,bases,EKerWeight{i1});
     histSize = bases.ihbasprs.NumFrame;
+    %% warning: not exact response function is write out.
+    if strcmp('incomplete_RF','incomplete_RF') % RF: response function
+      saveResponseFunc(env,Ograph,EKerWeight{i1},Ealpha,Ebias{i1}, ...
+                       DAL,status,regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2'),bases,i1);% for later use 
+    end
     [Ealpha_] = Ealpha2Mat(tmpEnv,Ealpha,regFacLen);
-    %    toc
     for i2 = 1:regFacLen
       loglambda = cell(tmpEnv.genLoop,1);
       %%++parallel strongly recommended. Especially if 'k' is small

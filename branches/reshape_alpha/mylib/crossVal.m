@@ -1,4 +1,5 @@
-function [cv,status] = crossVal(env,graph,status_cvDiv,DAL,bases,varargin)
+function [cv,cost,EKerWeight,Ebias] = crossVal(env,graph,status_cvDiv,DAL,bases,varargin)
+%function [cv,status] = crossVal(env,graph,status_cvDiv,DAL,bases,varargin)
 
 %% k: upper 'k' results file from 'infile' is used to do crossValidation.
 %% k-hold crossValidation.
@@ -72,19 +73,19 @@ else % artificially generated firing is not reliable at small frame index.
   len = floor(env.genLoop * prm);
 end
 
-if( nargin <= (baseN + 2) ) %++needless?
+if( nargin >= (baseN + 2) ) %++needless?
   tmp = len;
   while mod(tmp,k)
     tmp = tmp -1;
   end
   Tlen = tmp;
   if ( len ~= Tlen )
-    fprintf(1,'To make equally dividable, not all firng was used.');
-    fprintf(1,'(%10d <- %10d) <- %10d',Tlen,DAL.Drow,env.genLoop); 
+    fprintf(1,'To make equally dividable, not all firng was used.\n');
+    fprintf(1,'(use %10d out of %10d) <- %10d\n',DAL.Drow,Tlen,env.genLoop); 
   end
-  regFacIdx = varargin{2};
+  useFrameIdx = varargin{2};
 else
-  regFacIdx = 1; % noncommittal
+  useFrameIdx = 1; % noncommittal
 end
 
 if( nargin > (baseN + 2) ) %++needless?

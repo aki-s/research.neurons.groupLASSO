@@ -1,18 +1,20 @@
 warning('DEBUG:conf','conf_user_gaya.m.');
 
 DAL.regFac_UserDef = 1;
-DAL.regFac = [3000 2000 1500 1000 900 800 700 600 500 400 300];
+%DAL.regFac = [ 2048 1024 512 256 128 64 32 16 8 4 ];
+DAL.regFac = [30 10];
 
 graph.TIGHT = 0;
 graph.PLOT_MAX_NUM_OF_NEURO = 15;
 graph.GRAPHVIZ_OUT_FIG = 1; % default: 0
 graph.xrange = 1000;
 graph.PLOT_T = 1;
-graph.SAVE_ALL = 1;
+graph.PRINT_T = 1;%save plotted figure.
+graph.SAVE_ALL = 0;
 graph.prm.Yrange = [-.5 5];
 graph.prm.diag_Yrange = [-.5 5];
 
-env.inFiringLabel ='I';
+env.inFiringLabel = 's';
 env.inFiringDirect = 2;
 env.inFiringUSE = [10 20];
 env.Hz.video=1000;
@@ -31,4 +33,3 @@ status.DEBUG.level = 1; %++bug: not yet implemented.
 status.use.GUI = 0; %++bug: not yet implemented.
 status.READ_FIRING =1; % read gaya FIRING.
 status.inFiring = ['/home/shige-o/rec072b.mat'];
-

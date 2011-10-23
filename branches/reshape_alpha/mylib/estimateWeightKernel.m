@@ -50,6 +50,7 @@ if 1 == 1
   %% dimension reduction to be estimated.
   fprintf('\tGenerating Matrix for DAL\n');
   [D] = gen_designMat(env,status,bases,I,DAL.Drow);
+  %%+improve:write out for later use and speedup.
   %  DAL.Drow = Drow.Drow - length(bases.iht);
 
   if strcmp(method,'prgl')

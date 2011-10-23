@@ -4,9 +4,6 @@ global rootdir_
 statusOut = statusIn;
 envOut = envIn;
 %%
-%statusOut.inFiring = [ rootdir_ '/indir/Simulation/data_sim_9neuron.mat'];
-statusOut.inFiring = [ rootdir_ ['/indir/Real_data/' ...
-                    'data_real_catM1.mat']];
 
 % DAL.Drow
 if 1 == 0
@@ -33,7 +30,7 @@ else
         100000
         150000
                       ];
-  elseif 1 == 1
+  elseif 1 == 0
     envOut.useFrame = [
         100000
                       ];
@@ -42,4 +39,4 @@ else
 end
 
 %statusOut.checkDirname = '/outdir/check_110818';
-statusOut.checkDirname = '/indir/Real_data/myest_outdir';
+%statusOut.checkDirname = '/indir/Real_data/myest_outdir';

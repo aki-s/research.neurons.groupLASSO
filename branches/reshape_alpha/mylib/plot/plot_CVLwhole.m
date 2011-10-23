@@ -1,8 +1,9 @@
-function plot_CVLwhole(env,graph,DAL,CVL,RfWholeIdx,varargin)
+function plot_CVLwhole(env,status,graph,DAL,CVL,RfWholeIdx,varargin)
 
 a = sum(CVL,2);
+cnum = env.cnum;
 
-nargin_NUM = 5;
+nargin_NUM = 6;
 if nargin > nargin_NUM
   ALL = 0;
   FROM = varargin{1};
@@ -45,7 +46,7 @@ for i2 = FROM:fnum
   if ALL == 0
     title(['usedFrame:',sprintf('%d',env.useFrame(i2))])
   else
-    title('cross validation error.')
+    title(['- (cross Validation Liklihood)',sprintf('#%4d',cnum)])
   end
   set(gcf,'color','white')
   set(gca,'xtick',1:LEN)
@@ -55,3 +56,13 @@ end
 legend(LGDT,'FontSize',14,'LineWidth',3);
 xlabel( 'regularization factor' )
 ylabel( 'CVL' )
+if ALL == 1
+  inFname= regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2');
+  title2 = sprintf('%s-CVL-%s-%04d',status.method,inFname,cnum );
+else
+  title2 = sprintf('%s-CVL-used%07-n%04d',status.method,DAL.Drow,cnum );
+end
+if ( graph.PRINT_T == 1 )
+  fprintf(1,'%s', [status.savedirname '/' title2 '.png']);
+  print('-dpng', [status.savedirname '/' title2 '.png'])
+end

@@ -52,6 +52,23 @@ end
 
 if isfield(DAL,'Drow')
   Oenv.useFrame = DAL.Drow;
+elseif isfield(status,'crossVal')
+  tmp = Oenv.genLoop;
+  k = status.crossVal;
+  while mod(tmp,k)
+    tmp = tmp -1;
+  end
+  DALmax = tmp * (k-1) / k;
+  if isfield(env,'useFrame')
+    before = length(env.useFrame);
+    ODAL.Drow = env.useFrame(env.useFrame<=DALmax);
+    if (before ~= length(ODAL.Drow) )
+      warning('DEBUG:notice','demanded frame is large to do cross validation\n make smaller than env.genLoop *(status.crossVal-1)/(status.crossVal)');
+    end
+  else 
+    ODAL.Drow = DALmax;
+    Oenv.useFrame = DALmax;
+  end
 else
   ODAL.Drow = env.useFrame;
 end

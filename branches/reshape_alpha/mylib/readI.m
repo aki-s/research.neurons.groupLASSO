@@ -3,17 +3,17 @@ function [ Oenv I OTout] = readI(env,status,Tout,varargin)
 %% X = varargin{1}: name of spike train to be loaded.
 %% direction = varargin{2};: direction of sequence of X
 argin_NUM = 3;
-if varargin >= (argin_NUM + 1)
+if nargin >= (argin_NUM + 1)
   X = varargin{1};
-elseif isfield(status,'inFiringLabel')
-  X = status.inFiringLabel;
+elseif isfield(env,'inFiringLabel')
+  X = env.inFiringLabel;
 else 
   error('set label of firing');
 end
-if varargin >= (argin_NUM + 2)
+if nargin >= (argin_NUM + 2)
   direction = varargin{2};
-elseif isfield(status,'inFiringDirect')
-  direction = status.inFiringDirect;
+elseif isfield(env,'inFiringDirect')
+  direction = env.inFiringDirect;
 else
   error('set direction of firing time serise.')
 end
@@ -32,30 +32,28 @@ Oenv.SELF_DEPRESS_BASE = NaN;
 
 %% ==</conf >==
 %%
-S = load(infile,X);
+load(infile,num2str(X));
+X = eval(X);
+
 %% load time serise of firing 'X'
 %% from Kim's data
 %CHN:channel, SMP:number of flame, TRL:number of trial
-[CHN SMP TRL] = size(S.X);
-%if isfield(env,'inFiringUSE')
+[CHN SMP TRL] = size(X);
 I = zeros(CHN,SMP*TRL);
 
 if (direction == 2) % concatenate all firing data
   for i1 = 1: TRL
-    I(1:CHN,(1:SMP) + (i1-1) * SMP) = S.X(1:CHN,1:SMP,i1);
+    I(1:CHN,(1:SMP) + (i1-1) * SMP) = X(1:CHN,1:SMP,i1);
   end
 elseif (direction == 1)
   tmp = CHN;
   CHN = SMP;
   SMP = tmp;
   for i1 = 1: TRL
-    I(1:CHN,(1:SMP) + (i1-1) * SMP) = S.X(1:SMP,1:CHN,i1);
+    I(1:CHN,(1:SMP) + (i1-1) * SMP) = X(1:SMP,1:CHN,i1);
   end
 end
 I = transpose(I); % set I's sequence (direction == 1 ).
-
-
-%%
 
 [Oenv.genLoop Oenv.cnum] = size(I);
 %{
@@ -70,6 +68,8 @@ else
   OTout = NaN;
 end
 
-% $$$ if Oenv.useFrame < Oenv.genLoop
-% $$$   I = I((end+1 - Oenv.useFrame):end,:);
-% $$$ end
+if isfield(env,'inFiringUSE')
+else
+Oenv.inFiringUSE = CHN;
+end
+
