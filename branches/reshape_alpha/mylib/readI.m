@@ -33,7 +33,9 @@ Oenv.SELF_DEPRESS_BASE = NaN;
 %% ==</conf >==
 %%
 load(infile,num2str(X));
-X = eval(X);
+X = eval(num2str(X)); % o gaya, x KIM
+%X = eval(X); % o gaya
+%X = eval('X'); % x gaya, o kim
 
 %% load time serise of firing 'X'
 %% from Kim's data

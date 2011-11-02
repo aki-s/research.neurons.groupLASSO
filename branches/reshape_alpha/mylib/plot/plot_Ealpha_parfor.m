@@ -104,13 +104,6 @@ if 1 == 1
     set(gca,'XAxisLocation','top');
     set(gca,'XTick' , 1:dh:hnum*hwind);
     set(gca,'xticklabel',[])
-    %{
-    if cnum > LIM
-      set(gca,'xticklabel',[])
-    else
-      set(gca,'XTickLabel',TIMEL);
-    end
-    %}
     Y_LABEL = get(gca,'yTickLabel');
     set(gca,'yticklabel',[]);
     %% < from-to cell label >
@@ -139,7 +132,7 @@ else
 end
 
 %% h: description about outer x-y axis
-title = sprintf('dal%s:DAL regFac=%4d frame=%6d  #%4d',DAL.method,DAL.regFac(regFacIndex),DAL.Drow,cnum );
+title = sprintf('regFac=%4d frame=%6d  #%4d',DAL.regFac(regFacIndex),DAL.Drow,cnum );
 %{
 if cnum > LIM
   strcat(title,TIMEL);

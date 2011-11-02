@@ -36,7 +36,7 @@ end
 %DAL.Drow = 2000;
 
 graph.TIGHT = 0;
-graph.PLOT_MAX_NUM_OF_NEURO = 15;
+graph.PLOT_MAX_NUM_OF_NEURO = 10;
 graph.GRAPHVIZ_OUT_FIG = 1; % default: 0
 graph.SAVE_ALL = 0;
 graph.xrange = 1000;

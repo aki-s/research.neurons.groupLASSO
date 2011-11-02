@@ -7,6 +7,7 @@ if nargin == 1 % use write outed setting
                %++bug: 
   if isdir(varargin{1})
     in = varargin{1};
+    in = strcat(in,'/');
     LOOP =  1;
   elseif ischar(varargin{1})
     data = varargin{1};
@@ -22,6 +23,7 @@ if nargin == 1 % use write outed setting
 elseif nargin == 2
   if isdir(varargin{1})
     in = varargin{1};
+    in = strcat(in,'/');
   end
   if isnumeric(varargin{2})
     cnum = varargin{2}; % vector

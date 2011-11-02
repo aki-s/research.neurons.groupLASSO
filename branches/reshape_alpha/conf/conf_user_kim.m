@@ -2,11 +2,11 @@
 %% Please overload default configuration explicitly by writing here.
 warning('DEBUG:conf','conf_user_kim.m overrides all configuration variables set after this file.');
 
-DEBUG_s = 'realData'
+DEBUG_s = 'realData Kim'
 
 DAL.regFac_UserDef = 1;
-DAL.regFac = [1400 1300 1200 1100 1000 900 800];
-
+%DAL.regFac = [1400 1300 1200 1100 1000 900 800];
+DAL.regFac = [1100 1000 900 800 400 300 200];
 graph.TIGHT = 0;
 graph.PLOT_MAX_NUM_OF_NEURO = 15;
 graph.GRAPHVIZ_OUT_FIG = 1; % default: 0
@@ -23,8 +23,8 @@ env.Hz.video=1000;
 env.mail.to='aki-s@sys.i.kyoto-u.ac.jp';
 env.mail.smtp='hawaii.sys.i.kyoto-u.ac.jp';
 env.useFrame = [
+    50000
         100000
-        150000
                ];
 
 status.save_vars = 1;

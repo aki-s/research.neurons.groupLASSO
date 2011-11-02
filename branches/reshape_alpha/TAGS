@@ -272,7 +272,7 @@ function [L] = lorentzlorentz1,0
 
 mylib/plot/plot_Ealpha.m,70
 function plot_Ealpha(plot_Ealpha1,0
-global rootdir_rootdir_16,283
+global rootdir_rootdir_10,323
 
 mylib/plot/plot_alpha.m,68
 function plot_alpha(plot_alpha1,0
@@ -302,8 +302,17 @@ function plot_Ealpha_parfor(plot_Ealpha_parfor1,0
 mylib/plot/plot_Ealpha_parfor_.m,54
 function plot_Ealpha_parfor_(plot_Ealpha_parfor_1,0
 
+mylib/plot/plot_ROI.m,41
+function [my,mx] = plot_ROIplot_ROI1,0
+
 mylib/plot/plot_CVLwhole.m,42
 function plot_CVLwhole(plot_CVLwhole1,0
+
+mylib/plot/plot_ResFuncALL.m,46
+function plot_ResFuncALL(plot_ResFuncALL1,0
+
+mylib/plot/plot_Ealpha_subplot.m,54
+function plot_Ealpha_subplot(plot_Ealpha_subplot1,0
 
 mylib/comp_alpha_ternary.m,68
 function [Ealpha_hash] = comp_alpha_ternarycomp_alpha_ternary2,58
@@ -325,6 +334,9 @@ function Phi = evaluateAlphaevaluateAlpha1,0
 mylib/eval/plotalpha.m,34
 function plotalpha(plotalpha1,0
 
+mylib/eval/draw_connection.m,46
+function draw_connection(draw_connection1,0
+
 mylib/eval/transform_Talpha.m,78
 function debug_formTAlpha(debug_formTAlpha1,0
 global rootdir_rootdir_3,59
@@ -335,11 +347,51 @@ function AUC = fptp2aucfptp2auc1,0
 mylib/eval/evaluatePhi_old.m,61
 function [recn, recr, thresh0] = evaluatePhievaluatePhi1,0
 
+mylib/eval/arrow.m,1793
+function [h,yy,zz] = arrowarrow1,0
+global ARROW_PERSP_WARN ARROW_STRETCH_WARN ARROW_AXLIMITSARROW_AXLIMITS124,7135
+global ARROW_PERSP_WARN ARROW_STRETCH_WARNARROW_STRETCH_WARN124,7135
+global ARROW_PERSP_WARNARROW_PERSP_WARN124,7135
+function out = arrow_defcheckarrow_defcheck976,38662
+function [H,oldaxlims,errstr] = arrow_clicksarrow_clicks988,38972
+function [wasInterrupted,errstr] = arrow_clickarrow_click1025,40285
+	global ARROW_CLICK_H ARROW_CLICK_PROP ARROW_CLICK_AX ARROW_CLICK_USE_ZARROW_CLICK_USE_Z1034,40698
+	global ARROW_CLICK_H ARROW_CLICK_PROP ARROW_CLICK_AXARROW_CLICK_AX1034,40698
+	global ARROW_CLICK_H ARROW_CLICK_PROPARROW_CLICK_PROP1034,40698
+	global ARROW_CLICK_HARROW_CLICK_H1034,40698
+function arrow_callback(arrow_callback1067,41956
+		global ARROW_CLICK_H ARROW_CLICK_PROP ARROW_CLICK_AX ARROW_CLICK_USE_ZARROW_CLICK_USE_Z1075,42213
+		global ARROW_CLICK_H ARROW_CLICK_PROP ARROW_CLICK_AXARROW_CLICK_AX1075,42213
+		global ARROW_CLICK_H ARROW_CLICK_PROPARROW_CLICK_PROP1075,42213
+		global ARROW_CLICK_HARROW_CLICK_H1075,42213
+function out = arrow_pointarrow_point1082,42504
+function [wasKeyPress,wasInterrupted,errstr] = arrow_wfbdownarrow_wfbdown1090,42752
+function [out,is2D] = arrow_is2DXYarrow_is2DXY1120,43773
+function out = arrow_planarkidsarrow_planarkids1130,44126
+function arrow_fixlimits(arrow_fixlimits1145,44608
+function out = arrow_WarpToFillarrow_WarpToFill1156,45123
+function out = arrow_warnlimitsarrow_warnlimits1164,45393
+function arrow_copyprops(arrow_copyprops1180,45877
+function arrow_propsarrow_props1198,46789
+function out = arrow_demoarrow_demo1244,50079
+function h = arrow_demo3arrow_demo31263,50482
+function h = arrow_demo2arrow_demo21349,53985
+function out = trueornantrueornan1379,55215
+
 mylib/eval/evaluatePhi.m,66
 function [recn, recr, thresh0, auc] = evaluatePhievaluatePhi1,0
 
 mylib/eval/saveResponseFunc.m,49
 function  saveResponseFunc(saveResponseFunc1,0
+
+mylib/eval/evaluateAlpha_peak.m,61
+function [peak ] = evaluateAlpha_peakevaluateAlpha_peak1,0
+
+mylib/eval/evaluateAlpha_latency.m,75
+function [peak latency ] = evaluateAlpha_latencyevaluateAlpha_latency1,0
+
+mylib/eval/calcDistance.m,47
+function [Dis] = calcDistancecalcDistance1,0
 
 mylib/estimateWeightKernel.m,98
 function [EKerWeight,Ebias,DALstatus,DAL,Ostatus] = estimateWeightKernelestimateWeightKernel1,0
@@ -441,6 +493,9 @@ function plot_Ealpha_forPaper2(plot_Ealpha_forPaper21,0
 tools/plot_Ealpha_forPaper.m,31
 global rootdir_rootdir_7,134
 
+tools/save_plottedGraphAll.m,56
+function save_plottedGraphAll(save_plottedGraphAll1,0
+
 outdir/check_110814/evaluateAlpha.m,47
 function Phi = evaluateAlphaevaluateAlpha1,0
 
@@ -510,7 +565,16 @@ function  mainGenerateData(mainGenerateData1,0
 confidential/yoshimoto/transVoltageToSpike.m,54
 function transVoltageToSpike(transVoltageToSpike1,0
 
-gomi.m,0
+SRF_analysis.m,71
+function [Peak, Latency, Connectivity] = SRF_analysisSRF_analysis1,0
+
+._job077_SRFanalysis.m,0
+
+job077_SRFanalysis.m,0
+
+._SRF_analysis.m,0
+
+task111024.m,0
 
 indir/Real_data/ksplotting.m,0
 
@@ -549,6 +613,10 @@ tools/plot_graphviz.m,0
 tools/plot_loglambda_video.m,0
 
 mylib/fin.m,0
+
+mylib/eval/._arrow.m,0
+
+mylib/eval/._draw_connection.m,0
 
 mylib/eval/FigKimSequence.m,0
 
