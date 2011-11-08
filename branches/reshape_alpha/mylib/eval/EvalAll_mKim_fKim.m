@@ -9,7 +9,6 @@ env.useFrame = [
     90000 % 7
     100000 % 8
                ];
-status.method = 'Aki';
 status.inFiring = '/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/indir/Simulation/data_sim_9neuron.mat';
 load('/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/indir/sim_kim_ans.mat') % M_ans, env, status
 

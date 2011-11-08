@@ -49,7 +49,7 @@ end
 
 %  XSIZE = 2;
 XSIZE = 1; % stretch 'xlim' by XSIZE times.
-if strcmp('set_range','set_range')
+if strcmp('set_range','set_range') && (graph.prm.auto ~= 1)
   diag_Yrange = graph.prm.diag_Yrange;
   Yrange      = graph.prm.Yrange;
   zeroFlag = 0;

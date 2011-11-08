@@ -5,7 +5,7 @@ global status;
 
 status.profiler = 0;
 status.save_warning = 1; %++bug: not yet implemented.
-status.parfor_ = 1; %++bug: not yet implemented.
+status.parfor_ = 1;
 
 status.realData = 0;
 status.READ_NEURO_CONNECTION = 1;
@@ -16,14 +16,14 @@ if strcmp('Default','Default')
   status.inFiring = 'Aki';
   status.method = 'Aki';
 else
-  status.method = 'Kim';
+  %%  status.method = 'Kim'; % garbage?
 end
 status.estimateConnection = 1;
 status.save_vars = 0;
 status.use.GUI = 1;
 status.mail = 0;
 
-status.DEBUG.plot = 0;
-status.DEBUG.level = 0;
+status.DEBUG.plot = 0; %++bug: not yet implemented.
+status.DEBUG.level = 0; %++bug: not yet implemented.
 status.DEBUG.strict = 0; %++bug: not yet implemented.
 status.crossVal = 4;

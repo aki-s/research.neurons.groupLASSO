@@ -4,7 +4,7 @@ function S = makeSimStruct_glm(dt)
 global rootdir_
 run( [rootdir_ '/conf/conf_makeSimStruct_glm.m']); % load parameters.
 
-if basisType == 'bar'
+if strcmp(basisType,'bar')
   nlinF = NaN;
   ih = NaN;
   ihbasprs.hpeaks = NaN;

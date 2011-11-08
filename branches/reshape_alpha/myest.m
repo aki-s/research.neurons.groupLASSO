@@ -24,37 +24,42 @@ if strcmp('configure', 'configure') %++conf
   run([rootdir_ '/conf/conf_mail.m']);% notify the end of program via mail.
 end
 
-if strcmp('gaya','gaya')
-  run([rootdir_ '/conf/conf_user_gaya.m']);
+if strcmp('gaya','gaya_')
+  status.userDef = [rootdir_ '/conf/conf_user_gaya.m'];
 elseif strcmp('kim','kim')
-  run([rootdir_ '/conf/conf_user_kim.m']);
+  status.userDef = [rootdir_ '/conf/conf_user_kim.m'];
+else
+  %% set null file till user defines.
+  status.userDef = [rootdir_ '/conf/conf_user.m'];
 end
+run(status.userDef);
 
 if  (status.READ_FIRING == 1)
   [env I Tout] = readI(env,status,Tout);
 end
 
-gen_defaultEnv_ask();
+gen_defaultEnv_ask(); % set default params
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%<
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%>
 if (status.realData ~= 1 )
-  if (status.READ_NEURO_CONNECTION == 1) % (status.READ_FIRING ~= 1)
-    [alpha_fig,alpha_hash,env,status] = readTrueConnection(env,status);
-  else % random network connection
-    [alpha_fig,alpha_hash,status] = gen_alpha_hash(env,status);
-  end
-  Tout = get_neuronType(env,status,alpha_fig,Tout);
+    if (status.READ_NEURO_CONNECTION == 1) % from I/O % (status.READ_FIRING ~= 1)
+      %% e.g. Enter 'indir/KimFig1.con' when asked.
+      [alpha_fig,alpha_hash,env,status] = readTrueConnection(env,status);
+      Tout = get_neuronType(env,status,alpha_fig,Tout);
+    elseif (status.GEN_TrueValues == 1)  % generate artifical random network connection
+      [alpha_fig,alpha_hash,status] = gen_alpha_hash(env,status);
+      Tout = get_neuronType(env,status,alpha_fig,Tout);
+    end
 else
   status.inStructFile = '';
 end
 
 %% ==</ configure >==
-
+%%++improve
 %% bases should be loaded from a mat file.
-%% large argment make small width of basis.
+%% large argment of makeSimStruct_glm() make small width of basis.
 
 bases = makeSimStruct_glm(0.2); % Create GLM structure with default params
 %% 0.2 : 118
@@ -197,8 +202,6 @@ if status.estimateConnection == 1
         end
         if graph.PLOT_T == 1
           fprintf(1,' Now writing out estimated kernel\n');
-          %  plot_Ealpha_parfor(env,graph,status,tmpDAL{i2},bases,EKerWeight,1,... 
-          %plot_Ealpha_parfor_(env,tmpGraph,status,tmpDAL{i2},bases,Ealpha,1,... 
           plot_Ealpha_parfor(env,tmpGraph,status,tmpDAL{i2},bases,EKerWeight,1,... 
                              sprintf('elapsed:%s',num2str(status.time.regFac(i2,RfWholeIdx{i0}(i2)))) )
         end

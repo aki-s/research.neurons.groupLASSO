@@ -1,6 +1,6 @@
 function mailMe(env,status,DAL,bases,title)
 %% 
-%function mailMe(env,status,DAL,'mail title')
+%function mailMe(env,status,DAL,bases,'mail title')
 %% 
 if isfield(status,'inFiring')
   ;
@@ -50,7 +50,8 @@ if status.mail == 1
                   ['[usedFrame\regFac|]',num2str(DAL.regFac)],...
                   repmat('.',[1 100]),...
                   Tcost...
-              });
+              },status.userDef);
+    %% attach 'conf_user_*'
   else % debug
     sendmail( env.mail.to, title, ...
               { ['program started   : ', mydate(status.time.start)],...

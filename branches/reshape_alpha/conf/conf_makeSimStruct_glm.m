@@ -15,8 +15,8 @@ elseif strcmp('comp_kim','comp_kim')
 end
 %% ihbasprs.hpeaks: Peak location for first and last vectors.
 % To be [ihbasprs.hpeaks(1) > arg(makeSimStruct_glm)] is recommended.
-% Must be [ihbasprs.hpeaks(1) == ihbasprs.absref].
 if strcmp('makeAbsRef','makeAbsRef_')
+% Must be [ihbasprs.hpeaks(1) == ihbasprs.absref].
   ihbasprs.absref = .2; % absolute refractory period [sec].
   ihbasprs.hpeaks = [ihbasprs.absref 3]; % Unit of this is second.
   if ~mod(ihbasprs.nbase,2)

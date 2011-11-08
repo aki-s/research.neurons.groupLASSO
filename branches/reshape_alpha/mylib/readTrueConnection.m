@@ -1,23 +1,29 @@
-function  [alpha_fig,alpha_hash,env,status] = readTrueConnection(env,status,varargin)
-%% ============ about: input file ============
+function  [alpha_fig,alpha_hash,Oenv,Ostatus] = readTrueConnection(env,status,varargin)
 %% read true connection of neurons
+%% ============ about: input file ============
 %% input file format)
-%% -   [N,N] matrix with each +/0/- entry.
-%% --               [column index #from]
-%%   [row index #to]          '+'        denotes excitatory neuron from
-%%   a neuron #from to #to.
-%% --               [column index #from]
-%%   [row index #to]          '0'        denotes no connection
-%%   between neuron #from and #to.
-%% --               [column index #from]
-%%   [row index #to]          '-'        denotes inhibitory neuron from
-%%   a neuron #from to #to.
+%%  [N,N] matrix with each +/0/- entry.
+%%    '+'        denotes excitatory neuron from
+%%    '0'        denotes no connection
+%%    '-'        denotes inhibitory neuron from
+%% The shape of alpha_hash is 
+%%           1:N         => [from #neuron]
+%%   1  ---------------
+%%  ||  |  alpha_fig |
+%%  \/  ---------------
+%%   N
+%% [to #neuron]
 %%
+Oenv = env;
+Ostatus = status;
+tmp.in ='';
 
-
-tmp.in = varargin; % must be absolete path
-tmp.in = char(tmp.in);
-
+if nargin > 2
+  tmp.in = varargin{1}; % must be absolute path
+  tmp.in = char(tmp.in);
+elseif isfield(status,'inStructFile')
+  tmp.in = status.inStructFile;
+end
 if ~isempty(tmp.in)
 elseif status.use.GUI == 1
   fprintf('Which file describing neuronal connections do you want to use?');
@@ -29,21 +35,23 @@ end
 tmp.fid = fopen(tmp.in,'rt');
 
 %% Need exception hundler: if (#column ~= #row )  %%++improve
-[alpha_hash, env.cnum ] = fscanf(tmp.fid,'%s'); % don't read LF.
-                                                %[alpha_hash, env.cnum ] = fscanf(tmp.fid,'%s[+0-]'); % don't read LF.
+%% fscanf repeat reading in dimention 2
+[alpha_hash, Oenv.cnum ] = fscanf(tmp.fid,'%s'); % don't read LF.
+                                                 %[alpha_hash, Oenv.cnum ] = fscanf(tmp.fid,'%s[+0-]'); % don't read LF.
 alpha_hash = strrep(alpha_hash, '+','+1 ');
 alpha_hash = strrep(alpha_hash, '0','0 ');
 alpha_hash = strrep(alpha_hash, '-','-1 ');
+%% remove comment line.
 alpha_hash = regexprep(alpha_hash,'[a-z,A-Z,'','',''.'']','#');
 alpha_hash = regexprep(alpha_hash,'(\#[0-9\ ]*)','');
 
 alpha_hash = str2num(alpha_hash);
 [garbage,N] = size(alpha_hash);
-env.cnum = uint64(sqrt(N));
-if env.cnum*env.cnum ~= N
+Oenv.cnum = uint64(sqrt(N));
+if Oenv.cnum*Oenv.cnum ~= N
   error('Check your inputfile')
 end
-env.cnum = double(env.cnum);
+Oenv.cnum = double(Oenv.cnum);
 
 %% The shape of alpha_hash is 
 %                =>[to #neuron]
@@ -52,18 +60,19 @@ env.cnum = double(env.cnum);
 %  \/  ---------------
 % [from #neuron]
 
-alpha_fig = transpose(reshape(alpha_hash, env.cnum , env.cnum));
+alpha_fig = transpose(reshape(alpha_hash, Oenv.cnum , Oenv.cnum));
 
 
 fclose(tmp.fid);
 
-%% calculate env.spar %++todo ++bug
+%% calculate Oenv.spar %++todo ++bug
 if 1 == 1
-  env.spar.from = NaN;
-  env.spar.to   = NaN;
+Oenv.spar
+  Oenv.spar.from = NaN;
+  Oenv.spar.to   = NaN;
 else
-  env.spar.from = sum(sum(alpha_fig ~= 0));
-  env.spar.to = env.spar.to;
+  Oenv.spar.from = sum(sum((alpha_fig ~= 0),1)>0)/Oenv.cnum;
+  Oenv.spar.to =  sum(sum((alpha_fig ~= 0),2)>0)/Oenv.cnum;
 end
 
-status.inStructFile = tmp.in;
+Ostatus.inStructFile = tmp.in;

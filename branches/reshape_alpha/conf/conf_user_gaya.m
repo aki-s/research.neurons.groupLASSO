@@ -16,9 +16,9 @@ graph.prm.Yrange = [-.5 5];
 graph.prm.diag_Yrange = [-.5 5];
 
 env.inFiringLabel = 's';
-env.inFiringDirect = 2;
+env.inFiringDirect = 2; % time series direction
 %env.inFiringUSE = [10 20];
-env.inFiringUSE = [30 60];
+env.inFiringUSE = [30 60]; % the number of firing used out of 'env.inFiringLabel'.
 env.Hz.video=1000; %++bug: lookes like set 'nan'
 env.mail.to='aki-s@sys.i.kyoto-u.ac.jp';
 env.mail.smtp='hawaii.sys.i.kyoto-u.ac.jp';

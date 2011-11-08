@@ -118,7 +118,7 @@ status_tmp = cell(1,k);
 err = zeros(regFacLen,cnum,k);
 if (tmpEnv.genLoop < DAL.Drow)
   warning('DEBUG:NOTICE',...
-          'env.useFrame is too large for crossValidation, skipping...')
+          'env.useFrame=%s is too large for crossValidation, skipping...',DAL.Drow)
 cv = nan(regFacLen,cnum);
 cost = nan(1,regFacLen);
 else

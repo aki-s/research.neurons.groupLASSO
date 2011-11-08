@@ -20,6 +20,9 @@ if exist('graph')
     graph.PLOT_T = 1; % graph.PLOT_T: if (graph.PLOT_T == 1)
                       % then plot artificial (True) data.
   end
+  %%+bug: duplicate function? PRINT_T SAVE_EPS
+  %% When you mail graph data, print as eps is inconvenient.
+  %% SAVE_EPS is almost obsolete.
   if ~isfield(graph,'PRINT_T') % precede user defined value.
     graph.PRINT_T = 0; 
   end
@@ -32,22 +35,24 @@ if exist('graph')
   if ~isfield(graph,'TIGHT') % precede user defined value.
     graph.TIGHT = 0; % 0: each graph is plotted with absolute scale.
   end
-  if isfield(graph,'prm') & ~isfield(graph.prm,'Xrange')
+  if isfield(graph,'prm') && ~isfield(graph.prm,'Xrange')
     graph.prm.Xrange      = [0,0.2];
   end
-  if isfield(graph,'prm') & ~isfield(graph.prm,'Yrange')
+  if isfield(graph,'prm') && ~isfield(graph.prm,'Yrange')
     graph.prm.Yrange      = [-2,2];
   end
-  if isfield(graph,'prm') & ~isfield(graph.prm,'diag_Yrange')
+  if isfield(graph,'prm') && ~isfield(graph.prm,'diag_Yrange')
     graph.prm.diag_Yrange = [-10,3];
   end
-  if isfield(graph,'prm') & ~isfield(graph.prm,'Yrange_auto')
+  if isfield(graph,'prm') && ~isfield(graph.prm,'Yrange_auto')
     graph.prm.Yrange_auto = graph.prm.Yrange;
   end
-  if isfield(graph,'prm') & ~isfield(graph.prm,'diag_Yrange_auto')
+  if isfield(graph,'prm') && ~isfield(graph.prm,'diag_Yrange_auto')
     graph.prm.diag_Yrange_auto = graph.prm.diag_Yrange;
   end
-
+  if isfield(graph,'prm') && ~isfield(graph.prm,'auto')
+    graph.prm.auto = 1;
+  end
 else   %% defalut:
   graph = struct('PLOT_T',1 ...
                  ,'PRINT_T',0 ...

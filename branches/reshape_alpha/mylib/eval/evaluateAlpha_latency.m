@@ -12,6 +12,12 @@ latency =zeros(N1, N2);
 for i=1:N1
   for c=1:N2
     b = reshape( A(i,c,:), 1, M );
+    %% detect zero connection
+    if b == 0
+      peak(i,c) = nan;
+      latency(i,c) = nan;
+else
+    %%
     [p(1,2) l(1,2)] = max(b);
     [p(1,1) l(1,1)] = min(b);
     [val which] = sort(abs(p));
@@ -24,8 +30,10 @@ for i=1:N1
         latency(i,c) = l(1,2);
       end
     else
-      peak(i,c) = val(2)*sign(p(which(2)));
+      %      peak(i,c) = val(2)*sign(p(which(2)));
+      peak(i,c) = p(1,which(2));
       latency(i,c) = l(1,which(2));
+    end
     end
   end
 end

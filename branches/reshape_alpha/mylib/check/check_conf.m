@@ -6,9 +6,16 @@ OTout   = Tout   ;
 Ograph  = graph  ;
 ODAL    = DAL    ;
 
-if ( graph.SAVE_EPS == 1) && (graph.PLOT_T == 0 )
+if (graph.PLOT_T == 0 ) && ( graph.SAVE_EPS == 1) %++obsolete
   warning('DEBUG:conf','configuration error. graph.SAVE_EPS=1 was deactivated.');
   Ograph.SAVE_EPS = 0;
+elseif (graph.PLOT_T == 0 ) && (graph.PRINT_T == 1 )
+  Ograph.PRINT_T = 0; 
+  %%++refactoring
+  %% if (graph.PLOT_T) == 1
+  %%   if (graph.PRINT_T) == 1
+  %%   end
+  %% end
 end
 
 if (status.READ_FIRING == 1)
@@ -24,8 +31,9 @@ if (status.READ_FIRING == 1)
                         'status.READ_FIRING was deactivated.']);
     error(' check your conf')
   end
+  Ostatus.GEN_Neuron_individuality = '';%++bug?
   if ( status.realData == 1)
-    Ostatus.GEN_Neuron_individuality = '';
+    %%    Ostatus.GEN_Neuron_individuality = '';
     Ostatus.GEN_TrueValues = '';
     Ostatus.READ_NEURO_CONNECTION = '';
   end

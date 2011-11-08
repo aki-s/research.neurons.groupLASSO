@@ -319,8 +319,8 @@ function [Ealpha_hash] = comp_alpha_ternarycomp_alpha_ternary2,58
 
 mylib/mailMe.m,128
 function mailMe(mailMe1,0
-function [time_] = mydatemydate63,2131
-function [ ret ] = tidyElapsedTimetidyElapsedTime74,2389
+function [time_] = mydatemydate64,2159
+function [ ret ] = tidyElapsedTimetidyElapsedTime75,2417
 
 mylib/check/check_conf.m,70
 function [Oenv Ostatus OTout Ograph ODAL] = check_confcheck_conf1,0
@@ -381,14 +381,14 @@ function out = trueornantrueornan1379,55215
 mylib/eval/evaluatePhi.m,66
 function [recn, recr, thresh0, auc] = evaluatePhievaluatePhi1,0
 
+mylib/eval/evaluateAlpha_latency.m,75
+function [peak latency ] = evaluateAlpha_latencyevaluateAlpha_latency1,0
+
 mylib/eval/saveResponseFunc.m,49
 function  saveResponseFunc(saveResponseFunc1,0
 
 mylib/eval/evaluateAlpha_peak.m,61
 function [peak ] = evaluateAlpha_peakevaluateAlpha_peak1,0
-
-mylib/eval/evaluateAlpha_latency.m,75
-function [peak latency ] = evaluateAlpha_latencyevaluateAlpha_latency1,0
 
 mylib/eval/calcDistance.m,47
 function [Dis] = calcDistancecalcDistance1,0
@@ -403,8 +403,8 @@ global rootdir_rootdir_4,41
 mylib/make_basis.m,59
 function [iht, ihbas, ihbasis] = make_basismake_basis1,0
 
-mylib/readTrueConnection.m,88
-function  [alpha_fig,alpha_hash,env,status] = readTrueConnectionreadTrueConnection1,0
+mylib/readTrueConnection.m,90
+function  [alpha_fig,alpha_hash,Oenv,Ostatus] = readTrueConnectionreadTrueConnection1,0
 
 mylib/get_neuronType.m,53
 function [OTout] = get_neuronTypeget_neuronType1,0
@@ -464,6 +464,9 @@ function [Ebias_] = Ebias2MatEbias2Mat1,0
 
 mylib/init_crossVal.m,42
 function init_crossVal(init_crossVal1,0
+
+mylib/locateROI.m,43
+function [my,mx] = locateROIlocateROI1,0
 
 mylib/setSavedirName.m,59
 function [savedirname] = setSavedirNamesetSavedirName1,0
@@ -568,11 +571,7 @@ function transVoltageToSpike(transVoltageToSpike1,0
 SRF_analysis.m,71
 function [Peak, Latency, Connectivity] = SRF_analysisSRF_analysis1,0
 
-._job077_SRFanalysis.m,0
-
 job077_SRFanalysis.m,0
-
-._SRF_analysis.m,0
 
 task111024.m,0
 
@@ -613,10 +612,6 @@ tools/plot_graphviz.m,0
 tools/plot_loglambda_video.m,0
 
 mylib/fin.m,0
-
-mylib/eval/._arrow.m,0
-
-mylib/eval/._draw_connection.m,0
 
 mylib/eval/FigKimSequence.m,0
 

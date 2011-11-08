@@ -1,4 +1,4 @@
-function [iht, ihbas, ihbasis] = make_basis(ihbasprs,dt);
+function [iht, ihbas, ihbasis] = make_basis(ihbasprs,dt)
 % [iht, ihbas, ihbasis] = make_basis(ihbasprs,dt,iht);
 
 nbase = ihbasprs.nbase;
@@ -15,7 +15,7 @@ if (hpeaks(1)+b) < 0, % Because [hpeaks + b] is args of nlin().
     error('b + first peak location: must be greater than 0'); 
 end
 if dt> absref > 0
-    warning(['Refractory period too small for time-bin sizes.\n Basis you set ' ...
+    warning('DEBUG:NOTICE',['Refractory period too small for time-bin sizes.\n Basis you set ' ...
              'is reduced by 1'])
 end
 
