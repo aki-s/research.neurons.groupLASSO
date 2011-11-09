@@ -2,7 +2,12 @@ function plot_ResFuncALL(varargin)
 %%
 %% example)
 %  plot_ResFuncALL('outdir/22-Oct-2011-start-22_34/',20)
-
+%% plot_ResFuncALL(mat file)
+%%   varargin{1}: dirname or mat file containing variable 'env'.
+%%
+%% plot_ResFuncALL(dirname,#neuron)');
+%%   varargin{1}: dirname 
+%%   varargin{2}: vector containing num of neuron to be plotted.
 if nargin == 1 % use write outed setting
                %++bug: 
   if isdir(varargin{1})
@@ -30,7 +35,7 @@ elseif nargin == 2
     LOOP = length(cnum);
   end
 else
-  error('usage: (mat file) or (dirname,#neuron)');
+  error('usage: plot_ResFuncALL(mat file) or plot_ResFuncALL(dirname,#neuron)');
 end
 
 for i1 = 1:LOOP

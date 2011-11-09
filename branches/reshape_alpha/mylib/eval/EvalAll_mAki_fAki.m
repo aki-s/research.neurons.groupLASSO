@@ -29,12 +29,6 @@ L000
 
 for N1 = 1:length(N000)
   for L1 = 1:length(L000)
-% $$$         if N1 == 1
-% $$$             L11 = L1 + 3;
-% $$$         else
-% $$$             L11 = L1;
-% $$$         end
-
     filename =sprintf('%s%s%s%s.mat',FNAMEm, L000{L1}, FNAMEf, N000{N1});
     load( filename ); %Alpha
     Phi = evaluateAlpha( Alpha );
@@ -48,11 +42,6 @@ end
 % /home/aki-s/svn.d/art_repo2/branches/reshape_alpha/outdir/20-Aug-2011-start-20_44/20-Aug-2011-20_44.mat
 for N1 = 1:length(N000)
     for L1 = 1:length(L000)
-% $$$         if N1 == 1
-% $$$             L11 = L1 + 3;
-% $$$         else
-% $$$             L11 = L1;
-% $$$         end
         filename =sprintf('Aki-%s-Aki-%s.mat', L000{L1}, N000{N1});
         load( filename ); %Alpha
         Phi = evaluateAlpha( Alpha );

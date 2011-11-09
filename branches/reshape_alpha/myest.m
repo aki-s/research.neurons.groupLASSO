@@ -142,7 +142,7 @@ if status.estimateConnection == 1
           %% corresponding regularization factor: DAL.regFac(RfWholeIdx{i0})
           [CVeach{i0}(i1,1:env.cnum),RfEachIdx{i0}(i1,1:env.cnum)] = min(CVL{i0}(:,:,i1),[],1); % each neuron
           if ( graph.PLOT_T == 1 ) && ( i1 == useFrameLen )
-            plot_CVLwhole(env,status,graph,DAL,CVL{i0},RfWholeIdx{i0});
+            plot_CVLwhole(env,status,graph,DAL,CVL{i0});
           end
 
         else %++imcomplete
@@ -171,10 +171,10 @@ if status.estimateConnection == 1
     end
     if (status.parfor_ == 1 ) && strcmp('crossValidation','crossValidation')
       %% ==< extract and plot the best response func for each usedFrameNum from the results of crossValidation>==
-      validUseFrameNum = sum(~isnan(CVwhole{i0}));
-      tmpDAL = cell(1,validUseFrameNum );
-      %      parfor i2 = 1:validUseFrameNum %++parallel+bug
-      for i2 = 1:validUseFrameNum 
+      status.validUseFrameIdx = sum(~isnan(CVwhole{i0}));
+      tmpDAL = cell(1,status.validUseFrameIdx );
+      %      parfor i2 = 1:status.validUseFrameIdx %++parallel+bug
+      for i2 = 1:status.validUseFrameIdx  
         tmpDAL{i2} = DAL;
         tmpDAL{i2}.Drow = env.useFrame(i2);
         %% choose the best regularization factor
@@ -250,6 +250,11 @@ if status.estimateConnection == 1
   mailMe(env,status,DAL,bases,'Finished myest.m')
 end
 
+%% ==< clean >==
+if strcmp('clean','clean')  %++conf
+  run([rootdir_ '/mylib/clean.m'])
+end
+
 %% ==< bulk save all plotted graph  >==
 if (graph.SAVE_ALL == 1)
   tmp.figHandles = get(0,'Children');
@@ -266,12 +271,12 @@ if (graph.SAVE_ALL == 1)
     end
   end
 end 
-
+%{
 %% ==< clean >==
 if strcmp('clean','clean')  %++conf
   run([rootdir_ '/mylib/clean.m'])
 end
-
+%}
 %{
 %fin();
 t=readTrueConnection(env,status,status.inStructFile);

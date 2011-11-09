@@ -1,10 +1,10 @@
-function save_plottedGraphAll(FnameComment,varargin)
+function save_plottedGraphAll(FnamePrefix,varargin)
 %%
 %% example)
-%% save_plottedGraphAll('status.outdirname')
-%% save_plottedGraphAll(status.savedirname,DAL)
-%% save_plottedGraphAll(status.savedirname,DAL,eval(cnum))
-%% save_plottedGraphAll(status.savedirname,DAL,eval(cnum),4)
+% save_plottedGraphAll('FnamePrefix',status.savedirname)
+% save_plottedGraphAll('FnamePrefix',status.savedirname,DAL)
+% save_plottedGraphAll('FnamePrefix',status.savedirname,DAL,eval(cnum))
+% save_plottedGraphAll('FnamePrefix',status.savedirname,DAL,eval(cnum),4)
 %%
 
 %% ==< init >==
@@ -65,7 +65,9 @@ gnum = hdl / plate;
 switch ARGNUM
   case 1
     for i1 = 1:hdl
-      print(figHandles(i1),'-dpng',sprintf('%s/%0plate',savedirname,i1) );
+      print(figHandles(i1),'-dpng',sprintf('%s/%s%02d',savedirname,FnamePrefix,i1) ...
+            );
+      fprintf(1,'saved:%s/%s%02d\n',savedirname,FnamePrefix,i1);
     end
   case 2
     for i1 = 1:hdl
@@ -100,9 +102,9 @@ switch ARGNUM
     for i1 = 1:hdl
       print(figHandles(i1),'-dpng',...
             sprintf('%s/%sregFac=%05d_cnum=%05d_%0plate',...
-                    savedirname,FnameComment,DAL.regFac(idx(regCount)),cnum,count));
+                    savedirname,FnamePrefix,DAL.regFac(idx(regCount)),cnum,count));
       fprintf(1,'saved:%s/%sregFac=%05dcnum=%05d_%0plate\n',...
-              savedirname,FnameComment,DAL.regFac(idx(regCount)),cnum,count);
+              savedirname,FnamePrefix,DAL.regFac(idx(regCount)),cnum,count);
       count = count -1;
       if ~mod(count,GROUP)
         count = plate;

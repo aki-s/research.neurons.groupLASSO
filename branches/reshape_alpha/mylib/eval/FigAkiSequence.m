@@ -1,5 +1,6 @@
 %% generate figure
 %%==< conf >==
+cd('/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/outdir/check_110818')
 DAL.regFac = [1000 100 50 10 1];
 env.useFrame = [
     1000 % 1 
