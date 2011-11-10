@@ -19,30 +19,33 @@ if strcmp('test','test')
         118
         10
                    ];
-  elseif 1 == 1
+  elseif 1 == 0
     %    DAL.regFac = [ 64];
     DAL.regFac = [ 256 128 64 32 16 8 4 ];
     %    DAL.regFac = [ 2 1 0.5 0.25 0.125];
     if 1 == 1
-    env.useFrame = [
-        6000
-        3000
-                   ];
-else
-    env.useFrame = [
-        3000
-        2000
-        1000
-        100
-                   ];
-end
+      env.useFrame = [
+          6000
+          3000
+                     ];
+    else
+      env.useFrame = [
+          3000
+          2000
+          1000
+          100
+                     ];
+    end
   else
     DAL.regFac = [ 2048 1024 512 256 128 64 32 16 8 4 2 1 0.5 0.25 0.125];
 
     env.useFrame = [
-        3000
+        240
+        500
+        1000
+        4000
         10000
-        50000
+        40000
         75000
                    ];
   end

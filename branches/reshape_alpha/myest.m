@@ -116,24 +116,40 @@ if status.estimateConnection == 1
     fprintf(1,'#neuron:%5d<-%5d\n',env.inFiringUSE(i0),tmpEnv.cnum);
     I = tmpI(:,1:env.inFiringUSE(i0));
     env.cnum = size(I,2);
+if 1 == 0
     CVL{i0}        = zeros(regFacLen,env.cnum,useFrameLen);
     CVwhole{i0}    = zeros(useFrameLen,1);
     RfWholeIdx{i0} = zeros(useFrameLen,1); %Rf: regularization factor
     CVeach{i0}     = zeros(useFrameLen,env.cnum);
     RfEachIdx{i0}  = zeros(useFrameLen,env.cnum);
+else
+    CVL{i0}        = nan(regFacLen,env.cnum,useFrameLen);
+    CVwhole{i0}    = nan(useFrameLen,1);
+    RfWholeIdx{i0} = nan(useFrameLen,1); %Rf: regularization factor
+    CVeach{i0}     = nan(useFrameLen,env.cnum);
+    RfEachIdx{i0}  = nan(useFrameLen,env.cnum);
+end
     for i1 =1:useFrameLen
+      fprintf('%s',repmat('=',[30 1]));
+      fprintf(' %08d ',env.useFrame(i1));
+      fprintf('%s',repmat('=',[30 1]));
+      fprintf('\n');
+
       %% ( %++parallel? not practical for biological real data.)
-      if ( env.useFrame(i1) <= bases.ihbasprs.NumFrame ) && ( env.useFrame(i1) <= env.genLoop )
+      %bases.ihbasprs.NumFrame env.useFrame(i1) env.genLoop
+      if ( bases.ihbasprs.NumFrame <= env.useFrame(i1) ) && ( env.useFrame(i1) <= env.genLoop )
         DAL.Drow = env.useFrame(i1);
         if strcmp('crossValidation','crossValidation')
           %% ==< choose appropriate regFac >==
           if status.parfor_ == 1
+            %            [
+            %            CVL{i0}(1:regFacLen,1:env.cnum,i1),tmpCost,
+            %            EKerWeight, Ebias ] =...
+            %            status.time.regFac(i1,:) = tmpCost;
+
             %++bug? calc CVL
-            %            [ CVL{i0}(1:regFacLen,1:env.cnum,i1),status.time.regFac(i1,:), EKerWeight, Ebias ] =...
-            [ CVL{i0}(1:regFacLen,1:env.cnum,i1),tmpCost, EKerWeight, Ebias ] =...
+                     [ CVL{i0}(1:regFacLen,1:env.cnum,i1),status.time.regFac(i1,:), EKerWeight, Ebias ] =...
                 crossVal_parfor(env,graph,status,DAL,bases,I,i1);
-            status.time.regFac(i1,:) = tmpCost;
-CVL{i0}(1:regFacLen,1:env.cnum,i1)
           else %++imcomplete
 error('not yet')
 % $$$             [ CVL{i0}(1:regFacLen,1:env.cnum,i1), status ] =...

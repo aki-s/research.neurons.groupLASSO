@@ -9,6 +9,18 @@ function plot_AUC(env,status,DAL,ansMat,varargin)
 %% varargin{1}: index to select and plot only one sample.
 %%            index correspond with index of DAL.regFac.
 
+WIDTH = 550;
+switch 4
+  case 1
+    legendLoc = 'South';
+  case 2
+    legendLoc = 'Best';
+  case 3
+    legendLoc = 'WestOutside';
+case 4
+    legendLoc = 'SouthWest';
+end
+
 nargin_NUM = 4;
 if nargin > nargin_NUM
   FROM = varargin{1};
@@ -104,8 +116,8 @@ for ii = 1:(div2)
     axis([0 uR 0 105])
   end
   div = div + NN;
-  set(gcf, 'Color', 'White', 'Position',[400*(ii-1),200,400,800/div2+100])
-  legend(uFnum{FROM:uF},'Location','SouthWest')
+  set(gcf, 'Color', 'White', 'Position',[WIDTH*(ii-1),200,WIDTH,800/div2+100])
+  legend(uFnum{FROM:uF},'Location',legendLoc)
 end
 %% AUC
 figure
@@ -119,8 +131,8 @@ ylabel('AUC')
 set(gca, 'XTick', 1:uR, 'XTickLabel', XLABELrf)
 xlabel('regularization factor')
 axis([0 uR 0 1.05])
-set(gcf, 'Color', 'White', 'Position',[400,600,400,200])
-legend(uFnum{FROM:uF},'Location','SouthWest')
+set(gcf, 'Color', 'White', 'Position',[WIDTH,600,WIDTH+150,200])
+legend(uFnum{FROM:uF},'Location','WestOutside')
 
 %% debug
 color
