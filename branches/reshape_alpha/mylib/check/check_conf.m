@@ -58,20 +58,34 @@ if isfield(env,'Hz') && isfield(env.Hz,'video') % check ability of expression.
   end
 end
 
-if isfield(DAL,'Drow')
-  Oenv.useFrame = DAL.Drow;
-elseif isfield(status,'crossVal')
+%% limit of useFrame
+if isfield(env,'useFrame') 
+  %% check for variable reduction method.
+  ODAL.Drow = env.useFrame;
+  %  validIdx = ODAL.Drow > bases.ihbasprs.NumFrame;
+  validIdx = (env.genLoop > ODAL.Drow)&(ODAL.Drow > bases.ihbasprs.NumFrame);
+  Oenv.useFrame = ODAL.Drow(validIdx);
+  if length(Oenv.useFrame) ~= sum(validIdx)
+    warning('DEBUG:autoChange',['regularization factor more than bases.ihbasprs.NumFrame=%s '...
+            'is invalidated']...
+            ,bases.ihbasprs.NumFrame,ODAL.Drow( logical(ODAL.Drow.*(~validIdx) > 0 ))...
+                                               )
+  end
+
+end
+if isfield(status,'crossVal')
   tmp = Oenv.genLoop;
   k = status.crossVal;
   while mod(tmp,k)
     tmp = tmp -1;
   end
   DALmax = tmp * (k-1) / k;
+  %% check for cross valication.
   if isfield(env,'useFrame')
     before = length(env.useFrame);
     ODAL.Drow = env.useFrame(env.useFrame<=DALmax);
     if (before ~= length(ODAL.Drow) )
-      warning('DEBUG:notice','demanded frame is large to do cross validation\n make smaller than env.genLoop *(status.crossVal-1)/(status.crossVal)');
+      warning('DEBUG:autoChange','demanded frame is large to do cross validation\n make smaller than env.genLoop *(status.crossVal-1)/(status.crossVal)');
     end
   else 
     ODAL.Drow = DALmax;

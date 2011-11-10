@@ -89,7 +89,7 @@ else
   useFrameIdx = 1; % noncommittal
 end
 
-if( nargin > (baseN + 2) ) %++needless?
+if( nargin > (baseN + 3) ) %++needless?
   Tlen = varargin{3};
   if Tlen > len
     error('Tlen > len')
@@ -119,10 +119,10 @@ err = zeros(regFacLen,cnum,k);
 if (tmpEnv.genLoop < DAL.Drow)
   warning('DEBUG:NOTICE',...
           'env.useFrame=%s is too large for crossValidation, skipping...',DAL.Drow)
-cv = nan(regFacLen,cnum);
-cost = nan(1,regFacLen);
+  cv = nan(regFacLen,cnum);
+  cost = nan(1,regFacLen);
 else
-  parfor i1 = 1:k % crossValidation ( %++parallel)
+  for i1 = 1:k % crossValidation ( %++parallel)
     %%for i1 = 1:k % crossValidation ( %++parallel)
     fprintf(1,'crossValidation index:%2d',i1);
     omit = zeros(1,Tlen);
@@ -151,6 +151,7 @@ else
         loglambda{i3}(1:cnum) = Ebias{i1}(i2,1:cnum) + sum( Ealpha_(:,1:cnum,i2) .*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
       end
       loglambda = cell2mat(loglambda);
+calcLikelihood(loglambda,I(USE,:))
       if parfor_flag == 1
         err(i2,:,i1) = err(i2,:,i1) + calcLikelihood(loglambda,I(USE,:));
       end
@@ -158,10 +159,12 @@ else
     %% save(EKerWeight,Ebias,status,loglambda) 
   end
   %%cv = sum(err,3)/k;
-cv = sum(err,3)/k/env.useFrame(useFrameIdx);
-%%  ---> cnum
-%%  | cv
-%% \/
-%% regFac
-cost = cost/k;
+calcLikelihood(loglambda,I(USE,:))
+error('')
+  cv = sum(err,3)/k/env.useFrame(useFrameIdx);
+  %%  ---> cnum
+  %%  | cv
+  %% \/
+  %% regFac
+  cost = cost/k;
 end

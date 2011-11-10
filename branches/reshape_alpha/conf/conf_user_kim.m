@@ -8,19 +8,44 @@ DAL.regFac_UserDef = 1;
 %DAL.regFac = [1400 1300 1200 1100 1000 900 800];
 %DAL.regFac = [1100 1000 900 800 400 300 200];
 if strcmp('test','test')
-DAL.regFac = [ 64];
-env.useFrame = [
-    3000
-];
+  if 1 == 0
+    DAL.regFac = [ 64 2];
+    %    DAL.regFac = [ 2048 1024 512 256 128 64 32 16 8 4 2 1 ];
+    env.useFrame = [
+        3000
+        2000
+        1000
+        500
+        118
+        10
+                   ];
+  elseif 1 == 1
+    %    DAL.regFac = [ 64];
+    DAL.regFac = [ 256 128 64 32 16 8 4 ];
+    %    DAL.regFac = [ 2 1 0.5 0.25 0.125];
+    if 1 == 1
+    env.useFrame = [
+        6000
+        3000
+                   ];
 else
-DAL.regFac = [512 256 128 64 32 16 8 4];
+    env.useFrame = [
+        3000
+        2000
+        1000
+        100
+                   ];
+end
+  else
+    DAL.regFac = [ 2048 1024 512 256 128 64 32 16 8 4 2 1 0.5 0.25 0.125];
 
-env.useFrame = [
-    3000
-    10000
-    50000
-    100000
-               ];
+    env.useFrame = [
+        3000
+        10000
+        50000
+        75000
+                   ];
+  end
 end
 env.inFiringLabel ='X';
 env.Hz.video=1000;

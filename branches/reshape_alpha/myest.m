@@ -67,6 +67,7 @@ bases = makeSimStruct_glm(0.2); % Create GLM structure with default params
 [env status Tout graph DAL] = check_conf(env,status,Tout,graph,bases,DAL);
 status = check_genState(status);
 echo_initStatus(env,status,Tout)
+
 if ( status.GEN_TrueValues == 1 ) 
   %% 1.  Set parameters and display for GLM % =============================
   %% prepare 'TrueValues'.
@@ -96,7 +97,7 @@ if status.estimateConnection == 1
   end
   %% matlabpool close force local
   DAL = setDALregFac(env,DAL,bases);
-  regFacLen = length(DAL.regFac);
+  regFacLen = length(DAL.regFac);% DAL.prm.regFacLen =
   %% CVL: cross Validat error
   CVL = cell(1,useNeuroLenIdx);
   status.time.regFac = zeros(useFrameLen,regFacLen);
@@ -122,23 +123,26 @@ if status.estimateConnection == 1
     RfEachIdx{i0}  = zeros(useFrameLen,env.cnum);
     for i1 =1:useFrameLen
       %% ( %++parallel? not practical for biological real data.)
-      if env.useFrame(i1) <= env.genLoop
+      if ( env.useFrame(i1) <= bases.ihbasprs.NumFrame ) && ( env.useFrame(i1) <= env.genLoop )
         DAL.Drow = env.useFrame(i1);
         if strcmp('crossValidation','crossValidation')
           %% ==< choose appropriate regFac >==
           if status.parfor_ == 1
-            [ CVL{i0}(1:regFacLen,1:env.cnum,i1), cost, EKerWeight, Ebias ] =...
+            %++bug? calc CVL
+            %            [ CVL{i0}(1:regFacLen,1:env.cnum,i1),status.time.regFac(i1,:), EKerWeight, Ebias ] =...
+            [ CVL{i0}(1:regFacLen,1:env.cnum,i1),tmpCost, EKerWeight, Ebias ] =...
                 crossVal_parfor(env,graph,status,DAL,bases,I,i1);
-            status.time.regFac(i1,:) = cost;
+            status.time.regFac(i1,:) = tmpCost;
+CVL{i0}(1:regFacLen,1:env.cnum,i1)
           else %++imcomplete
+error('not yet')
 % $$$             [ CVL{i0}(1:regFacLen,1:env.cnum,i1), status ] =...
 % $$$                 crossVal(env,graph,status,DAL,bases,I,i1);
-            [ CVL{i0}(1:regFacLen,1:env.cnum,i1), cost, EKerWeight, Ebias ] =...
+            [ CVL{i0}(1:regFacLen,1:env.cnum,i1),status.time.regFac(i1,:), EKerWeight, Ebias ] =...
                 crossVal_parfor(env,graph,status,DAL,bases,I,i1);%++bug
-            status.time.regFac(i1,:) = cost;
           end
           %% ==</choose appropriate regFac >==
-          [CVwhole{i0}(i1),RfWholeIdx{i0}(i1)]             = min(sum(CVL{i0}(:,:,i1),2),[],1);
+          [CVwhole{i0}(i1),RfWholeIdx{i0}(i1)]    = min(sum(CVL{i0}(:,:,i1),2),[],1);
           %% corresponding regularization factor: DAL.regFac(RfWholeIdx{i0})
           [CVeach{i0}(i1,1:env.cnum),RfEachIdx{i0}(i1,1:env.cnum)] = min(CVL{i0}(:,:,i1),[],1); % each neuron
           if ( graph.PLOT_T == 1 ) && ( i1 == useFrameLen )
@@ -166,7 +170,7 @@ if status.estimateConnection == 1
         end
         %% ==</Start estimation with DAL>==
       else
-        warning('DEBUG:NOTICE','env.useFrame > env.genLoop')
+        warning('DEBUG:NOTICE','( env.useFrame < bases.ihbasprs.NumFrame) or (env.genLoop < env.useFrame)')
       end
     end
     if (status.parfor_ == 1 ) && strcmp('crossValidation','crossValidation')
@@ -196,14 +200,19 @@ if status.estimateConnection == 1
                     sprintf('-%07d',frame),...
                     sprintf('-%03d',cnum),...
                     '.mat'],'basisWeight','graph','env');
-          EKerWeight = S.basisWeight;
+          EKerWeight = S.basisWeight; % name rename transit EKerWeight->basisWeight
           tmpGraph = S.graph;
           env = S.env;
         end
         if graph.PLOT_T == 1
+          try
           fprintf(1,' Now writing out estimated kernel\n');
           plot_Ealpha_parfor(env,tmpGraph,status,tmpDAL{i2},bases,EKerWeight,1,... 
-                             sprintf('elapsed:%s',num2str(status.time.regFac(i2,RfWholeIdx{i0}(i2)))) )
+                             sprintf('elapsed:%s', ...
+                                     num2str(status.time.regFac(i2,RfWholeIdx{i0}(i2)))) )
+          catch indexError %++bug
+            disp(sprintf('RfWholeIdx: %d',RfWholeIdx{i0}(i2) ))
+          end
         end
       end
       %% ==</extract and plot the best response func for each usedFrameNum from the results of crossValidation>==
@@ -231,6 +240,12 @@ end
 
 status.time.end = fix(clock);
 
+
+%% ==< clean >==
+if strcmp('clean','clean')  %++conf
+  run([rootdir_ '/mylib/clean.m'])
+end
+%% clean variables before save
 if status.save_vars == 1
   fprintf(1,'Saving variables....\n');
   if status.use.GUI == 1
@@ -248,11 +263,6 @@ status.profile=profile('info');
 
 if status.estimateConnection == 1
   mailMe(env,status,DAL,bases,'Finished myest.m')
-end
-
-%% ==< clean >==
-if strcmp('clean','clean')  %++conf
-  run([rootdir_ '/mylib/clean.m'])
 end
 
 %% ==< bulk save all plotted graph  >==

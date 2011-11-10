@@ -30,6 +30,16 @@ else
 end
 
 DALout = DALin;
+
+%% errer handling
+%{
+if ( DAL.Drow > bases.ihbasprs.NumFrame )
+
+else
+  error('must be (DAL.Drow > bases.ihbasprs.NumFrame)')
+end
+
+  %}
 % $$$ if isfield(DAL,'Drow')
 % $$$ else
 % $$$   DAL.Drow = env.useFrame;

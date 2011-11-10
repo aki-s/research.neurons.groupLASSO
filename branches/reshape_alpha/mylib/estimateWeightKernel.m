@@ -49,7 +49,11 @@ method = DAL.method;
 if 1 == 1
   %% dimension reduction to be estimated.
   fprintf('\tGenerating Matrix for DAL\n');
+if ( DAL.Drow > bases.ihbasprs.NumFrame )
   [D] = gen_designMat(env,status,bases,I,DAL.Drow);
+else
+  error('must be (DAL.Drow > bases.ihbasprs.NumFrame)')
+end
   %%+improve:write out for later use and speedup.
   %  DAL.Drow = Drow.Drow - length(bases.iht);
 
@@ -59,7 +63,12 @@ if 1 == 1
     pI =  2 * I( (end - DAL.Drow+ length(bases.iht) +1): end,:) - 1;
   end
 end
-
+if strcmp('debug','debug_')
+  whos D
+fprintf(1,'Drow:%d, I:',DAL.Drow);
+fprintf(1,' %d',sum(  I((end+1-DAL.Drow):end,:), 1));
+fprintf(1,'\n');
+end
 if strcmp('calcDAL','calcDAL')
   PRMS = length(DAL.regFac);
   % == init ==
@@ -93,7 +102,7 @@ if strcmp('calcDAL','calcDAL')
   DAL.speedup = 0;
   for ii1 = 1:PRMS % search appropriate parameter.
     cost2 = tic;
-    fprintf(1,' == Reg.factor: %7.2f == frame: %d<-%d : elapsed: ',...
+    fprintf(1,'    == Reg.factor: %7.2f == frame: %d<-%d : elapsed: ',...
             DAL.regFac(ii1),DAL.Drow,env.genLoop);
     %%parfor i1to = 1:cnum % ++parallelization  %bug?
     for i1to = 1:cnum % ++parallelization 

@@ -2,9 +2,8 @@
 conf/conf_DAL.m,39
 function [DAL] = conf_DALconf_DAL1,0
 
-conf/conf_graph.m,72
-function [graph] = conf_graphconf_graph1,0
-global graph;graph;5,114
+conf/conf_graph.m,46
+function [Ograph] = conf_graphconf_graph1,0
 
 conf/setpaths.m,32
 function setpaths(setpaths1,0
@@ -274,9 +273,9 @@ mylib/plot/plot_Ealpha.m,70
 function plot_Ealpha(plot_Ealpha1,0
 global rootdir_rootdir_10,323
 
-mylib/plot/plot_alpha.m,68
+mylib/plot/plot_alpha.m,69
 function plot_alpha(plot_alpha1,0
-global rootdir_rootdir_14,188
+global rootdir_rootdir_35,1078
 
 mylib/plot/plot_I.m,52
 function plot_I(plot_I1,0
@@ -319,8 +318,8 @@ function [Ealpha_hash] = comp_alpha_ternarycomp_alpha_ternary2,58
 
 mylib/mailMe.m,128
 function mailMe(mailMe1,0
-function [time_] = mydatemydate64,2159
-function [ ret ] = tidyElapsedTimetidyElapsedTime75,2417
+function [time_] = mydatemydate64,2180
+function [ ret ] = tidyElapsedTimetidyElapsedTime75,2438
 
 mylib/check/check_conf.m,70
 function [Oenv Ostatus OTout Ograph ODAL] = check_confcheck_conf1,0
@@ -490,6 +489,9 @@ function plot_lambda_video(plot_lambda_video1,0
 tools/plot_loglambda.m,44
 function plot_loglambda(plot_loglambda1,0
 
+tools/plot_AUC.m,32
+function plot_AUC(plot_AUC1,0
+
 tools/plot_Ealpha_forPaper2.m,58
 function plot_Ealpha_forPaper2(plot_Ealpha_forPaper21,0
 
@@ -615,11 +617,11 @@ mylib/fin.m,0
 
 mylib/eval/FigKimSequence.m,0
 
-mylib/eval/FigAkiSequence.m,0
-
 mylib/eval/EvalAll_mKim_fKim.m,0
 
 mylib/eval/EvalAll_mAki_fAki.m,0
+
+mylib/eval/FigAkiSequence.m,0
 
 mylib/clean.m,0
 

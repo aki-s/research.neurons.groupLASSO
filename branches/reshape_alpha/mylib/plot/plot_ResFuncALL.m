@@ -2,6 +2,7 @@ function plot_ResFuncALL(varargin)
 %%
 %% example)
 %  plot_ResFuncALL('outdir/22-Oct-2011-start-22_34/',20)
+%  plot_ResFuncALL(status.savedirname,20)
 %% plot_ResFuncALL(mat file)
 %%   varargin{1}: dirname or mat file containing variable 'env'.
 %%
@@ -47,15 +48,21 @@ for i1 = 1:LOOP
                     '%s','delimiter','\t\n');
   end
   N = size(list{1},1);
+  S = load(list{1}{1});
+  regFacLen = length(S.DAL.regFac);
   for i2 = 1:N
     fprintf('loaded: %s\n',list{1}{i2});
     S = load(list{1}{i2});
-    try
-      plot_Ealpha(S.env,S.graph,S.DAL,S.bases,S.basisWeight,N+1- ...
-                  i2,'')
-    catch errP
-      plot_Ealpha(S.env,S.graph,S.DAL,S.bases,S.EKerWeight,N+1- ...
-                  i2,'')
+    if ~mod(i2-1,regFacLen)
+      count = regFacLen;
     end
+    try
+      plot_Ealpha(S.env,S.graph,S.DAL,S.bases,S.basisWeight,count ...
+                  ,'')
+    catch errP
+      plot_Ealpha(S.env,S.graph,S.DAL,S.bases,S.EKerWeight,count ...
+                  ,'')
+    end
+    count = count - 1;
   end
 end
