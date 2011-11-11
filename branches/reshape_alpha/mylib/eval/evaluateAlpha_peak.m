@@ -1,4 +1,4 @@
-function [peak ] = evaluateAlpha_peak( A )
+function [peak ] = evalResponseFunc_peak( A )
 
 [N1, N2, M] = size( A );
 
@@ -14,9 +14,9 @@ end
 
 %% example
 %{
-j0=c( (sum(evaluateAlpha(Alpha) >0 )) >0);
+j0=c( (sum(evalResponseFunc(Alpha) >0 )) >0);
 
-[a b]=sort(sum(evaluateAlpha(Alpha)>0),'descend')
+[a b]=sort(sum(evalResponseFunc(Alpha)>0),'descend')
 %}
 %{
 load('/home/shige-o/rec072b.mat')
@@ -26,8 +26,8 @@ j0=1:cnum;
 
 for th = 0.1:0.1:1
 A=zeros(cnum);
-A=A+(evaluateAlpha_peak(Alpha)>th);
-A=A-(evaluateAlpha_peak(Alpha)<-th);
+A=A+(evalResponseFunc_peak(Alpha)>th);
+A=A-(evalResponseFunc_peak(Alpha)<-th);
 A(logical(eye(cnum))) = 0;
 figure
 [mx, my] = plot_ROI( u, j0 ); % ( mx(i) , my(i) ) は、i番目ROIの中

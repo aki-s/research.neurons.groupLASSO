@@ -1,5 +1,8 @@
-function Phi = evaluateAlpha( A )
-
+function Phi = evalResponseFunc( A )
+%%
+%%
+%%
+%%
 [N1, N2, M] = size( A );
 
 Phi = zeros(N1, N2);

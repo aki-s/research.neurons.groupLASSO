@@ -2,8 +2,9 @@
 conf/conf_DAL.m,39
 function [DAL] = conf_DALconf_DAL1,0
 
-conf/conf_graph.m,46
+conf/conf_graph.m,71
 function [Ograph] = conf_graphconf_graph1,0
+global graphgraph4,115
 
 conf/setpaths.m,32
 function setpaths(setpaths1,0
@@ -304,8 +305,8 @@ function plot_Ealpha_parfor_(plot_Ealpha_parfor_1,0
 mylib/plot/plot_ROI.m,41
 function [my,mx] = plot_ROIplot_ROI1,0
 
-mylib/plot/plot_CVLwhole.m,42
-function plot_CVLwhole(plot_CVLwhole1,0
+mylib/plot/plot_CVLwhole.m,53
+function [myColor] = plot_CVLwholeplot_CVLwhole1,0
 
 mylib/plot/plot_ResFuncALL.m,46
 function plot_ResFuncALL(plot_ResFuncALL1,0
@@ -327,8 +328,8 @@ function [Oenv Ostatus OTout Ograph ODAL] = check_confcheck_conf1,0
 mylib/check/check_genState.m,54
 function [status] = check_genStatecheck_genState1,0
 
-mylib/eval/evaluateAlpha.m,47
-function Phi = evaluateAlphaevaluateAlpha1,0
+mylib/eval/evaluateAlpha.m,53
+function Phi = evalResponseFuncevalResponseFunc1,0
 
 mylib/eval/plotalpha.m,34
 function plotalpha(plotalpha1,0
@@ -380,14 +381,14 @@ function out = trueornantrueornan1379,55215
 mylib/eval/evaluatePhi.m,66
 function [recn, recr, thresh0, auc] = evaluatePhievaluatePhi1,0
 
-mylib/eval/evaluateAlpha_latency.m,75
-function [peak latency ] = evaluateAlpha_latencyevaluateAlpha_latency1,0
+mylib/eval/evaluateAlpha_latency.m,81
+function [peak latency ] = evalResponseFunc_latencyevalResponseFunc_latency1,0
 
 mylib/eval/saveResponseFunc.m,49
 function  saveResponseFunc(saveResponseFunc1,0
 
-mylib/eval/evaluateAlpha_peak.m,61
-function [peak ] = evaluateAlpha_peakevaluateAlpha_peak1,0
+mylib/eval/evaluateAlpha_peak.m,67
+function [peak ] = evalResponseFunc_peakevalResponseFunc_peak1,0
 
 mylib/eval/calcDistance.m,47
 function [Dis] = calcDistancecalcDistance1,0
@@ -501,8 +502,8 @@ global rootdir_rootdir_7,134
 tools/save_plottedGraphAll.m,56
 function save_plottedGraphAll(save_plottedGraphAll1,0
 
-outdir/check_110814/evaluateAlpha.m,47
-function Phi = evaluateAlphaevaluateAlpha1,0
+outdir/check_110814/evaluateAlpha.m,53
+function Phi = evalResponseFuncevalResponseFunc1,0
 
 outdir/check_110814/evaluatePhi.m,63
 function [recn, recr, thresh0] = evalulatePhievalulatePhi1,0

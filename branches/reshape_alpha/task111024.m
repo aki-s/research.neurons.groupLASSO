@@ -10,7 +10,7 @@ for i1= 1:length(cnum)
     load('/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/outdir/24-Oct-2011-start-15_48/Aki-0000016-rec072b-0044976-060.mat')
   end
   j0=1:cnum(i1);
-  [peak latency] = evaluateAlpha_latency(Alpha);
+  [peak latency] = evalResponseFunc_latency(Alpha);
 
   %  for thresh = 0.1:0.1:1
   for thresh = 0.2:0.2

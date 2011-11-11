@@ -67,7 +67,7 @@ for j0 = FROM:uF
       filename =sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{N1}, ...
                         fFNAME, uFnum{j0}, inFiringUSE{i0});
       load( [inRoot '/' filename], 'Alpha');
-      Phi = evaluateAlpha( Alpha );
+      Phi = evalResponseFunc( Alpha );
       [recn, recr, thresh0 ,auc.A(j0,N1)] = evaluatePhi(Phi, M_ans);
       disp( sprintf( '%20s: %3d, %3d, %3d, %3d, %5.1f, %5.1f, %5.1f, %5.1f: %2.1f',...
                      filename, recn, recr*100, auc.A(j0,N1)) );
@@ -134,5 +134,3 @@ axis([0 uR 0 1.05])
 set(gcf, 'Color', 'White', 'Position',[WIDTH,600,WIDTH+150,200])
 legend(uFnum{FROM:uF},'Location','WestOutside')
 
-%% debug
-color

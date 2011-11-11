@@ -2,12 +2,7 @@ function [recn, recr, thresh0, auc] = evaluatePhi( Phi, Answer )
 [N,dum] = size(Phi);
 
 %% Omit diagonal elements
-if 1 == 0
-Phi = Phi + eye(N)*1e100;
-idx = find( Phi(:) < 1e90 );
-else
 idx = ~logical(eye(N));
-end
 Phi = Phi( idx );
 Answer = Answer( idx );
 switch 'V3'
@@ -18,7 +13,7 @@ switch 'V3'
    tmp = [min(abs(Phi(:))), max(abs(Phi(:)))]
    thresh0 = tmp(1):( (tmp(2)-tmp(1))/1000 ):tmp(2);
    case 'V3'
-   thresh0 = sort(abs(Phi(:))-eps);% there may duplicate
+   thresh0 = sort(abs(Phi(:))-eps);% there may be duplicate
    thresh0 = [-Inf,thresh0',Inf];
 end
 N0 = sum( Answer == 0 );
