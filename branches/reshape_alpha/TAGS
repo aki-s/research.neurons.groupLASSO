@@ -328,9 +328,6 @@ function [Oenv Ostatus OTout Ograph ODAL] = check_confcheck_conf1,0
 mylib/check/check_genState.m,54
 function [status] = check_genStatecheck_genState1,0
 
-mylib/eval/evaluateAlpha.m,53
-function Phi = evalResponseFuncevalResponseFunc1,0
-
 mylib/eval/plotalpha.m,34
 function plotalpha(plotalpha1,0
 
@@ -381,17 +378,20 @@ function out = trueornantrueornan1379,55215
 mylib/eval/evaluatePhi.m,66
 function [recn, recr, thresh0, auc] = evaluatePhievaluatePhi1,0
 
-mylib/eval/evaluateAlpha_latency.m,81
-function [peak latency ] = evalResponseFunc_latencyevalResponseFunc_latency1,0
+mylib/eval/evalResponseFunc_peak.m,67
+function [peak ] = evalResponseFunc_peakevalResponseFunc_peak1,0
 
 mylib/eval/saveResponseFunc.m,49
 function  saveResponseFunc(saveResponseFunc1,0
 
-mylib/eval/evaluateAlpha_peak.m,67
-function [peak ] = evalResponseFunc_peakevalResponseFunc_peak1,0
-
 mylib/eval/calcDistance.m,47
 function [Dis] = calcDistancecalcDistance1,0
+
+mylib/eval/evalResponseFunc.m,53
+function Phi = evalResponseFuncevalResponseFunc1,0
+
+mylib/eval/evalResponseFunc_latency.m,81
+function [peak latency ] = evalResponseFunc_latencyevalResponseFunc_latency1,0
 
 mylib/estimateWeightKernel.m,98
 function [EKerWeight,Ebias,DALstatus,DAL,Ostatus] = estimateWeightKernelestimateWeightKernel1,0

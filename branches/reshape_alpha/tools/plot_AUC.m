@@ -67,8 +67,8 @@ for j0 = FROM:uF
       filename =sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{N1}, ...
                         fFNAME, uFnum{j0}, inFiringUSE{i0});
       load( [inRoot '/' filename], 'Alpha');
-      Phi = evalResponseFunc( Alpha );
-      [recn, recr, thresh0 ,auc.A(j0,N1)] = evaluatePhi(Phi, M_ans);
+      RFint = evalResponseFunc( Alpha );
+      [recn, recr, thresh0 ,auc.A(j0,N1)] = evaluatePhi(Rfint, M_ans);
       disp( sprintf( '%20s: %3d, %3d, %3d, %3d, %5.1f, %5.1f, %5.1f, %5.1f: %2.1f',...
                      filename, recn, recr*100, auc.A(j0,N1)) );
       AkiAcc(N1,:,j0) = recr*100;

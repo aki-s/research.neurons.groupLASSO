@@ -22,7 +22,6 @@ frame = DAL.Drow;
 regFac = DAL.regFac;
 N = length(regFac);
 method = status.method;
-%checkDirname = status.checkDirname;
 savedirname = status.savedirname;
 %%
 SIZE = 500; % SIZE > bases.ihbas.iht
