@@ -311,8 +311,8 @@ function [Oenv Ostatus OTout Ograph ODAL] = check_confcheck_conf1,0
 mylib/check/check_genState.m,54
 function [status] = check_genStatecheck_genState1,0
 
-mylib/eval/evalRFint.m,62
-function [recn, recr, thresh0, auc] = evalRFintevalRFint1,0
+mylib/eval/evalRFIntensity.m,62
+function [recn, recr, thresh0, auc] = evalRFIntensityevalRFIntensity1,0
 
 mylib/eval/plotalpha.m,34
 function plotalpha(plotalpha1,0
@@ -368,7 +368,7 @@ mylib/eval/saveResponseFunc.m,49
 function  saveResponseFunc(saveResponseFunc1,0
 
 mylib/eval/evalResponseFunc.m,55
-function RFint = evalResponseFuncevalResponseFunc1,0
+function RFIntensity = evalResponseFuncevalResponseFunc1,0
 
 mylib/eval/calcDistance.m,47
 function [Dis] = calcDistancecalcDistance1,0

@@ -53,12 +53,12 @@ if strcmp('set_xticks','set_xticks')
   end
 end
 
-  %  XSIZE = 2;
-  XSIZE = 1;
+%  XSIZE = 2;
+XSIZE = 1;
 if strcmp('set_range','set_range_')
   diag_Yrange = graph.prm.diag_Yrange;
   Yrange      = graph.prm.Yrange;
-    zeroFlag = 0;
+  zeroFlag = 0;
 else % you'd better collect max and min range of response functions
      % in advance.
   diag_Yrange = graph.prm.diag_Yrange_auto;
@@ -67,7 +67,7 @@ else % you'd better collect max and min range of response functions
   if newYrange == 0
     newYrange = [-0.1 0.1 ];
     zeroFlag = 1;
-else
+  else
     zeroFlag = 0;
   end
 end
@@ -82,8 +82,9 @@ if 1 == 1
     tmp1 = Ealpha{regFacIndex}{i2to}{i3from};
     %% <  chage color ploted according to cell type >
     hold on;
-
-    if tmp1 > 0
+    if tmp1 == 0
+      zeroFlag = 1;
+    elseif tmp1 > 0
       plot(tmp1,'r','LineWidth',3);
     elseif tmp1 < 0
       plot(tmp1,'b','LineWidth',3);
@@ -91,14 +92,19 @@ if 1 == 1
       plot(tmp1,'k','LineWidth',3);
     end
 
-    plot( 1:hnum, 0, 'b','LineWidth',4); % emphasize 0.
-    grid on;
-    if strcmp('showWeightDistribution','showWeightDistribution')
-      for i2 = 1:cnum
-        tmp2 = bases.ihbasis.*repmat(transpose(EbasisWeight{regFacIndex}{i2to}(:,i2)), ...
-                                     [bases.ihbasprs.NumFrame 1]);
-        for i3 = 1:bases.ihbasprs.nbase
-          bar(tmp2(:,i3));
+    if (zeroFlag == 1)
+      set(gca,'yticklabel',[]);
+      zeroFlag = 0;
+    else
+      plot( 1:hnum, 0, 'b','LineWidth',4); % emphasize 0.
+      grid on;
+      if  graph.prm.showWeightDistribution == 1
+        for i2 = 1:cnum
+          tmp2 = bases.ihbasis.*repmat(transpose(EbasisWeight{regFacIndex}{i2to}(:,i2)), ...
+                                       [bases.ihbasprs.NumFrame 1]);
+          for i3 = 1:bases.ihbasprs.nbase
+            bar(tmp2(:,i3));
+          end
         end
       end
     end

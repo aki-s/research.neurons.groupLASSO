@@ -114,8 +114,9 @@ for i0 = 1:regFacLen
       tmp1 = Ealpha{regFacIndex}{i2to}{i3from};
       %% <  chage color ploted according to cell type >
       hold on;
-      %    fprintf(1,'[%f,%f]\n',min(tmp1),max(tmp1));
-      if tmp1 > 0
+      if tmp1 == 0
+        zeroFlag = 1;
+      elseif tmp1 > 0
         plot(tmp1,'r','LineWidth',3);
       elseif tmp1 < 0
         plot(tmp1,'b','LineWidth',3);
@@ -123,19 +124,23 @@ for i0 = 1:regFacLen
         plot(tmp1,'k','LineWidth',3);
       end
 
-      plot( 1:hnum, 0, 'b','LineWidth',4); % emphasize 0.
-      grid on;
-      if graph.prm.showWeightDistribution == 1
-        for i2 = 1:cnum
-          tmp2 = bases.ihbasis.*repmat(transpose(EbasisWeight{regFacIndex}{i2to}(:,i2)), ...
-                                       [bases.ihbasprs.NumFrame 1]);
-          plot(tmp2,'--')
+      if (zeroFlag == 1)
+        set(gca,'yticklabel',[]);
+        zeroFlag = 0;
+      else
+        plot( 1:hnum, 0, 'b','LineWidth',4); % emphasize 0.
+        grid on;
+        if graph.prm.showWeightDistribution == 1
+          for i2 = 1:cnum
+            tmp2 = bases.ihbasis.*repmat(transpose(EbasisWeight{regFacIndex}{i2to}(:,i2)), ...
+                                         [bases.ihbasprs.NumFrame 1]);
+            plot(tmp2,'--')
+          end
         end
+        %% </ chage color ploted according to cell type >
+        xlim([0,hnum*hwind*XSIZE]);  
+        ylim(newYrange)
       end
-      %% </ chage color ploted according to cell type >
-      xlim([0,hnum*hwind*XSIZE]);  
-      ylim(newYrange)
-
       if  graph.TIGHT == 1;
         axis tight;
       end

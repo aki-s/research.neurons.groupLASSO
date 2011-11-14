@@ -102,7 +102,7 @@ if strcmp('calcDAL','calcDAL')
   DAL.speedup = 0;
   for ii1 = 1:PRMS % search appropriate parameter.
     cost2 = tic;
-    fprintf(1,'    == Reg.factor: %9.4f == frame: %d<-%d : elapsed: ',...
+    fprintf(1,'\t== Reg.factor: %9.4f == frame: %d<-%d : elapsed: ',...
             DAL.regFac(ii1),DAL.Drow,env.genLoop);
     %%parfor i1to = 1:cnum % ++parallelization  %bug?
     for i1to = 1:cnum % ++parallelization 

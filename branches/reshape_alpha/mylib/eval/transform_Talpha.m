@@ -1,5 +1,8 @@
-function debug_formTAlpha(Talpha)
-%debug_formAlpha(Talpha)
+function transform_Talpha(Talpha)
+%% transform response function
+%% from 'Talpha' to 'Alpha'
+%% 'Talpha' is (cnum*hnum,cnum) 2D matrix
+%% 'Alpha' is (cnum,cnum,hnum) 3D matrix
 global rootdir_
 
 

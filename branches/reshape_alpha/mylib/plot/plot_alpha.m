@@ -79,6 +79,7 @@ else
     zeroFlag = 0;
   end
 end
+
 if cnum < MAX
   if size(alpha,3) > 1 
     alphaH = sprintf('%s','shiftdim(alpha(i1to,i2from,:),2)');
@@ -90,16 +91,13 @@ if cnum < MAX
   for i1to = 1:cnum %++parallel
     for i2from = 1:cnum;
       %% subplot() delete existing Axes property.
-      %      subplot(cnum,cnum,(i1to-1)*cnum+i2from)
       subplot('position',pos + [i2from -i1to 1 1 ]/(cnum+3) );
-      %      tmp1 = alpha((1:hnum)+(i2from-1)*hnum,i1to);
       tmp1 = eval(alphaH);
       %% < chage color ploted according to cell type >
-      %      hold on;
       set(gcf,'color','white')
       hold on;
       if tmp1 == 0
-        zeroFlag_ = 1;
+        zeroFlag = 1;
       elseif tmp1 > 0
         plot( 1:hnum, tmp1,'r','LineWidth',3);
       elseif tmp1 < 0         
@@ -108,11 +106,13 @@ if cnum < MAX
         plot( 1:hnum, tmp1,'k','LineWidth',3);
       end
 
-      if zeroFlag_ == 1
+      if (zeroFlag == 1)
         %  plot(nan);
-        set(gca,'xticklabel',[]);
+        %        if (i1to ~= 1) && (i2from ~= 1)  % When in the topmost or leftmost margin.
+        %        set(gca,'xticklabel',[]);
         set(gca,'yticklabel',[]);
-        zeroFlag_ = 0;
+        %        end
+        zeroFlag = 0;
       else
         plot( 1:hnum, 0, 'b','LineWidth',4); % emphasize 0.
         grid on;
@@ -137,10 +137,11 @@ if cnum < MAX
       set(gca,'XAxisLocation','top');
       set(gca,'XTick' , 1:dh:hnum);
       set(gca,'xticklabel',[]);
+      Y_LABEL = get(gca,'yTickLabel');
       %% < from-to cell label >
       if (i1to == 1)     % When in the topmost margin.
         xlabel(i2from);
-      set(gca,'XTickLabel',TIMEL);
+        set(gca,'XTickLabel',TIMEL);
       end
       if (i2from == 1) % When in the leftmost margin.
         ylabel(i1to);
@@ -169,5 +170,6 @@ if cnum < MAX
     print('-depsc', '-tiff' ,[rootdir_ '/outdir/artificial_alpha.eps'])
   end
 else
+  fprintf(1,'graph.PLOT_MAX_NUM_OF_NEURO= %3d\n',graph.PLOT_MAX_NUM_OF_NEURO);
   warning('plot:aborted','Too large number of cells to plot.\n Plot aborted.')
 end

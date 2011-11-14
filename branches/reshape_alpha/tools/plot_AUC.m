@@ -73,8 +73,8 @@ for j0 = FROM:uF %++bug: duplicate j0,i0 ?
       filename =sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{regFacIdx}, ...
                         fFNAME, uFnum{j0}, inFiringUSE{i0});
       load( [inRoot '/' filename], 'Alpha');
-      RFint = evalResponseFunc( Alpha );
-      [recn, recr, thresh0 ,auc.A(j0,regFacIdx)] = evalRFint(RFint, M_ans);
+      RFIntensity = evalResponseFunc( Alpha );
+      [recn, recr, thresh0 ,auc.A(j0,regFacIdx)] = evalRFIntensity(RFIntensity, M_ans);
       disp( sprintf( '%20s: %3d, %3d, %3d, %6d: %5.1f, %5.1f, %5.1f, %5.1f: %2.1f',...
                      filename, recn, recr*100, auc.A(j0,regFacIdx)) );
       rate(regFacIdx,1:4,j0) = recr*100;

@@ -44,14 +44,14 @@ gen_defaultEnv_ask(); % set default params
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%>
 if (status.realData ~= 1 )
-    if (status.READ_NEURO_CONNECTION == 1) % from I/O % (status.READ_FIRING ~= 1)
-      %% e.g. Enter 'indir/KimFig1.con' when asked.
-      [alpha_fig,alpha_hash,env,status] = readTrueConnection(env,status);
-      Tout = get_neuronType(env,status,alpha_fig,Tout);
-    elseif (status.GEN_TrueValues == 1)  % generate artifical random network connection
-      [alpha_fig,alpha_hash,status] = gen_alpha_hash(env,status);
-      Tout = get_neuronType(env,status,alpha_fig,Tout);
-    end
+  if (status.READ_NEURO_CONNECTION == 1) % from I/O % (status.READ_FIRING ~= 1)
+    %% e.g. Enter 'indir/KimFig1.con' when asked.
+    [alpha_fig,alpha_hash,env,status] = readTrueConnection(env,status);
+    Tout = get_neuronType(env,status,alpha_fig,Tout);
+  elseif (status.GEN_TrueValues == 1)  % generate artifical random network connection
+    [alpha_fig,alpha_hash,status] = gen_alpha_hash(env,status);
+    Tout = get_neuronType(env,status,alpha_fig,Tout);
+  end
 else
   status.inStructFile = '';
 end
@@ -116,19 +116,19 @@ if status.estimateConnection == 1
     fprintf(1,'#neuron:%5d<-%5d\n',env.inFiringUSE(i0),tmpEnv.cnum);
     I = tmpI(:,1:env.inFiringUSE(i0));
     env.cnum = size(I,2);
-if 1 == 0
-    CVL{i0}        = zeros(regFacLen,env.cnum,useFrameLen);
-    CVwhole{i0}    = zeros(useFrameLen,1);
-    RfWholeIdx{i0} = zeros(useFrameLen,1); %Rf: regularization factor
-    CVeach{i0}     = zeros(useFrameLen,env.cnum);
-    RfEachIdx{i0}  = zeros(useFrameLen,env.cnum);
-else
-    CVL{i0}        = nan(regFacLen,env.cnum,useFrameLen);
-    CVwhole{i0}    = nan(useFrameLen,1);
-    RfWholeIdx{i0} = nan(useFrameLen,1); %Rf: regularization factor
-    CVeach{i0}     = nan(useFrameLen,env.cnum);
-    RfEachIdx{i0}  = nan(useFrameLen,env.cnum);
-end
+    if 1 == 0
+      CVL{i0}        = zeros(regFacLen,env.cnum,useFrameLen);
+      CVwhole{i0}    = zeros(useFrameLen,1);
+      RfWholeIdx{i0} = zeros(useFrameLen,1); %Rf: regularization factor
+      CVeach{i0}     = zeros(useFrameLen,env.cnum);
+      RfEachIdx{i0}  = zeros(useFrameLen,env.cnum);
+    else
+      CVL{i0}        = nan(regFacLen,env.cnum,useFrameLen);
+      CVwhole{i0}    = nan(useFrameLen,1);
+      RfWholeIdx{i0} = nan(useFrameLen,1); %Rf: regularization factor
+      CVeach{i0}     = nan(useFrameLen,env.cnum);
+      RfEachIdx{i0}  = nan(useFrameLen,env.cnum);
+    end
     for i1 =1:useFrameLen
       fprintf('%s',repmat('=',[30 1]));
       fprintf(' useFrame:%08d ',env.useFrame(i1));
@@ -148,10 +148,10 @@ end
             %            status.time.regFac(i1,:) = tmpCost;
 
             %++bug? calc CVL
-                     [ CVL{i0}(1:regFacLen,1:env.cnum,i1),status.time.regFac(i1,:), EbasisWeight, Ebias ] =...
+            [ CVL{i0}(1:regFacLen,1:env.cnum,i1),status.time.regFac(i1,:), EbasisWeight, Ebias ] =...
                 crossVal_parfor(env,graph,status,DAL,bases,I,i1);
           else %++imcomplete
-error('not yet')
+            error('not yet')
 % $$$             [ CVL{i0}(1:regFacLen,1:env.cnum,i1), status ] =...
 % $$$                 crossVal(env,graph,status,DAL,bases,I,i1);
             [ CVL{i0}(1:regFacLen,1:env.cnum,i1),status.time.regFac(i1,:), EbasisWeight, Ebias ] =...
@@ -212,8 +212,8 @@ error('not yet')
                            regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2')...
                            );
         else 
-        %++improve:speedUp:: loading saved vriables such as EbasisWeight.
-        % from the results of cross validation.
+          %++improve:speedUp:: loading saved vriables such as EbasisWeight.
+          % from the results of cross validation.
           S = load([status.savedirname,'/',status.method,'-',...
                     sprintf('%7d',tmpDAL{i2}.regFac),...
                     '-',regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2'),...
@@ -226,10 +226,10 @@ error('not yet')
         end
         if graph.PLOT_T == 1
           try
-          fprintf(1,' Now writing out estimated kernel\n');
-          plot_Ealpha_parfor(env,tmpGraph,status,tmpDAL{i2},bases,EbasisWeight,1,... 
-                             sprintf('elapsed:%s', ...
-                                     num2str(status.time.regFac(i2,RfWholeIdx{i0}(i2)))) )
+            fprintf(1,'estimated rename func:');
+            plot_Ealpha_parfor(env,tmpGraph,status,tmpDAL{i2},bases,EbasisWeight,1,... 
+                               sprintf('elapsed:%s', ...
+                                       num2str(status.time.regFac(i2,RfWholeIdx{i0}(i2)))) )
           catch indexError %++bug
             disp(sprintf('RfWholeIdx: %d',RfWholeIdx{i0}(i2) ))
           end

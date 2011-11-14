@@ -3,6 +3,7 @@ function plot_ResFuncALL(varargin)
 %% example)
 %  plot_ResFuncALL('outdir/22-Oct-2011-start-22_34/',20)
 %  plot_ResFuncALL(status.savedirname,20)
+%  plot_ResFuncALL(status.savedirname,20,3000)
 %% plot_ResFuncALL()
 %%  if (nargin == 1)
 %%   varargin{1}: mat file containing variable 'env'.
