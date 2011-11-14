@@ -1,4 +1,5 @@
-function plot_Ealpha_subplot(env,Fdim1,Fdim2,LIM,Ealpha,prm)
+function plot_Ealpha_subplot(env,graph,Fdim1,Fdim2,LIM,Ealpha,prm,...
+                             varargin)
 cnum = env.cnum;
 hnum = env.hnum;
 hwind = env.hwind;
@@ -8,6 +9,14 @@ dh = prm.xtickwidth;
 newYrange = prm.yrange;
 zeroFlag = prm.zeroFlag;
 title = prm.title;
+
+ARGNUM = 5;
+if nargin >= (ARGNUM + 1 ) 
+  if nargin >= (ARGNUM + 2 ) 
+    EbasisWeight = varargin{ 1 };
+    bases = varargin{ 2 };
+  end
+end
 if 1 == 1
   figure;
   i2to = 1 + (Fdim1-1)*LIM; % cell to
@@ -35,6 +44,13 @@ if 1 == 1
     %% 0 is discriminant line, emphasize 0.
     plot( 1:hnum, 0, 'b','LineWidth',4);
     grid on;
+    if graph.prm.showWeightDistribution == 1
+      for i2 = 1:cnum
+        tmp2 = bases.ihbasis.*repmat(transpose(EbasisWeight{regFacIndex}{i2to}(:,i2)), ...
+                                     [bases.ihbasprs.NumFrame 1]);
+        plot(tmp2)
+      end
+    end
     %% </ chage color ploted according to cell type >
     %{
     if  graph.TIGHT == 1;
@@ -90,7 +106,7 @@ MUL = 1;
 if LIM < 8
   pos1 = [ .1 cnum-1 ]/(cnum+2);
   pos2 = [ .2 cnum-3 ]/(cnum+2);
-MUL = 2;
+  MUL = 2;
 end
 text(pos1(1)+.15,pos1(2) +.05,title,'FontSize',12)
 text(pos2(1)+.05*MUL,pos2(2) +.02*MUL,'Triggers')

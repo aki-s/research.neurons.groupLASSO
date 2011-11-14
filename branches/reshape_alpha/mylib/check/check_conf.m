@@ -94,3 +94,13 @@ if isfield(status,'crossVal')
 else
   ODAL.Drow = env.useFrame;
 end
+
+if ~isfield(env,'inFiringUSE') % num. of use neuron (subset)
+  env.inFiringUSE = env.cnum;
+end
+
+%% auto color scaling
+useFrameLen = length(env.useFrame);
+if length(graph.prm.myColor) ~= useFrameLen
+  Ograph.prm.myColor = setMyColor(useFrameLen);
+end

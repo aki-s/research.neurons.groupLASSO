@@ -1,4 +1,4 @@
-function [myColor] = plot_CVLwhole(env,status,graph,DAL,CVL,varargin)
+function  plot_CVLwhole(env,status,graph,DAL,CVL,varargin)
 %%
 %%
 %% varargin{1}: index to select and plot only one sample.
@@ -8,6 +8,7 @@ cnum = env.cnum;
 LABEL = num2cell(DAL.regFac);
 regFacLEN = length(DAL.regFac);
 useFrameLen = length(env.useFrame);
+myColor = graph.prm.myColor;
 
 if strcmp('omitDiag','omitDiag_')
   zeroIdx = repmat(logical(eye(cnum)),[1 1 useFrameLen]);
@@ -39,22 +40,6 @@ for id = FROM : fnum
   %LGDT{id} = LGD{id};
 end
 %%col=hsv(fnum);
-%% colorB={'b','g','r','c','m','b'};
-colorB={[0 0 1],[0 1 0],[1 0 0],[0 1 1],[1 0 1],[0 0 0]};
-%colorB = [ [0 0 1],[0 1 0],[1 0 0],[0 1 1],[1 0 1],[0 0 0] ];
-colorLen = size(colorB,2);
-  TERM = ceil(useFrameLen / colorLen);
-  myColor= cell(1,colorLen*TERM);
-  for j1 = 1:TERM
-    for j2 = 1:colorLen
-      myColor{(j1-1)*colorLen+j2} = (colorB{j2}*j1 + .2*rand(1,1))/TERM;
-    end
-  end
-  norm = cell2mat(myColor);
-  while sum(( norm > 1 ))
-    norm( norm >1) =   norm( norm >1) - 1;
-  end
-  myColor= mat2cell(norm,1,repmat(3,[1 colorLen*TERM]));
 
 figure
 for i2 = FROM:fnum
@@ -77,9 +62,11 @@ for i2 = FROM:fnum
   minIdx = find(minVal(:,:,i2) == CVLt(1:regFacLEN,:,i2) );
   %% if (minIdx == 1) marker don't appear. Is this MATLAB bug?
   %% line
-i2
-  fprintf(1,'%02d useFrame:%04d myColor%d\n', i2, env.useFrame(i2), myColor{i2});
+if strcmp('DEBUG','DEBUG')
+  fprintf(1,'%02d, useFrame:%04d, myColor:[%f %f %f]\n',...
+          i2, env.useFrame(i2), myColor{i2}(1),myColor{i2}(2),myColor{i2}(3));
   plot(1:regFacLEN,CVLt(1:regFacLEN,1,i2),'color',myColor{i2},'LineWidth',3);
+end
   %% diamond
   hLine2 = plot(minIdx,CVLt(minIdx,:,i2),'o-','color',myColor{i2},...
                 'Marker','d','MarkerFaceColor','auto','MarkerSize',10,'LineWidth',3);

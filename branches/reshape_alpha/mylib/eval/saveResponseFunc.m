@@ -1,21 +1,28 @@
-function  saveResponseFunc(env,graph,EKerWeight,Ealpha,Ebias,DAL,status,fire,varargin)
+function  saveResponseFunc(env,graph,status,bases,EbasisWeight,Ealpha,Ebias,DAL,fire,varargin)
 %
-% saveResponseFunc(Ealpha,DAL,status,'fire_by')
+% saveResponseFunc(Ealpha,DAL,'FNAME')
+% saveResponseFunc(Ealpha,DAL,'FNAME','relative_dirname')
 
-INBASE = 8;
-if nargin > INBASE
-  bases = varargin{1};
+INBASE = 9;
+
+if nargin >= INBASE + 1
+  outFolder = varargin{1};
+  outFmk = [status.savedirname,'/',outFolder];
+  if ~exist(outFmk,'dir')
+    mkdir(outFmk)
+  end
 else
-  bases = NaN;
+  outFolder ='';
 end
-if nargin > INBASE + 1
+
+if nargin >= INBASE + 2
   crossValIdx = varargin{2};
 else
   crossValIdx = '';
 end
 
-basisWeight = EKerWeight;
-AlphaSelf = Ebias;
+EbasisWeight = EbasisWeight; %good, rename in transition
+AlphaSelf = Ebias; %bad, rename in transition
 %%
 cnum = env.cnum;
 frame = DAL.Drow;
@@ -43,13 +50,28 @@ if isempty(crossValIdx)
 else
   K = sprintf('-CV%1d',crossValIdx);
 end
-for i1 = 1:N
-  Alpha = Alpha_{i1};
-  save([savedirname,'/',method,'-', ...
-        sprintf('%09.4d',regFac(i1)),...
-        '-',fire, ...
-        sprintf('-%07d',frame),...
-        sprintf('-%03d',cnum),...
-        K,...
-        '.mat' ],'env','graph','savedirname','Alpha','AlphaSelf','basisWeight','DAL','bases');
+if nargin == INBASE + 2
+  for i1 = 1:N
+    Alpha = Alpha_{i1};
+    save([savedirname,'/',outFolder,'/',...
+          method,'-', ...
+          sprintf('%09.4f',regFac(i1)),...
+          '-',fire, ...
+          sprintf('-%07d',frame),...
+          sprintf('-%03d',cnum),...
+          K,...
+          '.mat' ],'env','graph','savedirname','Alpha','AlphaSelf','EbasisWeight','DAL','bases');
+  end
+
+else
+  for i1 = 1:N
+    Alpha = Alpha_{i1};
+    save([savedirname,'/',method,'-', ...
+          sprintf('%09.4f',regFac(i1)),...
+          '-',fire, ...
+          sprintf('-%07d',frame),...
+          sprintf('-%03d',cnum),...
+          K,...
+          '.mat' ],'env','graph','savedirname','Alpha','AlphaSelf','EbasisWeight','DAL','bases');
+  end
 end

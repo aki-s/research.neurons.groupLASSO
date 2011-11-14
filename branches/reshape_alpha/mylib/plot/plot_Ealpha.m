@@ -1,10 +1,10 @@
-function plot_Ealpha(env,graph,DAL,bases,EKerWeight,regFacIndex,titleAddMemo)
+function plot_Ealpha(env,graph,DAL,bases,EbasisWeight,regFacIndex,titleAddMemo)
 %function plot_Ealpha(env,graph,Ealpha,DAL,regFacIndex,titleAddMemo)
 %%
 %% USAGE)
 %% Example:
-% plot_Ealpha(env,graph,DAL,bases,EKerWeight,regFacIndex,'titleAddMemo')
-% plot_Ealpha(env,graph,DAL,bases,basisWeight,regFacIndex,'titleAddMemo')
+% plot_Ealpha(env,graph,DAL,bases,EbasisWeight,regFacIndex,'titleAddMemo')
+% plot_Ealpha(env,graph,DAL,bases,EbasisWeight,regFacIndex,'titleAddMemo')
 %%
 
 global rootdir_
@@ -33,8 +33,8 @@ else
 end
 %%% ==< reconstruct response func >==
 
-[Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EKerWeight,regFacIndex);
-%[Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EKerWeight);
+[Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EbasisWeight,regFacIndex);
+%[Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EbasisWeight);
 %%% ==</reconstruct response func >==
 
 if strcmp('set_xticks','set_xticks')
@@ -73,7 +73,7 @@ regFacLen = length(regFacIndex);
 tmpregFacIndex = regFacIndex;
 for i0 = 1:regFacLen
   regFacIndex = tmpregFacIndex(i0);
-  title = sprintf('regFac=%4d frame=%6d',DAL.regFac(regFacIndex),DAL.Drow );
+  title = sprintf('regFac=%9.4f frame=%6d',DAL.regFac(regFacIndex),DAL.Drow );
   title = strcat(title,[', xrange:',sprintf('[%2.1d,%4.3f](sec)',TIMEL{1},TIMEL{Lnum+1})]);
   titleYrange = '';
   if  LIM >= 10
@@ -98,7 +98,8 @@ for i0 = 1:regFacLen
     shift = 1/fignum;
     for Fdim1 = 1:fignum
       for Fdim2 = 1:fignum
-        plot_Ealpha_subplot(env,Fdim1,Fdim2,LIM,Ealpha,prm);
+        plot_Ealpha_subplot(env,graph,Fdim1,Fdim2,LIM,Ealpha,prm,...
+                            EbasisWeight,bases);
         set(gcf, 'menubar','none','Color','White','units','normalized',...
                  'outerposition',[(Fdim2-1)*shift,(fignum-Fdim1)*shift,shift,shift])
       end
@@ -124,6 +125,13 @@ for i0 = 1:regFacLen
 
       plot( 1:hnum, 0, 'b','LineWidth',4); % emphasize 0.
       grid on;
+      if graph.prm.showWeightDistribution == 1
+        for i2 = 1:cnum
+          tmp2 = bases.ihbasis.*repmat(transpose(EbasisWeight{regFacIndex}{i2to}(:,i2)), ...
+                                       [bases.ihbasprs.NumFrame 1]);
+          plot(tmp2,'--')
+        end
+      end
       %% </ chage color ploted according to cell type >
       xlim([0,hnum*hwind*XSIZE]);  
       ylim(newYrange)
@@ -161,7 +169,7 @@ for i0 = 1:regFacLen
 
     h = axes('Position',[0 0 1 1],'Visible','off'); 
     set(gcf,'CurrentAxes',h)
-    text(.2,.95,title,'FontSize',12)
+    text(.18,.95,title,'FontSize',12)
     if 1 == 0
       text(.12,.90,'Triggers')
       text(.08,.85,'Targets')

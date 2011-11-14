@@ -39,7 +39,7 @@ if MAX > LIM
 end
 %}
 %%% == useful func ==
-%[Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EKerWeight);
+%[Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EbasisWeight);
 %%% ===== PLOT alpha ===== START =====
 if strcmp('set_xticks','set_xticks')
   Lnum = 2;

@@ -1,4 +1,4 @@
-function plot_Ealpha_parfor(env,graph,status,DAL,bases,EKerWeight,regFacIndex,titleIn)
+function plot_Ealpha_parfor(env,graph,status,DAL,bases,EbasisWeight,regFacIndex,titleIn)
 %function plot_Ealpha(env,graph,Ealpha,DAL,regFacIndex,titleIn)
 %%
 %% USAGE)
@@ -8,6 +8,8 @@ function plot_Ealpha_parfor(env,graph,status,DAL,bases,EKerWeight,regFacIndex,ti
 
 DEBUG = 0;
 LIM = 10;
+
+%myColor = graph.prm.myColor;
 
 if DEBUG == 1
   title = 'DEBUG:';
@@ -39,7 +41,7 @@ if MAX > LIM
 end
 %}
 %%% == useful func ==
-[Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EKerWeight);
+[Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EbasisWeight);
 %%% ===== PLOT alpha ===== START =====
 if strcmp('set_xticks','set_xticks')
   Lnum = 2;
@@ -91,6 +93,15 @@ if 1 == 1
 
     plot( 1:hnum, 0, 'b','LineWidth',4); % emphasize 0.
     grid on;
+    if strcmp('showWeightDistribution','showWeightDistribution')
+      for i2 = 1:cnum
+        tmp2 = bases.ihbasis.*repmat(transpose(EbasisWeight{regFacIndex}{i2to}(:,i2)), ...
+                                     [bases.ihbasprs.NumFrame 1]);
+        for i3 = 1:bases.ihbasprs.nbase
+          bar(tmp2(:,i3));
+        end
+      end
+    end
     %% </ chage color ploted according to cell type >
     xlim([0,hnum*hwind*XSIZE]);  
     %{
@@ -158,8 +169,9 @@ ylabel(h,'Target')
 
 %%% ===== PLOT alpha ===== END =====
 %% write out eps file
-title2 = sprintf('_regFac=%07d_frame=%07d_N=%04d',DAL.regFac(regFacIndex),DAL.Drow,cnum );
 if ( graph.PRINT_T == 1 ) || ( status.parfor_ == 1 )
-  fprintf(1,'%s', [status.savedirname '/Estimated_alpha' title2 '.png']);
+  title2 = sprintf('_regFac=%07d_frame=%07d_N=%04d',DAL.regFac(regFacIndex),DAL.Drow,cnum );
+  %% fprintf(1,'saved figure: \n')
+  fprintf(1,'%s\n', [status.savedirname '/Estimated_alpha' title2 '.png']);
   print('-dpng', [status.savedirname '/Estimated_alpha' title2 '.png'])
 end

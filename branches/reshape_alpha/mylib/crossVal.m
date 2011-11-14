@@ -1,4 +1,4 @@
-function [cv,cost,EKerWeight,Ebias] = crossVal(env,graph,status_cvDiv,DAL,bases,varargin)
+function [cv,cost,EbasisWeight,Ebias] = crossVal(env,graph,status_cvDiv,DAL,bases,varargin)
 %function [cv,status] = crossVal(env,graph,status_cvDiv,DAL,bases,varargin)
 
 %% k: upper 'k' results file from 'infile' is used to do crossValidation.
@@ -113,10 +113,10 @@ else
     USE = (1:Tlen);
     USE = USE - omit;
     USE = USE(USE >0);
-    [EKerWeight,Ebias_,Estatus,dum1,status] =...
+    [EbasisWeight,Ebias_,Estatus,dum1,status] =...
         estimateWeightKernel(tmpEnv,graph,status,bases,I(USE,:),DAL,regFacIdx);
     %    tic;fprintf(1,'Eapha2Mat:\t');
-    Ealpha = reconstruct_Ealpha(tmpEnv,DAL,bases,EKerWeight);
+    Ealpha = reconstruct_Ealpha(tmpEnv,DAL,bases,EbasisWeight);
     histSize = bases.ihbasprs.NumFrame;
     [Ealpha_] = Ealpha2Mat(tmpEnv,Ealpha,regFacLen);
     %    toc
@@ -133,7 +133,7 @@ else
       toc
         err(i2,:,i1) = err(i2,:,i1) + calcLikelihood(loglambda,I(USE,:));
     end
-    %% save(EKerWeight,Ebias_,status,loglambda) 
+    %% save(EbasisWeight,Ebias_,status,loglambda) 
   end
 end
 %  cv = sum(err,1)/k;

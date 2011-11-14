@@ -1,4 +1,4 @@
-function [recn, recr, thresh0, auc] = evalRfint( RFint, Answer )
+function [recn, recr, thresh0, auc] = evalRFint( RFint, Answer )
 [N,dum] = size(RFint);
 
 %% Omit diagonal elements
@@ -13,7 +13,8 @@ switch 'V3'
    tmp = [min(abs(RFint(:))), max(abs(RFint(:)))]
    thresh0 = tmp(1):( (tmp(2)-tmp(1))/1000 ):tmp(2);
    case 'V3'
-   thresh0 = sort(abs(RFint(:))-eps);% there may be duplicate
+     %   thresh0 = sort(abs(RFint(:))-eps);% there may be duplicate
+   thresh0 = sort(unique(abs(RFint(:)))-eps);
    thresh0 = [-Inf,thresh0',Inf];
 end
 N0 = sum( Answer == 0 );
@@ -37,6 +38,7 @@ for t1 = 1:lenT0
    recn( t1, : ) = [TP0, TPp, TPn, TPtotal];
    recr( t1, : ) = [TP0/N0, TPp/Np, TPn/Nn, TPtotal/length(RFint)];
 end
+recFPTP = [0,0;recFPTP;1,1];
 [dum, idx] = max( recn(:,4) );
 
 recn = recn(idx,:);
@@ -50,4 +52,14 @@ recr = recr(idx,:);
 %%---------------------------------------
 %% 0  |          (FP0)| sencitivity (TP0)|
 auc = fptp2auc( recFPTP );
-%recr = [recr,auc];
+
+if strcmp('DEBUG','DEBUG_')
+  %%  plot ROC curve
+  fprintf(1,'DEBUG:%s\n',mfilename)
+  figure
+  plot(recFPTP(:,1),recFPTP(:,2))
+  xlabel('FP')
+  ylabel('TP')
+  title('')
+  set(gcf, 'Color', 'White', 'Position',[200,700,400,400])
+end

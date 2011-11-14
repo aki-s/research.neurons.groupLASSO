@@ -9,13 +9,11 @@ function AUC = fptp2auc( FPTP )
 % at the m-th threshold.
 %
 
-
-FPTP = [0,0;FPTP;1,1];
 [M,dum] = size(FPTP);
 FP = FPTP(:,1);
 TP = FPTP(:,2);
 AUC = 0;
 for i=1:M-1   
-  AUC = AUC + abs( FP(i+1)-FP(i) ) * TP(i+1);
+  % calc area with trapezoid method
+  AUC = AUC + ( TP(i+1) + TP(i) ) * ( FP(i+1) - FP(i) ) * 0.5;
 end
-

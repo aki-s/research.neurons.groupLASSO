@@ -1,4 +1,4 @@
-function [cv,cost,EKerWeight,Ebias] = crossVal_parfor(env,graph,status_cvDiv,DAL,bases,varargin)
+function [cv,cost,EbasisWeight,Ebias] = crossVal_parfor(env,graph,status_cvDiv,DAL,bases,varargin)
 
 %% k: upper 'k' results file from 'infile' is used to do crossValidation.
 %% k-hold crossValidation.
@@ -106,7 +106,7 @@ else
   cnum = env.cnum;
 end
 loglambda = zeros(tmpEnv.genLoop,cnum);
-EKerWeight = cell(1,k);
+EbasisWeight = cell(1,k);
 Ebias  = cell(1,k);
 Estatus = cell(1,k);
 %{
@@ -130,15 +130,17 @@ else
     USE = (1:Tlen);
     USE = USE - omit;
     USE = USE(USE >0);
-    [EKerWeight{i1},Ebias{i1},Estatus{i1},dum1,status_tmp{i1}] =...
+    [EbasisWeight{i1},Ebias{i1},Estatus{i1},dum1,status_tmp{i1}] =...
         estimateWeightKernel(tmpEnv,graph,status,bases,I(USE,:),DAL,useFrameIdx);
     cost = cost + status_tmp{i1}.time.regFac(useFrameIdx,:);
-    [Ealpha Ograph] = reconstruct_Ealpha(tmpEnv,graph,DAL,bases,EKerWeight{i1});
+    [Ealpha Ograph] = reconstruct_Ealpha(tmpEnv,graph,DAL,bases,EbasisWeight{i1});
     histSize = bases.ihbasprs.NumFrame;
     %% warning: not exact response function is write out.
     if strcmp('incomplete_RF','incomplete_RF') % RF: response function
-      saveResponseFunc(env,Ograph,EKerWeight{i1},Ealpha,Ebias{i1}, ...
-                       DAL,status,regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2'),bases,i1);% for later use 
+      saveResponseFunc(env,Ograph,status,bases,...
+                       EbasisWeight{i1},Ealpha,Ebias{i1},DAL,...
+                       regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2'),...
+                       'CV',i1);% for later use 
     end
     [Ealpha_] = Ealpha2Mat(tmpEnv,Ealpha,regFacLen);
     for i2 = 1:regFacLen
@@ -155,7 +157,7 @@ else
         err(i2,:,i1) = err(i2,:,i1) + calcLikelihood(loglambda,I(USE,:));
       end
     end
-    %% save(EKerWeight,Ebias,status,loglambda) 
+    %% save(EbasisWeight,Ebias,status,loglambda) 
   end
   %%cv = sum(err,3)/k;
   cv = sum(err,3)/k/env.useFrame(useFrameIdx);
