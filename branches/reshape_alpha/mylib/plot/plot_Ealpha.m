@@ -68,6 +68,8 @@ else % you'd better collect max and min range of response functions
   end
 end
 
+RFIntensity = evalResponseFunc( EalphaCell2Mat(Ealpha) );
+
 %% ==< set title >==
 regFacLen = length(regFacIndex);
 tmpregFacIndex = regFacIndex;
@@ -123,8 +125,14 @@ for i0 = 1:regFacLen
       else           
         plot(tmp1,'k','LineWidth',3);
       end
-
+if RFIntensity(i1) > 0
+whitebg('red')
+elseif RFIntensity(i1) < 0
+whitebg('blue')
+end
+      %% </ chage color ploted according to cell type >
       if (zeroFlag == 1)
+        %% plot nothing
         set(gca,'yticklabel',[]);
         zeroFlag = 0;
       else
@@ -137,7 +145,6 @@ for i0 = 1:regFacLen
             plot(tmp2,'--')
           end
         end
-        %% </ chage color ploted according to cell type >
         xlim([0,hnum*hwind*XSIZE]);  
         ylim(newYrange)
       end

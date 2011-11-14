@@ -436,8 +436,8 @@ function [cv,cost,EbasisWeight,Ebias] = crossValcrossVal1,0
 mylib/calcLikelihood.m,47
 function L = calcLikelihoodcalcLikelihood1,0
 
-mylib/Ealpha2Mat.m,49
-function [ Ealpha_ ] = Ealpha2MatEalpha2Mat1,0
+mylib/EalphaCell2Mat.m,49
+function [ Ealpha_ ] = EalphaCell2MatEalphaCell2Mat1,0
 
 mylib/calcCorrectRate_I.m,15
 function 1,0

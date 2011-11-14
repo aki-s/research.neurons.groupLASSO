@@ -118,7 +118,7 @@ else
     %    tic;fprintf(1,'Eapha2Mat:\t');
     Ealpha = reconstruct_Ealpha(tmpEnv,DAL,bases,EbasisWeight);
     histSize = bases.ihbasprs.NumFrame;
-    [Ealpha_] = Ealpha2Mat(tmpEnv,Ealpha,regFacLen);
+    [Ealpha_] = EalphaCell2Mat(tmpEnv,Ealpha,regFacLen);
     %    toc
     %{
     fprintf(1,'Ebias2Mat:\t')

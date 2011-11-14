@@ -1,7 +1,7 @@
-function [ Ealpha_ ] = Ealpha2Mat(env,Ealpha,regFacLen)
-%%
-%%
-%%
+function [ Ealpha_ ] = EalphaCell2Mat(env,Ealpha,regFacLen)
+%% transform response function
+%% from Ealpha{cellIdx}{ito}{ifrom} cell
+%% to   (cnum,cnum,hnum) 3D matrix
 %%
 cnum = env.cnum;
 

@@ -142,7 +142,7 @@ else
                        regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2'),...
                        'CV',i1);% for later use 
     end
-    [Ealpha_] = Ealpha2Mat(tmpEnv,Ealpha,regFacLen);
+    [Ealpha_] = EalphaCell2Mat(tmpEnv,Ealpha,regFacLen);
     for i2 = 1:regFacLen
       loglambda = cell(tmpEnv.genLoop,1);
       %%++parallel strongly recommended. Especially if 'k' is small
