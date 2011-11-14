@@ -25,10 +25,16 @@ if strcmp('show_basis','show_basis')
   xlabel('m ');
   title('cosine basis function');
 
-  %{
-  figure;
-  %  plot(bases.iht*env.Hz.video, bases.ihbas);
-  plot(bases.ihbas);
-  title('orthogonalized basis');
-  %}
 end
+
+%{
+zeros(,bases.ihbasprs.nbase);
+figure
+hold on
+for i1 = 0.1:0.3:10
+for i2 = 0.1:0.3:10
+bases.ihbasis.*[
+end
+end
+
+%}

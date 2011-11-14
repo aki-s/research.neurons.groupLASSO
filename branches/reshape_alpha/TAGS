@@ -13,6 +13,9 @@ conf/conf_progress.m,81
 function  [status] = conf_progressconf_progress1,0
 global status;status;4,64
 
+conf/setMyColor.m,45
+function myColor = setMyColorsetMyColor1,0
+
 conf/conf_IO.m,80
 function [envOut statusOut] = conf_IOconf_IO1,0
 global rootdir_rootdir_3,56
@@ -204,26 +207,6 @@ function varargout = loss_sqdloss_sqd8,211
 dal_mod/loss_sqp.m,48
 function [floss, gloss]=loss_sqploss_sqp5,141
 
-misc/compare/init_kDAL.m,40
-function kDAL = init_kDALinit_kDAL1,0
-
-misc/compare/demo_compare_KIM.m,116
-global kenv;kenv;4,127
-global kstatus;kstatus;6,141
-global kgraph;kgraph;14,327
-global kbases;kbases;16,365
-
-misc/compare/compare_KIM.m,217
-function  [kEKerWeight,kEbias,kEstatus,kDAL] = compare_KIMcompare_KIM1,0
-global kenv;kenv;8,280
-global kgraph;kgraph;9,293
-global rootdir_rootdir_10,308
-global kstatus;kstatus;11,324
-global kDALkDAL12,340
-
-misc/compare/conf_compare_KIM_user.m,24
-global kDALkDAL13,301
-
 misc/plot_ggsimBaseFunc.m,52
 function plot_ggsimBaseFunc(plot_ggsimBaseFunc1,0
 
@@ -272,7 +255,7 @@ function [L] = lorentzlorentz1,0
 
 mylib/plot/plot_Ealpha.m,70
 function plot_Ealpha(plot_Ealpha1,0
-global rootdir_rootdir_10,323
+global rootdir_rootdir_10,328
 
 mylib/plot/plot_alpha.m,69
 function plot_alpha(plot_alpha1,0
@@ -305,8 +288,8 @@ function plot_Ealpha_parfor_(plot_Ealpha_parfor_1,0
 mylib/plot/plot_ROI.m,41
 function [my,mx] = plot_ROIplot_ROI1,0
 
-mylib/plot/plot_CVLwhole.m,53
-function [myColor] = plot_CVLwholeplot_CVLwhole1,0
+mylib/plot/plot_CVLwhole.m,43
+function  plot_CVLwhole(plot_CVLwhole1,0
 
 mylib/plot/plot_ResFuncALL.m,46
 function plot_ResFuncALL(plot_ResFuncALL1,0
@@ -327,6 +310,9 @@ function [Oenv Ostatus OTout Ograph ODAL] = check_confcheck_conf1,0
 
 mylib/check/check_genState.m,54
 function [status] = check_genStatecheck_genState1,0
+
+mylib/eval/evalRFint.m,62
+function [recn, recr, thresh0, auc] = evalRFintevalRFint1,0
 
 mylib/eval/plotalpha.m,34
 function plotalpha(plotalpha1,0
@@ -375,26 +361,23 @@ function h = arrow_demo3arrow_demo31263,50482
 function h = arrow_demo2arrow_demo21349,53985
 function out = trueornantrueornan1379,55215
 
-mylib/eval/evaluatePhi.m,66
-function [recn, recr, thresh0, auc] = evaluatePhievaluatePhi1,0
-
 mylib/eval/evalResponseFunc_peak.m,67
 function [peak ] = evalResponseFunc_peakevalResponseFunc_peak1,0
 
 mylib/eval/saveResponseFunc.m,49
 function  saveResponseFunc(saveResponseFunc1,0
 
+mylib/eval/evalResponseFunc.m,55
+function RFint = evalResponseFuncevalResponseFunc1,0
+
 mylib/eval/calcDistance.m,47
 function [Dis] = calcDistancecalcDistance1,0
-
-mylib/eval/evalResponseFunc.m,53
-function Phi = evalResponseFuncevalResponseFunc1,0
 
 mylib/eval/evalResponseFunc_latency.m,81
 function [peak latency ] = evalResponseFunc_latencyevalResponseFunc_latency1,0
 
-mylib/estimateWeightKernel.m,98
-function [EKerWeight,Ebias,DALstatus,DAL,Ostatus] = estimateWeightKernelestimateWeightKernel1,0
+mylib/estimateWeightKernel.m,100
+function [EbasisWeight,Ebias,DALstatus,DAL,Ostatus] = estimateWeightKernelestimateWeightKernel1,0
 
 mylib/makeSimStruct_glm.m,83
 function S = makeSimStruct_glmmakeSimStruct_glm1,0
@@ -412,8 +395,8 @@ function [OTout] = get_neuronTypeget_neuronType1,0
 mylib/reconstruct_Ealpha.m,70
 function [Ealpha, Ograph] = reconstruct_Ealphareconstruct_Ealpha1,0
 
-mylib/crossVal_parfor.m,74
-function [cv,cost,EKerWeight,Ebias] = crossVal_parforcrossVal_parfor1,0
+mylib/crossVal_parfor.m,76
+function [cv,cost,EbasisWeight,Ebias] = crossVal_parforcrossVal_parfor1,0
 
 mylib/echo_TrueValueStatus.m,81
 function echo_TrueValueStatus(echo_TrueValueStatus1,0
@@ -447,8 +430,8 @@ function [rate] = calcCorrectRateStrictcalcCorrectRateStrict1,0
 mylib/calcCorrectRateLax_IE.m,72
 function [rate0,num0] = calcCorrectRateLax_IEcalcCorrectRateLax_IE1,0
 
-mylib/crossVal.m,60
-function [cv,cost,EKerWeight,Ebias] = crossValcrossVal1,0
+mylib/crossVal.m,62
+function [cv,cost,EbasisWeight,Ebias] = crossValcrossVal1,0
 
 mylib/calcLikelihood.m,47
 function L = calcLikelihoodcalcLikelihood1,0
@@ -501,6 +484,13 @@ global rootdir_rootdir_7,134
 
 tools/save_plottedGraphAll.m,56
 function save_plottedGraphAll(save_plottedGraphAll1,0
+
+tools/plot_RFweight.m,74
+function plot_RFweight(plot_RFweight1,0
+global rootdir_rootdir_10,330
+
+tools/plot_Ealpha_profile.m,54
+function plot_Ealpha_profile(plot_Ealpha_profile1,0
 
 outdir/check_110814/evaluateAlpha.m,53
 function Phi = evalResponseFuncevalResponseFunc1,0
@@ -625,6 +615,8 @@ mylib/eval/EvalAll_mAki_fAki.m,0
 mylib/eval/FigAkiSequence.m,0
 
 mylib/clean.m,0
+
+mylib/plot/plot_FPTP.m,0
 
 mylib/plot/plot_TrueValues.m,0
 
