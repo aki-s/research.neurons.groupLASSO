@@ -106,7 +106,7 @@ if status.estimateConnection == 1
   CVeach     = cell(1,useNeuroLenIdx);
   RfEachIdx  = cell(1,useNeuroLenIdx);
   %{
-  EKerWeight = cell(1,useNeuroLenIdx);
+  EbasisWeight = cell(1,useNeuroLenIdx);
   Ebias = cell(1,useNeuroLenIdx);
   Ealpha =  cell(1,useNeuroLenIdx);
   %}
@@ -131,7 +131,7 @@ else
 end
     for i1 =1:useFrameLen
       fprintf('%s',repmat('=',[30 1]));
-      fprintf(' %08d ',env.useFrame(i1));
+      fprintf(' useFrame:%08d ',env.useFrame(i1));
       fprintf('%s',repmat('=',[30 1]));
       fprintf('\n');
 
@@ -144,17 +144,17 @@ end
           if status.parfor_ == 1
             %            [
             %            CVL{i0}(1:regFacLen,1:env.cnum,i1),tmpCost,
-            %            EKerWeight, Ebias ] =...
+            %            EbasisWeight, Ebias ] =...
             %            status.time.regFac(i1,:) = tmpCost;
 
             %++bug? calc CVL
-                     [ CVL{i0}(1:regFacLen,1:env.cnum,i1),status.time.regFac(i1,:), EKerWeight, Ebias ] =...
+                     [ CVL{i0}(1:regFacLen,1:env.cnum,i1),status.time.regFac(i1,:), EbasisWeight, Ebias ] =...
                 crossVal_parfor(env,graph,status,DAL,bases,I,i1);
           else %++imcomplete
 error('not yet')
 % $$$             [ CVL{i0}(1:regFacLen,1:env.cnum,i1), status ] =...
 % $$$                 crossVal(env,graph,status,DAL,bases,I,i1);
-            [ CVL{i0}(1:regFacLen,1:env.cnum,i1),status.time.regFac(i1,:), EKerWeight, Ebias ] =...
+            [ CVL{i0}(1:regFacLen,1:env.cnum,i1),status.time.regFac(i1,:), EbasisWeight, Ebias ] =...
                 crossVal_parfor(env,graph,status,DAL,bases,I,i1);%++bug
           end
           %% ==</choose appropriate regFac >==
@@ -167,21 +167,22 @@ error('not yet')
 
         else %++imcomplete
 
-          [EKerWeight,Ebias,Estatus,DAL,status] = estimateWeightKernel(env,graph,status,bases,I,DAL,i1);
+          [EbasisWeight,Ebias,Estatus,DAL,status] = estimateWeightKernel(env,graph,status,bases,I,DAL,i1);
           %++bug Ebias isn't correct.
-          Ealpha = reconstruct_Ealpha(env,DAL,bases,EKerWeight);
-          saveResponseFunc(Ealpha,DAL,status,regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2'));
+          Ealpha = reconstruct_Ealpha(env,DAL,bases,EbasisWeight);
+          saveResponseFunc(Ealpha,DAL,status,...
+                           regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2'));
           if graph.PLOT_T == 1
             fprintf(1,'\n\n Now plotting estimated kernel\n');
             for i2 = 1:regFacLen
-              plot_Ealpha(env,graph,DAL,bases,EKerWeight,i2,... 
+              plot_Ealpha(env,graph,DAL,bases,EbasisWeight,i2,... 
                           sprintf('elapsed:%s',num2str(status.time.regFac(i1,i2))) )
             end
           end
           %% reconstruct lambda
           if strcmp('reconstruct','reconstruct_')
             error('not yet implemented')
-            estimateFiringIntensity(I,Ebias,EKerWeight);
+            estimateFiringIntensity(I,Ebias,EbasisWeight);
           end
         end
         %% ==</Start estimation with DAL>==
@@ -204,26 +205,29 @@ error('not yet')
           tmpDAL{i2}.regFac = DAL.regFac;
         end
         if 1 == 1
-          [EKerWeight,Ebias,Estatus,tmpDAL{i2}] = estimateWeightKernel(env,graph,status,bases,I,tmpDAL{i2},i2);
-          [Ealpha,tmpGraph] = reconstruct_Ealpha(env,graph,tmpDAL{i2},bases,EKerWeight);
-          saveResponseFunc(env,graph,EKerWeight,Ealpha,Ebias,tmpDAL{i2},status,regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2'),bases);
+          [EbasisWeight,Ebias,Estatus,tmpDAL{i2}] = estimateWeightKernel(env,graph,status,bases,I,tmpDAL{i2},i2);
+          [Ealpha,tmpGraph] = reconstruct_Ealpha(env,graph,tmpDAL{i2},bases,EbasisWeight);
+          saveResponseFunc(env,graph,status,bases,...
+                           EbasisWeight,Ealpha,Ebias,tmpDAL{i2},...
+                           regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2')...
+                           );
         else 
-        %++improve:speedUp:: loading saved vriables such as EKerWeight.
+        %++improve:speedUp:: loading saved vriables such as EbasisWeight.
         % from the results of cross validation.
           S = load([status.savedirname,'/',status.method,'-',...
                     sprintf('%7d',tmpDAL{i2}.regFac),...
                     '-',regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2'),...
                     sprintf('-%07d',frame),...
                     sprintf('-%03d',cnum),...
-                    '.mat'],'basisWeight','graph','env');
-          EKerWeight = S.basisWeight; % name rename transit EKerWeight->basisWeight
+                    '.mat'],'EbasisWeight','graph','env');
+          EbasisWeight = S.EbasisWeight; % name rename transit EbasisWeight->EbasisWeight
           tmpGraph = S.graph;
           env = S.env;
         end
         if graph.PLOT_T == 1
           try
           fprintf(1,' Now writing out estimated kernel\n');
-          plot_Ealpha_parfor(env,tmpGraph,status,tmpDAL{i2},bases,EKerWeight,1,... 
+          plot_Ealpha_parfor(env,tmpGraph,status,tmpDAL{i2},bases,EbasisWeight,1,... 
                              sprintf('elapsed:%s', ...
                                      num2str(status.time.regFac(i2,RfWholeIdx{i0}(i2)))) )
           catch indexError %++bug
