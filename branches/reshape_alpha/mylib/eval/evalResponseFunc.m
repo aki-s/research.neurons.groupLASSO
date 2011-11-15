@@ -1,6 +1,6 @@
 function RFIntensity = evalResponseFunc( A )
 %%
-%%
+%% A: response function, (cnum,cnum,histsize) 3D matrix
 %%
 %%
 [N1, N2, M] = size( A );

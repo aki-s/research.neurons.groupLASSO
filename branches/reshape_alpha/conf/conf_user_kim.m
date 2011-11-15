@@ -19,11 +19,11 @@ if strcmp('test','test')
         118
         10
                    ];
-  elseif 1 == 1
+  elseif 1 == 0
     DAL.regFac = [ 64 32 16 4];
     %DAL.regFac = [ 256 128 64 32 16 8 4 ];
     %    DAL.regFac = [ 2 1 0.5 0.25 0.125];
-    if 1 == 1
+    if 1 == 0
       env.useFrame = [
           6000
           3000
@@ -39,14 +39,17 @@ if strcmp('test','test')
   else
     DAL.regFac = [ 2048 1024 512 256 128 64 32 16 8 4 2 1 0.5 0.25 0.125];
 
+    %% 8-fold cross validation
+    %%  There's not enought firing in 128 frames
     env.useFrame = [
-        240
-        500
-        1000
-        4000
-        10000
-        40000
-        75000
+        256
+        512
+        1024
+        4096
+        8192
+        33168
+        66336
+        87500
                    ];
   end
 end
@@ -65,6 +68,7 @@ graph.SAVE_ALL = 0;%++ name is not nice
 graph.prm.Yrange = [-.5 5];
 graph.prm.diag_Yrange = [-.5 5];
 
+status.crossVal = 8; %% maximum of MATLAB prallelization is 8
 status.save_vars = 1;
 status.GEN_TrueValues = 0;
 status.READ_FIRING =1; % read kim FIRING. ++bug:critical
@@ -73,7 +77,8 @@ status.save_warning = 1; %++bug: not yet implemented.
 status.parfor_ = 1;
 status.mail = 1;
 status.DEBUG.plot = 1; %++bug: not yet implemented.
-status.DEBUG.level = 1; %++bug: not yet implemented.
+status.DEBUG.level = 0;
+status.clean = 0; % clean() tmp variables after run.
 status.use.GUI = 0; %++bug: not yet implemented.
 if strcmp('simulation','simulation')
   status.realData = 0;

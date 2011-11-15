@@ -1,13 +1,28 @@
-function plot_Ealpha(env,graph,DAL,bases,EbasisWeight,regFacIndex,titleAddMemo)
-%function plot_Ealpha(env,graph,Ealpha,DAL,regFacIndex,titleAddMemo)
+function plot_Ealpha(env,graph,status,DAL,bases,EbasisWeight,...
+                     titleAddMemo,varargin)
 %%
 %% USAGE)
 %% Example:
-% plot_Ealpha(env,graph,DAL,bases,EbasisWeight,regFacIndex,'titleAddMemo')
-% plot_Ealpha(env,graph,DAL,bases,EbasisWeight,regFacIndex,'titleAddMemo')
+% plot_Ealpha(env,graph,DAL,bases,EbasisWeight,'titleAddMemo')
+% plot_Ealpha(env,graph,DAL,bases,EbasisWeight,'titleAddMemo',regFacIndexIn)
 %%
-
+%% regFacIndexIn: e.g. o [1] [1:3] , x [1 3] ++bug
 global rootdir_
+
+DEBUG = status.DEBUG.level;
+
+regFacLen = length(DAL.regFac);
+regFacIndexIn = (1:regFacLen);
+
+IN = 7;
+if nargin >= IN +1
+  FROM =  varargin{ 1};
+  regFacLen  = FROM(end);
+  %  regFacIndexIn(regFacLen) =  varargin{ 1};
+else
+  FROM = 1;
+end
+
 if 1 == 1
   LIM = graph.PLOT_MAX_NUM_OF_NEURO;
 else
@@ -33,8 +48,11 @@ else
 end
 %%% ==< reconstruct response func >==
 
-[Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EbasisWeight,regFacIndex);
-%[Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EbasisWeight);
+if (nargin == IN + 1) %++bug %get only Ealpha{regFacIndexIn}, Ealpha{others}=[]
+  [Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EbasisWeight,regFacIndexIn(regFacLen));
+else
+  [Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EbasisWeight);
+end
 %%% ==</reconstruct response func >==
 
 if strcmp('set_xticks','set_xticks')
@@ -68,13 +86,15 @@ else % you'd better collect max and min range of response functions
   end
 end
 
-RFIntensity = evalResponseFunc( EalphaCell2Mat(Ealpha) );
+RFIntensity = nan(cnum,cnum,regFacLen);
+for i1 = FROM:regFacLen
+  tmp = EalphaCell2Mat(env,Ealpha,regFacIndexIn(regFacLen),i1);
+  RFIntensity(:,:,i1) = evalResponseFunc( ResponseFuncMat2DtoMat3D(tmp(:,:,i1)) );
+end
 
-%% ==< set title >==
-regFacLen = length(regFacIndex);
-tmpregFacIndex = regFacIndex;
-for i0 = 1:regFacLen
-  regFacIndex = tmpregFacIndex(i0);
+for i0 = FROM:regFacLen
+  %% ==< set title >==
+  regFacIndex = regFacIndexIn(i0);
   title = sprintf('regFac=%9.4f frame=%6d',DAL.regFac(regFacIndex),DAL.Drow );
   title = strcat(title,[', xrange:',sprintf('[%2.1d,%4.3f](sec)',TIMEL{1},TIMEL{Lnum+1})]);
   titleYrange = '';
@@ -112,7 +132,31 @@ for i0 = 1:regFacLen
     i3from = 1; % cell from
     pos = [ .5 (cnum) 0 0 ]/(cnum+2);
     for i1 = 1:cnum*cnum % subplot select
-      subplot('position',pos + [i3from -i2to 1 1 ]/(cnum+3) );
+      %% <  subplot background color >
+      if RFIntensity(i2to,i3from,i0) > 0
+        if DEBUG == 1
+          fprintf(1,'%5.2f: r ,',RFIntensity(i2to,i3from,i0))
+        end
+        heat = [1 0.5 0.5];
+      elseif RFIntensity(i2to,i3from,i0) < 0
+        if DEBUG == 1
+          fprintf(1,'%5.2f: b ,',RFIntensity(i2to,i3from,i0))
+        end
+        heat = [0.5 0.5 1];
+      else
+        if DEBUG == 1
+          fprintf(1,'%5.2f: w ,',RFIntensity(i2to,i3from,i0))
+        end
+        heat = [1 1 1];
+      end
+      if DEBUG == 1
+        fprintf(1,'%2d<-%2d | ',i2to,i3from);
+        if i3from == cnum
+          fprintf(1,'\n');
+        end
+      end
+      %% </ subplot background color >
+      subplot('position',pos + [i3from -i2to 1 1 ]/(cnum+3),'Color',heat );
       tmp1 = Ealpha{regFacIndex}{i2to}{i3from};
       %% <  chage color ploted according to cell type >
       hold on;
@@ -125,11 +169,6 @@ for i0 = 1:regFacLen
       else           
         plot(tmp1,'k','LineWidth',3);
       end
-if RFIntensity(i1) > 0
-whitebg('red')
-elseif RFIntensity(i1) < 0
-whitebg('blue')
-end
       %% </ chage color ploted according to cell type >
       if (zeroFlag == 1)
         %% plot nothing

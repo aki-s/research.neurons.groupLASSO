@@ -64,8 +64,8 @@ Ograph.prm.Yrange_auto      = [mt,Mt];
 Ograph.prm.diag_Yrange = graph.prm.diag_Yrange;
 Ograph.prm.Yrange = graph.prm.Yrange;
 
-if strcmp('showMaxMin','showMaxMin_')
-  fprintf(1,'\tregFac:%9.4f| ',DAL.regFac(FROM));
+if strcmp('showMaxMin','showMaxMin')
+  fprintf(1,'\tregFac:%9.4f~%9.4f| ',DAL.regFac(FROM),DAL.regFac(regFacLen));
   %fprintf(1,'diag:[%f],~diag:[%f]\n',Ograph.prm.diag_Yrange_auto,Ograph.prm.Yrange_auto)
   fprintf(1, 'diag:[%5.2f,%5.2f] ',Ograph.prm.diag_Yrange_auto(1),Ograph.prm.diag_Yrange_auto(2))
   fprintf(1,'~diag:[%5.2f,%5.2f]\n',Ograph.prm.Yrange_auto(1),Ograph.prm.Yrange_auto(2))

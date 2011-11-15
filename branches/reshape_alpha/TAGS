@@ -253,9 +253,9 @@ global graph;graph;3,45
 mylib/gen/lorentz.m,35
 function [L] = lorentzlorentz1,0
 
-mylib/plot/plot_Ealpha.m,70
+mylib/plot/plot_Ealpha.m,69
 function plot_Ealpha(plot_Ealpha1,0
-global rootdir_rootdir_10,328
+global rootdir_rootdir_8,188
 
 mylib/plot/plot_alpha.m,69
 function plot_alpha(plot_alpha1,0
@@ -311,7 +311,7 @@ function [Oenv Ostatus OTout Ograph ODAL] = check_confcheck_conf1,0
 mylib/check/check_genState.m,54
 function [status] = check_genStatecheck_genState1,0
 
-mylib/eval/evalRFIntensity.m,62
+mylib/eval/evalRFIntensity.m,74
 function [recn, recr, thresh0, auc] = evalRFIntensityevalRFIntensity1,0
 
 mylib/eval/plotalpha.m,34
@@ -319,10 +319,6 @@ function plotalpha(plotalpha1,0
 
 mylib/eval/draw_connection.m,46
 function draw_connection(draw_connection1,0
-
-mylib/eval/transform_Talpha.m,78
-function debug_formTAlpha(debug_formTAlpha1,0
-global rootdir_rootdir_3,59
 
 mylib/eval/fptp2auc.m,37
 function AUC = fptp2aucfptp2auc1,0
@@ -367,11 +363,15 @@ function [peak ] = evalResponseFunc_peakevalResponseFunc_peak1,0
 mylib/eval/saveResponseFunc.m,49
 function  saveResponseFunc(saveResponseFunc1,0
 
-mylib/eval/evalResponseFunc.m,55
+mylib/eval/evalResponseFunc.m,61
 function RFIntensity = evalResponseFuncevalResponseFunc1,0
 
 mylib/eval/calcDistance.m,47
 function [Dis] = calcDistancecalcDistance1,0
+
+mylib/eval/ResponseFuncMat2DtoMat3D.m,106
+function [Alpha] =  ResponseFuncMat2DtoMat3DResponseFuncMat2DtoMat3D1,0
+global rootdir_rootdir_19,408
 
 mylib/eval/evalResponseFunc_latency.m,81
 function [peak latency ] = evalResponseFunc_latencyevalResponseFunc_latency1,0
@@ -436,9 +436,6 @@ function [cv,cost,EbasisWeight,Ebias] = crossValcrossVal1,0
 mylib/calcLikelihood.m,47
 function L = calcLikelihoodcalcLikelihood1,0
 
-mylib/EalphaCell2Mat.m,49
-function [ Ealpha_ ] = EalphaCell2MatEalphaCell2Mat1,0
-
 mylib/calcCorrectRate_I.m,15
 function 1,0
 
@@ -463,6 +460,9 @@ mylib/test_Pointer.m,91
 function p1 = test_Pointertest_Pointer1,0
 function change_pointer(change_pointer12,276
 
+mylib/EalphaCell2Mat.m,57
+function [ Ealpha_ ] = EalphaCell2MatEalphaCell2Mat1,0
+
 mylib/change_array_by_func.m,99
 function change_array_by_func(change_array_by_func1,0
 function change_array(change_array10,176
@@ -484,10 +484,6 @@ global rootdir_rootdir_7,134
 
 tools/save_plottedGraphAll.m,56
 function save_plottedGraphAll(save_plottedGraphAll1,0
-
-tools/plot_RFweight.m,74
-function plot_RFweight(plot_RFweight1,0
-global rootdir_rootdir_10,330
 
 tools/plot_Ealpha_profile.m,54
 function plot_Ealpha_profile(plot_Ealpha_profile1,0

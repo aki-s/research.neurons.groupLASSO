@@ -106,77 +106,83 @@ if status.estimateConnection == 1
   CVeach     = cell(1,useNeuroLenIdx);
   RfEachIdx  = cell(1,useNeuroLenIdx);
   %{
+  %% not yet
   EbasisWeight = cell(1,useNeuroLenIdx);
   Ebias = cell(1,useNeuroLenIdx);
   Ealpha =  cell(1,useNeuroLenIdx);
   %}
   tmpI = I;
-  tmpEnv = env;
+%%< prepare for 'parfor' >
+tenv = env; %% make 'env' global to local variable 'tenv'
+tgraph = graph; %% make 'graph' global to local variable 'tgraph'
+tstatus = status;%% make 'status' global to local variable 'tstatus'
+%%</prepare for 'parfor' >
   for i0 = 1:useNeuroLenIdx
-    fprintf(1,'#neuron:%5d<-%5d\n',env.inFiringUSE(i0),tmpEnv.cnum);
+    fprintf(1,'#neuron:%5d<-%5d\n',tenv.inFiringUSE(i0),env.cnum);
     I = tmpI(:,1:env.inFiringUSE(i0));
-    env.cnum = size(I,2);
+    tenv.cnum = size(I,2);
     if 1 == 0
-      CVL{i0}        = zeros(regFacLen,env.cnum,useFrameLen);
+      CVL{i0}        = zeros(regFacLen,tenv.cnum,useFrameLen);
       CVwhole{i0}    = zeros(useFrameLen,1);
       RfWholeIdx{i0} = zeros(useFrameLen,1); %Rf: regularization factor
-      CVeach{i0}     = zeros(useFrameLen,env.cnum);
-      RfEachIdx{i0}  = zeros(useFrameLen,env.cnum);
+      CVeach{i0}     = zeros(useFrameLen,tenv.cnum);
+      RfEachIdx{i0}  = zeros(useFrameLen,tenv.cnum);
     else
-      CVL{i0}        = nan(regFacLen,env.cnum,useFrameLen);
+      CVL{i0}        = nan(regFacLen,tenv.cnum,useFrameLen);
       CVwhole{i0}    = nan(useFrameLen,1);
       RfWholeIdx{i0} = nan(useFrameLen,1); %Rf: regularization factor
-      CVeach{i0}     = nan(useFrameLen,env.cnum);
-      RfEachIdx{i0}  = nan(useFrameLen,env.cnum);
+      CVeach{i0}     = nan(useFrameLen,tenv.cnum);
+      RfEachIdx{i0}  = nan(useFrameLen,tenv.cnum);
     end
+    %%< loop:useFrameLen >
     for i1 =1:useFrameLen
       fprintf('%s',repmat('=',[30 1]));
-      fprintf(' useFrame:%08d ',env.useFrame(i1));
+      fprintf(' useFrame:%08d ',tenv.useFrame(i1));
       fprintf('%s',repmat('=',[30 1]));
       fprintf('\n');
 
       %% ( %++parallel? not practical for biological real data.)
-      %bases.ihbasprs.NumFrame env.useFrame(i1) env.genLoop
-      if ( bases.ihbasprs.NumFrame <= env.useFrame(i1) ) && ( env.useFrame(i1) <= env.genLoop )
-        DAL.Drow = env.useFrame(i1);
+      %bases.ihbasprs.NumFrame tenv.useFrame(i1) tenv.genLoop
+      if ( bases.ihbasprs.NumFrame <= tenv.useFrame(i1) ) && ( tenv.useFrame(i1) <= tenv.genLoop )
+        DAL.Drow = tenv.useFrame(i1);
         if strcmp('crossValidation','crossValidation')
           %% ==< choose appropriate regFac >==
-          if status.parfor_ == 1
+          if tstatus.parfor_ == 1
             %            [
-            %            CVL{i0}(1:regFacLen,1:env.cnum,i1),tmpCost,
+            %            CVL{i0}(1:regFacLen,1:tenv.cnum,i1),tmpCost,
             %            EbasisWeight, Ebias ] =...
-            %            status.time.regFac(i1,:) = tmpCost;
+            %            tstatus.time.regFac(i1,:) = tmpCost;
 
             %++bug? calc CVL
-            [ CVL{i0}(1:regFacLen,1:env.cnum,i1),status.time.regFac(i1,:), EbasisWeight, Ebias ] =...
-                crossVal_parfor(env,graph,status,DAL,bases,I,i1);
+            [ CVL{i0}(1:regFacLen,1:tenv.cnum,i1),tstatus.time.regFac(i1,:), EbasisWeight, Ebias ] =...
+                crossVal_parfor(tenv,tgraph,tstatus,DAL,bases,I,i1);
           else %++imcomplete
             error('not yet')
-% $$$             [ CVL{i0}(1:regFacLen,1:env.cnum,i1), status ] =...
-% $$$                 crossVal(env,graph,status,DAL,bases,I,i1);
-            [ CVL{i0}(1:regFacLen,1:env.cnum,i1),status.time.regFac(i1,:), EbasisWeight, Ebias ] =...
-                crossVal_parfor(env,graph,status,DAL,bases,I,i1);%++bug
+% $$$             [ CVL{i0}(1:regFacLen,1:tenv.cnum,i1), tstatus ] =...
+% $$$                 crossVal(tenv,tgraph,tstatus,DAL,bases,I,i1);
+            [ CVL{i0}(1:regFacLen,1:tenv.cnum,i1),tstatus.time.regFac(i1,:), EbasisWeight, Ebias ] =...
+                crossVal_parfor(tenv,tgraph,tstatus,DAL,bases,I,i1);%++bug
           end
           %% ==</choose appropriate regFac >==
           [CVwhole{i0}(i1),RfWholeIdx{i0}(i1)]    = min(sum(CVL{i0}(:,:,i1),2),[],1);
           %% corresponding regularization factor: DAL.regFac(RfWholeIdx{i0})
-          [CVeach{i0}(i1,1:env.cnum),RfEachIdx{i0}(i1,1:env.cnum)] = min(CVL{i0}(:,:,i1),[],1); % each neuron
-          if ( graph.PLOT_T == 1 ) && ( i1 == useFrameLen )
-            plot_CVLwhole(env,status,graph,DAL,CVL{i0});
+          [CVeach{i0}(i1,1:tenv.cnum),RfEachIdx{i0}(i1,1:tenv.cnum)] = min(CVL{i0}(:,:,i1),[],1); % each neuron
+          if ( tgraph.PLOT_T == 1 ) && ( i1 == useFrameLen )
+            plot_CVLwhole(tenv,tstatus,tgraph,DAL,CVL{i0});
           end
 
         else %++imcomplete
 
-          [EbasisWeight,Ebias,Estatus,DAL,status] = estimateWeightKernel(env,graph,status,bases,I,DAL,i1);
+          [EbasisWeight,Ebias,Estatus,DAL,tstatus] = estimateWeightKernel(tenv,tgraph,tstatus,bases,I,DAL,i1);
           %++bug Ebias isn't correct.
-          Ealpha = reconstruct_Ealpha(env,DAL,bases,EbasisWeight);
-          saveResponseFunc(Ealpha,DAL,status,...
-                           regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2'));
-          if graph.PLOT_T == 1
+          Ealpha = reconstruct_Ealpha(tenv,DAL,bases,EbasisWeight);
+          saveResponseFunc(Ealpha,DAL,tstatus,...
+                           regexprep(tstatus.inFiring,'(.*/)(.*)(.mat)','$2'));
+          if tgraph.PLOT_T == 1
             fprintf(1,'\n\n Now plotting estimated kernel\n');
             for i2 = 1:regFacLen
-              plot_Ealpha(env,graph,DAL,bases,EbasisWeight,i2,... 
-                          sprintf('elapsed:%s',num2str(status.time.regFac(i1,i2))) )
+              plot_Ealpha(tenv,tgraph,tstatus,DAL,bases,EbasisWeight,...
+                          sprintf('elapsed:%s',num2str(tstatus.time.regFac(i1,i2))),i2 )
             end
           end
           %% reconstruct lambda
@@ -190,14 +196,15 @@ if status.estimateConnection == 1
         warning('DEBUG:NOTICE','( env.useFrame < bases.ihbasprs.NumFrame) or (env.genLoop < env.useFrame)')
       end
     end
-    if (status.parfor_ == 1 ) && strcmp('crossValidation','crossValidation')
+    if (tstatus.parfor_ == 1 ) && strcmp('crossValidation','crossValidation')
       %% ==< extract and plot the best response func for each usedFrameNum from the results of crossValidation>==
-      status.validUseFrameIdx = sum(~isnan(CVwhole{i0}));
-      tmpDAL = cell(1,status.validUseFrameIdx );
-      %      parfor i2 = 1:status.validUseFrameIdx %++parallel+bug
-      for i2 = 1:status.validUseFrameIdx  
+      tstatus.validUseFrameIdx = sum(~isnan(CVwhole{i0}));
+      tmpDAL = cell(1,tstatus.validUseFrameIdx );
+      %%++parallel+bug(global variable: tgraph, tstatus)
+      %      parfor i2 = 1:tstatus.validUseFrameIdx
+      parfor i2 = 1:tstatus.validUseFrameIdx  
         tmpDAL{i2} = DAL;
-        tmpDAL{i2}.Drow = env.useFrame(i2);
+        tmpDAL{i2}.Drow = tenv.useFrame(i2);
         %% choose the best regularization factor
         if 1 == 0
           tmpDAL{i2}.regFac = DAL.regFac(RfWholeIdx{i0}(i2)); 
@@ -205,31 +212,34 @@ if status.estimateConnection == 1
           tmpDAL{i2}.regFac = DAL.regFac;
         end
         if 1 == 1
-          [EbasisWeight,Ebias,Estatus,tmpDAL{i2}] = estimateWeightKernel(env,graph,status,bases,I,tmpDAL{i2},i2);
-          [Ealpha,tmpGraph] = reconstruct_Ealpha(env,graph,tmpDAL{i2},bases,EbasisWeight);
-          saveResponseFunc(env,graph,status,bases,...
+          [EbasisWeight,Ebias,Estatus,tmpDAL{i2}] = ...
+              estimateWeightKernel(tenv,tgraph,...
+                                   tstatus,bases,I,tmpDAL{i2},i2);
+          [Ealpha,tmpGraph] = reconstruct_Ealpha(tenv,tgraph,tmpDAL{i2},bases,EbasisWeight);
+          saveResponseFunc(tenv,tgraph,tstatus,bases,...
                            EbasisWeight,Ealpha,Ebias,tmpDAL{i2},...
-                           regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2')...
+                           regexprep(tstatus.inFiring,'(.*/)(.*)(.mat)','$2')...
                            );
         else 
           %++improve:speedUp:: loading saved vriables such as EbasisWeight.
           % from the results of cross validation.
-          S = load([status.savedirname,'/',status.method,'-',...
+          S = load([tstatus.savedirname,'/',tstatus.method,'-',...
                     sprintf('%7d',tmpDAL{i2}.regFac),...
-                    '-',regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2'),...
+                    '-',regexprep(tstatus.inFiring,'(.*/)(.*)(.mat)','$2'),...
                     sprintf('-%07d',frame),...
                     sprintf('-%03d',cnum),...
                     '.mat'],'EbasisWeight','graph','env');
           EbasisWeight = S.EbasisWeight; % name rename transit EbasisWeight->EbasisWeight
           tmpGraph = S.graph;
-          env = S.env;
+          tmpEnv = S.env;
         end
-        if graph.PLOT_T == 1
+        if tgraph.PLOT_T == 1
           try
-            fprintf(1,'estimated rename func:');
-            plot_Ealpha_parfor(env,tmpGraph,status,tmpDAL{i2},bases,EbasisWeight,1,... 
+            fprintf(1,'estimated rename func:'); %??
+            plot_Ealpha_parfor(tenv,tmpGraph,tstatus,tmpDAL{i2},bases,EbasisWeight,...
                                sprintf('elapsed:%s', ...
-                                       num2str(status.time.regFac(i2,RfWholeIdx{i0}(i2)))) )
+                                       num2str(tstatus.time.regFac(i2,RfWholeIdx{i0}(i2)))),...
+                               RfWholeIdx{i0}(i2) )%++bug? why '1'
           catch indexError %++bug
             disp(sprintf('RfWholeIdx: %d',RfWholeIdx{i0}(i2) ))
           end
@@ -238,8 +248,10 @@ if status.estimateConnection == 1
       %% ==</extract and plot the best response func for each usedFrameNum from the results of crossValidation>==
     end
   end
+  %%</ loop:useFrameLen >
   I = tmpI;
-  env = tmpEnv;
+  %  env = tmpEnv;
+  status = tstatus; %% status.time.regFac is modified.
   if status.parfor_ == 1
     matlabpool close
   end
@@ -262,7 +274,7 @@ status.time.end = fix(clock);
 
 
 %% ==< clean >==
-if strcmp('clean','clean')  %++conf
+if status.clean == 1
   run([rootdir_ '/mylib/clean.m'])
 end
 %% clean variables before save
@@ -303,7 +315,7 @@ if (graph.SAVE_ALL == 1)
 end 
 %{
 %% ==< clean >==
-if strcmp('clean','clean')  %++conf
+if status.clean == 1
   run([rootdir_ '/mylib/clean.m'])
 end
 %}

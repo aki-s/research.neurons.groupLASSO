@@ -27,3 +27,4 @@ status.DEBUG.plot = 0; %++bug: not yet implemented.
 status.DEBUG.level = 0; %++bug: not yet implemented.
 status.DEBUG.strict = 0; %++bug: not yet implemented.
 status.crossVal = 4;
+status.clean = 1;

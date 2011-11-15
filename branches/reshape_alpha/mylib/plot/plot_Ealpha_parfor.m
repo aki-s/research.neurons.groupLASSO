@@ -1,18 +1,34 @@
-function plot_Ealpha_parfor(env,graph,status,DAL,bases,EbasisWeight,regFacIndex,titleIn)
-%function plot_Ealpha(env,graph,Ealpha,DAL,regFacIndex,titleIn)
+function plot_Ealpha_parfor(env,graph,status,DAL,bases,EbasisWeight,...
+                            titleIn,varargin)
 %%
 %% USAGE)
 %% Example:
-% plot_Ealpha(env,graph,Ealpha,DAL,regFacIndex,'title')
+% plot_Ealpha(env,graph,DAL,bases,EbasisWeight,'titleAddMemo')
+% plot_Ealpha(env,graph,DAL,bases,EbasisWeight,'titleAddMemo',regFacIndexIn)
 %%
 
-DEBUG = 0;
-LIM = 10;
-
-%myColor = graph.prm.myColor;
-
+DEBUG = status.DEBUG.level;
 if DEBUG == 1
   title = 'DEBUG:';
+end
+%myColor = graph.prm.myColor;
+%%<copy>
+regFacLen = length(DAL.regFac);
+regFacIndexIn = (1:regFacLen);
+
+IN = 7;
+if nargin >= IN +1
+  FROM =  varargin{ 1};
+  regFacLen  = FROM(end);
+else
+  FROM = 1;
+end
+%%</copy>
+
+if 1 == 1
+  LIM = graph.PLOT_MAX_NUM_OF_NEURO;
+else
+  LIM = 10;
 end
 
 cnum = env.cnum;
@@ -32,16 +48,13 @@ else
   Hz = 1000;
 end
 
-MAX = graph.PLOT_MAX_NUM_OF_NEURO;
-%{
-if MAX > LIM
-  warning(['It take too much time.Not giving cell array to plot() may ' ...
-           'speed up this function'])
-  %plot by thining out may best answer to this problem.
-end
-%}
 %%% == useful func ==
+if (nargin == IN + 1) %++bug %get only Ealpha{regFacIndexIn},
+                      %Ealpha{others}=[]
+  [Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EbasisWeight,regFacIndexIn(regFacLen));
+else
 [Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EbasisWeight);
+end
 %%% ===== PLOT alpha ===== START =====
 if strcmp('set_xticks','set_xticks')
   Lnum = 2;
@@ -71,14 +84,46 @@ else % you'd better collect max and min range of response functions
     zeroFlag = 0;
   end
 end
-%if cnum <= MAX
-if 1 == 1
+RFIntensity = nan(cnum,cnum,regFacLen);
+for i1 = FROM:regFacLen
+  tmp = EalphaCell2Mat(env,Ealpha,regFacIndexIn(regFacLen),i1);
+  RFIntensity(:,:,i1) = evalResponseFunc( ResponseFuncMat2DtoMat3D(tmp(:,:,i1)) );
+end
+
+for i0 = FROM:regFacLen
+  regFacIndex = regFacIndexIn(i0);
+if (cnum > LIM )
+  warning('DEBUG:notice','too much of neurons to be plotted.');
+  %%plot_Ealpha_subplot()
+else
   figure;
   i2to = 1; % cell to
   i3from = 1; % cell from
   pos = [ .5 (cnum) 0 0 ]/(cnum+2);
   for i1 = 1:cnum*cnum % subplot select
-    subplot('position',pos + [i3from -i2to 1 1 ]/(cnum+3) );
+    if RFIntensity(i2to,i3from,i0) > 0
+      if DEBUG == 1
+        fprintf(1,'%5.2f: r ,',RFIntensity(i2to,i3from,i0))
+      end
+      heat = [1 0.5 0.5];
+    elseif RFIntensity(i2to,i3from,i0) < 0
+      if DEBUG == 1
+        fprintf(1,'%5.2f: b ,',RFIntensity(i2to,i3from,i0))
+      end
+      heat = [0.5 0.5 1];
+    else
+      if DEBUG == 1
+        fprintf(1,'%5.2f: w ,',RFIntensity(i2to,i3from,i0))
+      end
+      heat = [1 1 1];
+    end
+    if DEBUG == 1
+      fprintf(1,'%2d<-%2d | ',i2to,i3from);
+      if i3from == cnum
+        fprintf(1,'\n');
+      end
+    end
+    subplot('position',pos + [i3from -i2to 1 1 ]/(cnum+3),'Color',heat );
     tmp1 = Ealpha{regFacIndex}{i2to}{i3from};
     %% <  chage color ploted according to cell type >
     hold on;
@@ -144,10 +189,8 @@ if 1 == 1
     %% </ index config >
   end
   set(gcf,'color','white')
-else
-  warning('DEBUG:notice','too much of neurons to be plotted.');
 end
-
+end
 %% h: description about outer x-y axis
 title = sprintf('regFac=%4d frame=%6d  #%4d',DAL.regFac(regFacIndex),DAL.Drow,cnum );
 %{
