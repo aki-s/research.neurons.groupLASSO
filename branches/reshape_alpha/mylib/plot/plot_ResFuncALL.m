@@ -87,12 +87,16 @@ for i1 = 1:LOOPn
       end
       %}
       S.graph.prm.auto = 0; % make comparison of ResFunc easy.
+if strcmp('rm_after_AROB','rm_after_AROB')
+S.status.DEBUG.level=0;
+end
+
       try
-        plot_Ealpha(S.env,S.graph,S.DAL,S.bases,S.EbasisWeight,regFacIdx ...
-                    ,'')
+        plot_Ealpha(S.env,S.graph,S.status,S.DAL,S.bases,S.EbasisWeight ...
+                    ,'',regFacIdx)
       catch errP
-        plot_Ealpha(S.env,S.graph,S.DAL,S.bases,S.EbasisWeight,regFacIdx ...
-                    ,'')
+        plot_Ealpha(S.env,S.graph,S.status,S.DAL,S.bases,S.EbasisWeight ...
+                    ,'',regFacIdx)
       end
       %      regFacIdx = regFacIdx - 1;
     end

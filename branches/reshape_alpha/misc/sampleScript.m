@@ -1,3 +1,5 @@
+%% generate_connection -> generate_firing -> estimate_connection
+
 clear;close all;
 env=struct('genLoop',30000,'hwind',4,'hnum',50', ...
                            'cnum',6,'spar',[],'Hz',[])

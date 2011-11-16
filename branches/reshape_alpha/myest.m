@@ -28,6 +28,8 @@ if strcmp('gaya','gaya_')
   status.userDef = [rootdir_ '/conf/conf_user_gaya.m'];
 elseif strcmp('kim','kim')
   status.userDef = [rootdir_ '/conf/conf_user_kim.m'];
+elseif strcmp('aki','aki')
+  status.userDef = [rootdir_ '/conf/conf_user_aki.m'];
 else
   %% set null file till user defines.
   status.userDef = [rootdir_ '/conf/conf_user.m'];
@@ -142,26 +144,19 @@ tstatus = status;%% make 'status' global to local variable 'tstatus'
       fprintf('\n');
 
       %% ( %++parallel? not practical for biological real data.)
-      %bases.ihbasprs.NumFrame tenv.useFrame(i1) tenv.genLoop
       if ( bases.ihbasprs.NumFrame <= tenv.useFrame(i1) ) && ( tenv.useFrame(i1) <= tenv.genLoop )
         DAL.Drow = tenv.useFrame(i1);
-        if strcmp('crossValidation','crossValidation')
+        %        if strcmp('crossValidation','crossValidation')
+        if (status.crossVal > 1 )
           %% ==< choose appropriate regFac >==
           if tstatus.parfor_ == 1
-            %            [
-            %            CVL{i0}(1:regFacLen,1:tenv.cnum,i1),tmpCost,
-            %            EbasisWeight, Ebias ] =...
-            %            tstatus.time.regFac(i1,:) = tmpCost;
-
             %++bug? calc CVL
             [ CVL{i0}(1:regFacLen,1:tenv.cnum,i1),tstatus.time.regFac(i1,:), EbasisWeight, Ebias ] =...
                 crossVal_parfor(tenv,tgraph,tstatus,DAL,bases,I,i1);
           else %++imcomplete
             error('not yet')
-% $$$             [ CVL{i0}(1:regFacLen,1:tenv.cnum,i1), tstatus ] =...
-% $$$                 crossVal(tenv,tgraph,tstatus,DAL,bases,I,i1);
             [ CVL{i0}(1:regFacLen,1:tenv.cnum,i1),tstatus.time.regFac(i1,:), EbasisWeight, Ebias ] =...
-                crossVal_parfor(tenv,tgraph,tstatus,DAL,bases,I,i1);%++bug
+                crossVal(tenv,tgraph,tstatus,DAL,bases,I,i1);%++bug
           end
           %% ==</choose appropriate regFac >==
           [CVwhole{i0}(i1),RfWholeIdx{i0}(i1)]    = min(sum(CVL{i0}(:,:,i1),2),[],1);
@@ -171,12 +166,13 @@ tstatus = status;%% make 'status' global to local variable 'tstatus'
             plot_CVLwhole(tenv,tstatus,tgraph,DAL,CVL{i0});
           end
 
-        else %++imcomplete
-
+        else %
           [EbasisWeight,Ebias,Estatus,DAL,tstatus] = estimateWeightKernel(tenv,tgraph,tstatus,bases,I,DAL,i1);
           %++bug Ebias isn't correct.
-          Ealpha = reconstruct_Ealpha(tenv,DAL,bases,EbasisWeight);
-          saveResponseFunc(Ealpha,DAL,tstatus,...
+
+          [Ealpha tgraph] = reconstruct_Ealpha(tenv,tgraph,DAL,bases,EbasisWeight);
+          saveResponseFunc(tenv,tgraph,tstatus,bases,...
+                           EbasisWeight,Ealpha,Ebias,DAL,...
                            regexprep(tstatus.inFiring,'(.*/)(.*)(.mat)','$2'));
           if tgraph.PLOT_T == 1
             fprintf(1,'\n\n Now plotting estimated kernel\n');
@@ -196,12 +192,12 @@ tstatus = status;%% make 'status' global to local variable 'tstatus'
         warning('DEBUG:NOTICE','( env.useFrame < bases.ihbasprs.NumFrame) or (env.genLoop < env.useFrame)')
       end
     end
-    if (tstatus.parfor_ == 1 ) && strcmp('crossValidation','crossValidation')
-      %% ==< extract and plot the best response func for each usedFrameNum from the results of crossValidation>==
+    %    if (tstatus.parfor_ == 1 ) && strcmp('crossValidation','crossValidation')
+    if (tstatus.parfor_ == 1 ) && (status.crossVal > 1 )
+     %% ==< extract and plot the best response func for each usedFrameNum from the results of crossValidation>==
       tstatus.validUseFrameIdx = sum(~isnan(CVwhole{i0}));
       tmpDAL = cell(1,tstatus.validUseFrameIdx );
       %%++parallel+bug(global variable: tgraph, tstatus)
-      %      parfor i2 = 1:tstatus.validUseFrameIdx
       parfor i2 = 1:tstatus.validUseFrameIdx  
         tmpDAL{i2} = DAL;
         tmpDAL{i2}.Drow = tenv.useFrame(i2);

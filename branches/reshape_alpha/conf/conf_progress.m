@@ -26,5 +26,6 @@ status.mail = 0;
 status.DEBUG.plot = 0; %++bug: not yet implemented.
 status.DEBUG.level = 0; %++bug: not yet implemented.
 status.DEBUG.strict = 0; %++bug: not yet implemented.
-status.crossVal = 4;
+%%status.crossVal = 4;
+status.crossVal = 0;
 status.clean = 1;

@@ -10,7 +10,7 @@ regFacLEN = length(DAL.regFac);
 useFrameLen = length(env.useFrame);
 myColor = graph.prm.myColor;
 
-if strcmp('omitDiag','omitDiag_')
+if strcmp('omitDiag','omitDiag_') %%DEBUG
   zeroIdx = repmat(logical(eye(cnum)),[1 1 useFrameLen]);
   CVL(zeroIdx) = 0;
   CVLt = sum(CVL,2);
@@ -41,32 +41,21 @@ for id = FROM : fnum
 end
 %%col=hsv(fnum);
 
-figure
+%figure
 for i2 = FROM:fnum
   hold on;
 
   %% set index of minima as 'sameIdx' ++bug
   [minVal idx] = min(CVLt);
-  %{
-  sameIdx = zeros(regFacLEN,1);
-  sameIdx(2:regFacLEN,1) = ( CVLt(2:regFacLEN,:,i2) == CVLt(1:(regFacLEN-1),:,i2) );
-  if sameIdx(idx)
-    tmp = find(sameIdx>0);
-    sameIdx(tmp(1)-1) = 1;
-  else
-    sameIdx(idx) = 1;
-  end
-  minIdx = find(sameIdx>0);
-  %}
-%  sameIdx = (repmat(minVal == CVLt(1:regFacLEN,1,i2) )
   minIdx = find(minVal(:,:,i2) == CVLt(1:regFacLEN,:,i2) );
   %% if (minIdx == 1) marker don't appear. Is this MATLAB bug?
   %% line
-if strcmp('DEBUG','DEBUG')
-  fprintf(1,'%02d, useFrame:%04d, myColor:[%f %f %f]\n',...
-          i2, env.useFrame(i2), myColor{i2}(1),myColor{i2}(2),myColor{i2}(3));
-  plot(1:regFacLEN,CVLt(1:regFacLEN,1,i2),'color',myColor{i2},'LineWidth',3);
-end
+  if strcmp('DEBUG','DEBUG')
+    fprintf(1,'%02d, useFrame:%10d, myColor:[%f %f %f]\n',...
+            i2, env.useFrame(i2), myColor{i2}(1),myColor{i2}(2),myColor{i2}(3));
+    plot(1:regFacLEN,CVLt(1:regFacLEN,1,i2),'color',myColor{i2},'LineWidth',3);
+    axis([1 regFacLEN .5 1.05]) % move figures to the left.
+  end
   %% diamond
   hLine2 = plot(minIdx,CVLt(minIdx,:,i2),'o-','color',myColor{i2},...
                 'Marker','d','MarkerFaceColor','auto','MarkerSize',10,'LineWidth',3);
@@ -78,7 +67,7 @@ end
            sprintf('%d',env.useFrame(i2)),...
            sprintf('\tminVal:%f',minVal(:,:,i2)),...
            sprintf('\tProb.:%f',exp(-minVal(:,:,i2)))...
-])
+          ])
   else
     title(['- (cross Validation Liklihood)',sprintf('#%4d',cnum)])
   end
