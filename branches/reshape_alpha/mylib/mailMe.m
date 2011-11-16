@@ -73,8 +73,13 @@ for i1 = 4:6
 end
 
 function [ ret ] = tidyElapsedTime(env,status,useFrameLen)
-%a = fprintf('%10.1f\n',env.useFrame);
 a = env.useFrame;
+[d1 d2] = size(a);
+if d1 == 1
+  a = a';
+elseif d2 == 1
+  % o.k.
+end
 b = nan(useFrameLen, 1);
 c = status.time.regFac;
 if 1 == 0

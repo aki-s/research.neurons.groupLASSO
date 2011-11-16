@@ -26,9 +26,9 @@ end
 
 if strcmp('gaya','gaya_')
   status.userDef = [rootdir_ '/conf/conf_user_gaya.m'];
-elseif strcmp('kim','kim')
+elseif strcmp('kim','kim_')
   status.userDef = [rootdir_ '/conf/conf_user_kim.m'];
-elseif strcmp('aki','aki')
+elseif strcmp('aki','aki_')
   status.userDef = [rootdir_ '/conf/conf_user_aki.m'];
 else
   %% set null file till user defines.

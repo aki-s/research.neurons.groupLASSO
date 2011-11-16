@@ -3,7 +3,10 @@
 %% 1: on , 0: off
 %% ==< EDIT FOR YOURSELF >==
 status.inFiring = [ rootdir_ '/indir/Simulation/data_sim_9neuron.mat'];% set your mat file containing firing data.
-env.inFiringLabel ='X'; % format of 'X' is (dimention1,dimention2) = (time,neuron)
+env.inFiringLabel ='X'; % If format of 2-D matrix 'X' is (dimention1,dimention2) = (time,neuron)
+env.inFiringDirect=1; % then env.inFiringDirect = 1. else if (dimention1,dimention2) = (neuron,time)
+                      % then env.inFiringDirect = 2
+env.useFrame = [200 400]; % set num of frame used to estimate as vector(or scalar).
 env.mail.to='aki-s@sys.i.kyoto-u.ac.jp'; % notify the end of program.
 env.mail.smtp='hawaii.sys.i.kyoto-u.ac.jp'; % set your smtp server
 %% ==</EDIT FOR YOURSELF >==
