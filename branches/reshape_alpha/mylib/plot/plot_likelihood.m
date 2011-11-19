@@ -1,4 +1,4 @@
-function  plot_CVLwhole(env,status,graph,DAL,CVL,varargin)
+function  plot_likelihood(env,status,graph,DAL,CVL,varargin)
 %%
 %%
 %% varargin{1}: index to select and plot only one sample.
@@ -18,6 +18,8 @@ else
   CVLt = sum(CVL,2); %CVLt : CVL total
 end
 
+prob = exp(-CVLt);
+
 nargin_NUM = 5;
 if nargin > nargin_NUM
   ALL = 0;
@@ -26,7 +28,6 @@ if nargin > nargin_NUM
 else
   ALL = 1;
   FROM = 1;
-  %  [dum1 dum2 fnum] = size(CVL);
   fnum = sum( ~isnan(sum(CVLt)) );
 end
 
@@ -45,19 +46,19 @@ end
 for i2 = FROM:fnum
   hold on;
 
-  %% set index of minima as 'sameIdx' ++bug
-  [minVal idx] = min(CVLt);
-  minIdx = find(minVal(:,:,i2) == CVLt(1:regFacLEN,:,i2) );
-  %% if (minIdx == 1) marker don't appear. Is this MATLAB bug?
+  %% set index of maxima as 'sameIdx' ++bug
+  [maxVal idx] = max(prob);
+  maxIdx = find(maxVal(:,:,i2) == prob(1:regFacLEN,:,i2) );
+  %% if (maxIdx == 1) marker don't appear. Is this MATLAB bug?
   %% line
   if strcmp('DEBUG','DEBUG')
     fprintf(1,'%02d, useFrame:%10d, myColor:[%f %f %f]\n',...
             i2, env.useFrame(i2), myColor{i2}(1),myColor{i2}(2),myColor{i2}(3));
-    plot(1:regFacLEN,CVLt(1:regFacLEN,1,i2),'color',myColor{i2},'LineWidth',3);
+    plot(1:regFacLEN,prob(1:regFacLEN,1,i2),'color',myColor{i2},'LineWidth',3);
     axis([1 regFacLEN .5 1.05]) % move figures to the left.
   end
   %% diamond
-  hLine2 = plot(minIdx,CVLt(minIdx,:,i2),'o-','color',myColor{i2},...
+  hLine2 = plot(maxIdx,prob(maxIdx,:,i2),'o-','color',myColor{i2},...
                 'Marker','d','MarkerFaceColor','auto','MarkerSize',10,'LineWidth',3);
   set(get(get(hLine2,'Annotation'),'LegendInformation'),...
       'IconDisplayStyle','off');
@@ -65,11 +66,11 @@ for i2 = FROM:fnum
   if ALL == 0
     title(['usedFrame:',...
            sprintf('%d',env.useFrame(i2)),...
-           sprintf('\tminVal:%f',minVal(:,:,i2)),...
-           sprintf('\tProb.:%f',exp(-minVal(:,:,i2)))...
+           sprintf('\tmaxVal:%f',maxVal(:,:,i2)),...
+           sprintf('\tProb.:%f',maxVal(:,:,i2))...
           ])
   else
-    title(['- (cross Validation Log Likelihood)',sprintf('#%4d',cnum)])
+    title(['- (cross Validation Liklihood)',sprintf('#%4d',cnum)])
   end
   set(gcf,'color','white')
   set(gca,'xtick',1:regFacLEN)
@@ -79,7 +80,8 @@ end
 %legend(LGDT,'FontSize',14,'LineWidth',3);
 legend(LGDT{FROM:fnum},'FontSize',14,'LineWidth',3,'Location','NorthWest');
 xlabel( 'regularization factor' )
-ylabel( 'CVL' )
+ylabel( 'prob.' )
+ylim([0 1])
 if ALL == 1
   inFname= regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2');
   title2 = sprintf('%s-CVL-%s-%04d',status.method,inFname,cnum );

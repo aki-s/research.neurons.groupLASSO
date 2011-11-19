@@ -33,8 +33,9 @@ for t1 = 1:lenT0
    TPn = sum( RFIntensity < thresh & Answer == -1);
    TPtotal = TP0 + TPp + TPn;
    %  (FalsePositive,TruePositive)= (1-specificity, sencitivity)
+   %% if (Np+Nn) == 0 ?
    recFPTP( t1, : ) = [FP0/(Np+Nn), TP0/N0]; 
-   % fprintf(1,'%d',FP0/(Np+Nn), TP0/N0);
+   %   fprintf(1,'%d _%d _%d %d _%d\n',FP0, Np, Nn, TP0,N0);
    recn( t1, : ) = [TP0, TPp, TPn, TPtotal];
    recr( t1, : ) = [TP0/N0, TPp/Np, TPn/Nn, TPtotal/length(RFIntensity)];
 end

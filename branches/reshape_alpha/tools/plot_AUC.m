@@ -35,9 +35,11 @@ else % mix ALL
   FROM = 1; %++bug
   uF = status.validUseFrameIdx;
 end
-
-load(ansMat,'M_ans');
-
+if isnumeric(ansMat)
+  M_ans = ansMat;  
+else
+  load(ansMat,'M_ans');
+end
 uR = length(DAL.regFac);
 cSET = length(env.inFiringUSE);
 
@@ -60,7 +62,8 @@ for i1 = 1:cSET
   inFiringUSE{i1} = num2str(sprintf('%03d',env.inFiringUSE(i1)));
 end
 fFNAME = regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2');
-inRoot = regexprep(status.outputfilename,'(.*/)(.*)(.mat)','$1');
+%inRoot = regexprep(status.outputfilename,'(.*/)(.*)(.mat)','$1');
+inRoot = status.savedirname;
 %% ==</conf>==
 
 %% ==< calc AUC and correct rate >==
@@ -144,8 +147,8 @@ axis([1 uR .5 1.05]) % move figures to the left.
 xlabel('regularization factor')
 
 %% for paper
-if strcmp('for_publish','for_publish') % without legend
-  if 1 == 1
+if strcmp('for_publish','for_publish_') % without legend
+  if 1 == 0
     %% program started   : 2011-11-10-18:54:29, (firng,method) = (kim,aki)
     if nargin == nargin_NUM
       text(11.5 ,0.60,'\color{white}  240','fontsize',12,'BackgroundColor',myColor{1} );
@@ -155,7 +158,7 @@ if strcmp('for_publish','for_publish') % without legend
       text( 5.5 ,0.88,'\color{white}10000','fontsize',12,'BackgroundColor',myColor{5} );
       text( 4.0 ,0.80,'\color{white}40000','fontsize',12,'BackgroundColor',myColor{6} );
       text( 3.0 ,0.88,'\color{white}75000','fontsize',12,'BackgroundColor',myColor{7} );
-    else
+    elseif 1 == 0
       switch FROM
         case 1
           text(11.5 ,0.60,'\color{white}  240','fontsize',12,'BackgroundColor',myColor{1} );
@@ -173,7 +176,7 @@ if strcmp('for_publish','for_publish') % without legend
           text( 3.0 ,0.88,'\color{white}75000','fontsize',12,'BackgroundColor',myColor{7} );
       end
     end
-  else
+  elseif 1 == 0
     %% program started   : 15-Nov-2011-start-12_49, (firng,method) = (kim,aki)
     text(11.5 ,0.60,'\color{white}  256','fontsize',12,'BackgroundColor',myColor{1} );
     text(11.5 ,0.87,'\color{white}  512','fontsize',12,'BackgroundColor',myColor{2} );

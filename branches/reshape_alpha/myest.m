@@ -4,7 +4,7 @@
 global env;
 global status;
 global Tout;
-global graph; %++bug: global
+global graph;
 global rootdir_;   rootdir_ = pwd;
 
 status.time.start = fix(clock);
@@ -28,7 +28,7 @@ if strcmp('gaya','gaya_')
   status.userDef = [rootdir_ '/conf/conf_user_gaya.m'];
 elseif strcmp('kim','kim_')
   status.userDef = [rootdir_ '/conf/conf_user_kim.m'];
-elseif strcmp('aki','aki_')
+elseif strcmp('aki','aki')
   status.userDef = [rootdir_ '/conf/conf_user_aki.m'];
 else
   %% set null file till user defines.
@@ -270,15 +270,17 @@ status.time.end = fix(clock);
 
 
 %% ==< clean >==
+%% clean variables before save
 if status.clean == 1
   run([rootdir_ '/mylib/clean.m'])
 end
-%% clean variables before save
+
+%% ==< save >==
 if status.save_vars == 1
   fprintf(1,'Saving variables....\n');
   if status.use.GUI == 1
     uisave(who,strcat(status.savedirname,'/', 'frame', num2str(sprintf('%05d',env.genLoop)), 'hwind', num2str(sprintf('%04d',env.hwind)), 'hnum' , num2str(sprintf('%02d',env.hnum))));
-  else
+  else 
     tmp.v = datevec(date);
     status.outputfilename = [status.savedirname,'/',num2str(tmp.v(3)),'_',num2str(tmp.v(2)),'_',num2str(tmp.v(1)),'__',num2str(status.time.start(4)),'_',num2str(status.time.start(5)),'.mat'];
     save(status.outputfilename);

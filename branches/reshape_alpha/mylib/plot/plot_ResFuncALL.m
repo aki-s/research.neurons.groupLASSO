@@ -4,6 +4,7 @@ function plot_ResFuncALL(varargin)
 %  plot_ResFuncALL('outdir/22-Oct-2011-start-22_34/',20)
 %  plot_ResFuncALL(status.savedirname,20)
 %  plot_ResFuncALL(status.savedirname,20,3000)
+%  plot_ResFuncALL(status.savedirname,9,env.useFrame(4),graph)
 %% plot_ResFuncALL()
 %%  if (nargin == 1)
 %%   varargin{1}: mat file containing variable 'env'.
@@ -86,11 +87,13 @@ for i1 = 1:LOOPn
         regFacIdx = regFacLen;
       end
       %}
-      S.graph.prm.auto = 0; % make comparison of ResFunc easy.
 if strcmp('rm_after_AROB','rm_after_AROB')
 S.status.DEBUG.level=0;
 end
-
+S.graph.prm.auto = 0; % make comparison of ResFunc easy.
+if nargin >= 4 %% to hand 'graph.prm'
+S.graph = varargin{4};
+end
       try
         plot_Ealpha(S.env,S.graph,S.status,S.DAL,S.bases,S.EbasisWeight ...
                     ,'',regFacIdx)

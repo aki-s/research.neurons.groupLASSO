@@ -19,7 +19,7 @@ else
   %%  status.method = 'Kim'; % garbage?
 end
 status.estimateConnection = 1;
-status.save_vars = 0;
+status.save_vars = 1;
 status.use.GUI = 1;
 status.mail = 0;
 

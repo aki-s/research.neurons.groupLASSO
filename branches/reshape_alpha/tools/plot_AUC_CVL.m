@@ -39,8 +39,11 @@ else % mix ALL
   uF = status.validUseFrameIdx;
 end
 
+if isnumeric(ansMat)
+  M_ans = ansMat;  
+else
 load(ansMat,'M_ans');
-
+end
 uR = length(DAL.regFac);
 cSET = length(env.inFiringUSE);
 
@@ -61,9 +64,11 @@ for i1 = 1:cSET
   inFiringUSE{i1} = num2str(sprintf('%03d',env.inFiringUSE(i1)));
 end
 fFNAME = regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2');
-inRoot = regexprep(status.outputfilename,'(.*/)(.*)(.mat)','$1');
+%inRoot = regexprep(status.outputfilename,'(.*/)(.*)(.mat)','$1');
+inRoot = status.savedirname;
 %% ==</conf>==
 
+if strcmp('leaveOut_calcAUC','leaveOut_calcAUC')
 %% ==< calcAUC >==
 rate = zeros(uR,4,uF);
 auc.A = zeros(uF,uR);
@@ -92,7 +97,7 @@ for j0 = FROM:uF
   fprintf(1,'\n');
 end
 %% ==</calcAUC >==
-
+end
 %%
 for j0 = FROM:uF
   figure
