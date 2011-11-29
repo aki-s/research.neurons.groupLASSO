@@ -3,8 +3,8 @@ function plot_Ealpha(env,graph,status,DAL,bases,EbasisWeight,...
 %%
 %% USAGE)
 %% Example:
-% plot_Ealpha(env,graph,DAL,bases,EbasisWeight,'titleAddMemo')
-% plot_Ealpha(env,graph,DAL,bases,EbasisWeight,'titleAddMemo',regFacIndexIn)
+% plot_Ealpha(env,graph,status,DAL,bases,EbasisWeight,'titleAddMemo')
+% plot_Ealpha(env,graph,status,DAL,bases,EbasisWeight,'titleAddMemo',regFacIndexIn)
 %%
 %% regFacIndexIn: e.g. o [1] [1:3] , x [1 3] ++bug
 global rootdir_

@@ -4,6 +4,8 @@ warning('DEBUG:conf','conf_user.m overrides all configuration variables set afte
 if 1 == 0
   DEBUG_s = 'gen_9_non'
 elseif 1 == 1
+  DEBUG_s = 'comp_steven'
+else
   DEBUG_s = 'my_n9.con'
 else
   DEBUG_s = 'test'
@@ -29,6 +31,14 @@ switch DEBUG_s
     DAL.regFac = [32 4 1];
     env.genLoop = 10000;
     graph.PLOT_T = 1;
+  case 'comp_steven'
+    status.crossVal = 8;
+    DAL.regFac = [ 16 10 8 4];
+    env.genLoop = 110000; % essential
+    env.useFrame = [20000]; % essential
+    graph.PLOT_T = 1;
+    status.inStructFile = [ rootdir_ '/indir/my_n9.con'];
+
   otherwise
     fprintf(1,['not_DEBUG_MODE -- set variables used to estimate ' ...
                'randomly generated network\n']);

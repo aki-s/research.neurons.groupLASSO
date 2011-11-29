@@ -1,6 +1,6 @@
 %% ( Number of basis vectors for post-spike kernel )
 %% <Tweek here>
-if strcmp('comp_stevenson','comp_stevenson_')
+if strcmp('comp_stevenson','comp_stevenson')
   basisType = 'bar'; % ability of representatation is too much.
   if 1 == 1
     nbase = 50;

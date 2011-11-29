@@ -22,7 +22,7 @@ if strcmp('show_basis','show_basis')
   plot(bases.ihbasis);
   axis tight;
   %xlabel('history index (frames) ');
-  xlabel('m ');
+  %  xlabel('m ');
   title('cosine basis function');
 
 end

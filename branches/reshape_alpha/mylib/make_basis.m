@@ -1,6 +1,7 @@
 function [iht, ihbas, ihbasis] = make_basis(ihbasprs,dt)
 % [iht, ihbas, ihbasis] = make_basis(ihbasprs,dt,iht);
 
+%%tail(log(max(1:x))/(pi/2) ) == nbase
 nbase = ihbasprs.nbase;
 b = ihbasprs.b;
 hpeaks = ihbasprs.hpeaks;
@@ -25,8 +26,7 @@ invnl = @(x)exp(x)-1e-20; % inverse nonlinearity
 
 % Generate basis of raised cosines
 yrnge = nlin(hpeaks+b);  
-%db = diff(yrnge)/(nbase-1);    % spacing between raised cosine peaks
-db = diff(yrnge)/(nbase-1); 
+db = diff(yrnge)/(nbase-1); % spacing between raised cosine peaks
 %%ctrs = yrnge(1)-db:db:yrnge(2);   % centers for basis vectors
 ctrs = yrnge(1):db:yrnge(2);   % centers for basis vectors
 mxt = invnl(yrnge(2)+2*db)-b;  % maximum time bin

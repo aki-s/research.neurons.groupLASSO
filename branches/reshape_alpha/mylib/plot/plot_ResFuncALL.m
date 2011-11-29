@@ -12,6 +12,7 @@ function plot_ResFuncALL(varargin)
 %%   varargin{1}: dirname 
 %%   varargin{2}: vector containing num of neuron to be plotted.
 %%   varargin{3}: vector from env.userFrame()
+%%   varargin{4}: override prameter to plot graph
 
 if isdir(varargin{1})
   in = varargin{1};
@@ -53,9 +54,9 @@ end
 %% get mat file list to be plotted.
 %{
 listLS = textscan(ls([in,'*.mat']), ...
-                '%s','delimiter','\t\n'); % default list
+                  '%s','delimiter','\t\n'); % default list
 listLS{1}{1:2}
-                                          %}
+%}
 listLS = ls([in,'*.mat']); % default list
 
 for i1 = 1:LOOPn
@@ -80,26 +81,41 @@ for i1 = 1:LOOPn
       fprintf('loaded: %s\n',list{i3});
       S = load(list{i3});
       regFacIdx = str2double(regexprep(list{i3},...
-                            '(.*/)(\w*-)([0-9\.]*)(-.*.mat)','$3'));
+                                       '(.*/)(\w*-)([0-9\.]*)(-.*.mat)','$3'));
       regFacIdx = find(S.DAL.regFac == repmat(regFacIdx,[1 regFacLen]));
       %{
       if ~mod(i3-1,regFacLen)
         regFacIdx = regFacLen;
       end
       %}
-if strcmp('rm_after_AROB','rm_after_AROB')
-S.status.DEBUG.level=0;
-end
-S.graph.prm.auto = 0; % make comparison of ResFunc easy.
-if nargin >= 4 %% to hand 'graph.prm'
-S.graph = varargin{4};
-end
-      try
-        plot_Ealpha(S.env,S.graph,S.status,S.DAL,S.bases,S.EbasisWeight ...
+      if strcmp('rm_after_AROB','rm_after_AROB')
+        %10-Nov-2011-start-18_54
+        S.status.DEBUG.level=0;
+        S.graph.prm.showWeightDistribution = 0;
+      end
+      S.graph.prm.auto = 0; % make comparison of ResFunc easy.
+      if nargin >= 4 %% to hand 'graph.prm'
+        S.graph = varargin{4};
+      end
+      if 1 == 1
+        plot_Ealpha(S.env,S.graph,S.status,S.DAL,S.bases,S.basisWeight ...
                     ,'',regFacIdx)
-      catch errP
-        plot_Ealpha(S.env,S.graph,S.status,S.DAL,S.bases,S.EbasisWeight ...
-                    ,'',regFacIdx)
+      else
+        try
+          plot_Ealpha(S.env,S.graph,S.status,S.DAL,S.bases,S.basisWeight ...
+                      ,'',regFacIdx)
+
+        catch errP
+          warning('DEBUG:NOTICE','error hundling');
+          plot_Ealpha(S.env,S.graph,S.status,S.DAL,S.bases,S.EbasisWeight ...
+                      ,'',regFacIdx)
+          try
+            plot_Ealpha(S.env,S.graph,S.status,S.DAL,S.bases,S.KerWeight ...
+                        ,'',regFacIdx)
+          catch err
+            error()
+          end
+        end
       end
       %      regFacIdx = regFacIdx - 1;
     end

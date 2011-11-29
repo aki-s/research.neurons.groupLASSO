@@ -2,11 +2,16 @@ function plot_ResFuncSuperpose(in,DAL,useFrame,cnum,varargin)
 %%
 %% USAGE)
 %% Example:
-%  plot_ResFuncALL(status.savedirname,DAL.regFac(3),env.useFrame(4),9)
+%plot_ResFuncSuperpose(status.savedirname,DAL,80000,env.cnum)
 
 BASEIN = 4;
 if nargin >= BASEIN +1
-  yrangeIn = varargin{1};
+  xrangeIn = varargin{1};
+else
+  xrangeIn = [0 200];
+end
+if nargin >= BASEIN +2
+  yrangeIn = varargin{2};
 else
   yrangeIn = [-1 1];
 end
@@ -19,12 +24,9 @@ listLS = ls([in,'*.mat']); % default list
                     '0*',sprintf('%d',useFrame),'-',...
                     '0*',sprintf('%d',cnum),'.mat']);
 N = length(list);
-%S = load(list{1});
-%regFacLen = length(S.DAL.regFac);
-%RFIntensity = nan(cnum,cnum,regFacLen);
+
 RFIntensity = nan(cnum,cnum,N);
-%for i1 = 1:regFacLen
-%for i1 = 14:14
+
 for i1 = 1:N
 
 [dum1 dum2 dum3 list dum5 dum6 dum7] = regexp(listLS,[in, ...
@@ -36,7 +38,7 @@ for i1 = 1:N
 
   RFIntensity(:,:,i1) = evalResponseFunc( S.Alpha );
   FLAG = reshape(RFIntensity(:,:,i1),1,[]);
-  %end
+
   RFIp = RFIntensity >0;
   RFIpN = sum(sum(RFIp,1),2);
   RFIn = RFIntensity <0;
@@ -47,8 +49,6 @@ for i1 = 1:N
 
   %%% ===== PLOT alpha ===== START =====
   figure;
-  %for i1 = 1:regFacLen
-  %title('positive')
   title(['positive: ',sprintf('#%4d, regFac:%9.4f, useFrame:%10d',RFIpN(i1),S.DAL.regFac(i1),useFrame)])
   hold on;
   for i2 = 1:cnum*cnum
@@ -58,10 +58,10 @@ for i1 = 1:N
       plot(reshape(S.Alpha(row,col,:),1,[]))
     end
   end
+  xlim(xrangeIn);
   ylim(yrangeIn);
-  %end
+
   figure;
-  %for i1 = 1:regFacLen
   title(['negative: ',sprintf('#%4d, regFac:%9.4f, useFrame:%10d',RFInN(i1),S.DAL.regFac(i1),useFrame)])
   hold on;
   for i2 = 1:cnum*cnum
@@ -71,7 +71,11 @@ for i1 = 1:N
       plot(reshape(S.Alpha(row,col,:),1,[]))
     end
   end
+  xlim(xrangeIn);
   ylim(yrangeIn);
 end
 
 %%% ===== PLOT alpha ===== END =====
+if N == 0
+  fprintf(1,'nothing to plot\n');
+end

@@ -1,6 +1,7 @@
 function myColor = setMyColor(useFrameLen)
 %% color allocated for each elemenths from env.useFrame
-
+% myColor = setMyColor(length(env.useFrame))
+%%
 METHOD = 'tight';
 %% avoid yellow
 %% colorBase={'b','g','r','c','m','k'};

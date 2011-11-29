@@ -104,8 +104,8 @@ if strcmp('calcDAL','calcDAL')
     cost2 = tic;
     fprintf(1,'\t== Reg.factor: %9.4f == frame: %d<-%d : elapsed: ',...
             DAL.regFac(ii1),DAL.Drow,env.genLoop);
-    %%parfor i1to = 1:cnum % ++parallelization  %bug?
-    for i1to = 1:cnum % ++parallelization 
+   %%    parfor i1to = 1:cnum % ++parallelization  %bug: EbasisWeight{ii1}{i1to}, Ebias(ii1,i1to)
+   for i1to = 1:cnum % ++parallelization 
       switch  method
         %%+improve: save all data for various method
         case 'lrgl'
@@ -132,7 +132,7 @@ if strcmp('calcDAL','calcDAL')
 
         case 'prgl'
           %% poisson regression group lasso: 
-          if status.parfor_ == 1 %++notyet?
+          if status.parfor_ == 1
             if DAL.speedup == 1
               [EbasisWeight{ii1}{i1to}, Ebias(ii1,i1to), DALstatus{i1to}] = ...
                   dalprgl( EbasisWeight{ii1-1}{i1to}, Ebias(ii1-1,i1to), ...

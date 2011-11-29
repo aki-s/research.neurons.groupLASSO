@@ -41,7 +41,10 @@ for N1 = 1:uF
   filename =sprintf('Aki-%s-%s-%s.mat', L000{L0(N1)}, FNAMEf, N000{N1});
   load( filename ); %Alpha
   Phi = evalResponseFunc( Alpha );
-  [recn, recr, thresh0,auc.A(1,N1)] = evaluatePhi(Phi, M_ans);
+  %  [recn, recr, thresh0,auc.A(1,N1)] = evaluatePhi(Phi, M_ans);
+  %  [recn, recr, thresh0,auc.A(1,N1)] = evalRFIntensity(Phi,
+  %  M_ans);
+  [recn, recr, thresh0,auc.A(1,N1)] = evalRFIntensity_omitDiag(Phi, M_ans);
   disp( sprintf( '%20s: %3d, %3d, %3d, %3d, %5.1f, %5.1f, %5.1f, %5.1f',...
                  filename, recn, recr*100 ) );
   AkiAcc(N1,:) = recr*100;
@@ -55,7 +58,8 @@ for N1 = 1:uF
     filename =sprintf('Aki-%s-%s-%s.mat', L000{reg}, FNAMEf, N000{N1});
     load( filename ); %Alpha
     Phi = evalResponseFunc( Alpha );
-    [recn, recr, thresh00,auc.tmp] = evaluatePhi(Phi, M_ans);
+    %    [recn, recr, thresh00,auc.tmp] = evalRFIntensity(Phi, M_ans);
+    [recn, recr, thresh00,auc.tmp] = evalRFIntensity_omitDiag(Phi, M_ans);
     disp( sprintf( '%20s: %3d, %3d, %3d, %3d,: %5.1f, %5.1f, %5.1f, %5.1f, :%f',...
                    filename, recn, recr*100, auc.tmp) );
     %    AkiAcc(N1,:) = recr*100;
@@ -68,7 +72,8 @@ KimAcc = zeros(uF,4);
 for N1 = 1:uF
   filename = sprintf('Kim-%s-%s.mat', FNAMEf, N000{N1});
   load( filename ); % Phi
-  [recn, recr, thresh0,auc.B(1,N1)] = evaluatePhi(Phi, M_ans);
+                    %  [recn, recr, thresh0,auc.B(1,N1)] = evalRFIntensity(Phi, M_ans);
+  [recn, recr, thresh0,auc.B(1,N1)] = evalRFIntensity_omitDiag(Phi, M_ans);
   disp( sprintf( '%20s: %3d, %3d, %3d, %3d, %5.1f, %5.1f, %5.1f, %5.1f',...
                  filename, recn, recr*100 ) )
   KimAcc(N1,:) = recr*100;
@@ -95,7 +100,8 @@ end
 set(gcf, 'Color', 'White', 'Position',[100,100,400,800])
 %}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-div2 = N;
+%div2 = N;
+div2 = 1;
 %div2 = 2;
 
 NN = N/div2;

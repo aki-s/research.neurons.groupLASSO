@@ -10,7 +10,8 @@ if strcmp(basisType,'bar')
   ihbasprs.hpeaks = NaN;
   ihbasprs.b = NaN;
   ihbas = NaN;
-  ihbasis = ones(1,iht);
+  %  ihbasis = ones(1,iht);
+  ihbasis = ones(1,50);
 else
   % -- Nonlinearity -------
   nlinF = @exp;

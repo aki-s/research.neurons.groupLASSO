@@ -1,9 +1,12 @@
 function  plot_likelihood(env,status,graph,DAL,CVL,varargin)
 %%
+%  plot_likelihood(env,status,graph,DAL,CVL{1},varargin)
 %%
 %% varargin{1}: index to select and plot only one sample.
 %%            index correspond with index of DAL.regFac.
 %% CVL: (regFac idx, cnum, usedFrame) matrix
+%%
+
 cnum = env.cnum;
 LABEL = num2cell(DAL.regFac);
 regFacLEN = length(DAL.regFac);
@@ -70,7 +73,7 @@ for i2 = FROM:fnum
            sprintf('\tProb.:%f',maxVal(:,:,i2))...
           ])
   else
-    title(['- (cross Validation Liklihood)',sprintf('#%4d',cnum)])
+    title([' Liklihood ',sprintf('#%4d',cnum)])
   end
   set(gcf,'color','white')
   set(gca,'xtick',1:regFacLEN)
@@ -78,7 +81,13 @@ for i2 = FROM:fnum
 end
 
 %legend(LGDT,'FontSize',14,'LineWidth',3);
+if strcmp('for_paper','for_paper')
+  text(11.5 ,0.15,['\color{white}',sprintf('%5.0d',env.useFrame(6))],'fontsize',12,'BackgroundColor',myColor{6} );
+  text(11.5 ,0.30,['\color{white}',sprintf('%5.0d',env.useFrame(7))],'fontsize',12,'BackgroundColor',myColor{7} );
+
+else
 legend(LGDT{FROM:fnum},'FontSize',14,'LineWidth',3,'Location','NorthWest');
+end
 xlabel( 'regularization factor' )
 ylabel( 'prob.' )
 ylim([0 1])

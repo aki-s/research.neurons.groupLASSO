@@ -62,8 +62,11 @@ end
 %%++improve
 %% bases should be loaded from a mat file.
 %% large argment of makeSimStruct_glm() make small width of basis.
-
+if 1==0 
+bases = makeSimStruct_glm(length,nonlinear); % Create GLM structure with default params
+else
 bases = makeSimStruct_glm(0.2); % Create GLM structure with default params
+end
 %% 0.2 : 118
 
 [env status Tout graph DAL] = check_conf(env,status,Tout,graph,bases,DAL);

@@ -4,7 +4,7 @@ function plot_AUC(env,status,graph,DAL,ansMat,varargin)
 %% usage)
 % load('./outdir/some_out_data/allVarMat.m')
 % ansMat = '/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/indir/sim_kim_ans.mat'
-% plot_AUC(env,status,DAL,ansMat)
+% plot_AUC(env,status,graph,DAL,ansMat)
 %%
 %% varargin{1}: index to select and plot only one sample.
 %%            index correspond with index of DAL.regFac.
@@ -73,10 +73,10 @@ auc.A = zeros(uF,uR);
 spaceLen = length(sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{1}, ...
                           fFNAME, uFnum{FROM}, inFiringUSE{1}));
 
-fprintf(1,'LEGEND) TP:=True Positive, p:=positive, n:=negative\n')
-fprintf(1,['response func mat_file %s : (#)TP0  TPp  TPn  TPtotal'...
-           ':(%%)TP0  TPp   TPn   TPtotal'...
-           ': AUC'...
+fprintf(1,'LEGEND) TP:=True Positive, p:=positive, n:=negative, z:=zero\n')
+fprintf(1,['response func mat_file %s : (#)TPz  TPp  TPn  TPtotal'...
+           ':(%%)TPz  TPp   TPn   TPtotal'...
+           ': AUC threshold'...
            '\n'],...
         repmat(' ',[1 (spaceLen-28)]) )
 for j0 = FROM:uF
@@ -86,9 +86,20 @@ for j0 = FROM:uF
                         fFNAME, uFnum{j0}, inFiringUSE{i0});
       load( [inRoot '/' filename], 'Alpha');
       RFIntensity = evalResponseFunc( Alpha );
-      [recn, recr, thresh0 ,auc.A(j0,regFacIdx)] = evalRFIntensity(RFIntensity, M_ans);
-      disp( sprintf( '%20s: %3d, %3d, %3d, %6d: %5.1f, %5.1f, %5.1f, %5.1f: %2.1f',...
-                     filename, recn, recr*100, auc.A(j0,regFacIdx)) );
+      if strcmp('omitDiag','omitDiag_')
+        [recn, recr, thresh0 ,auc.A(j0,regFacIdx)] = evalRFIntensity_omitDiag(RFIntensity, M_ans);
+      else
+        [recn, recr, thresh0 ,auc.A(j0,regFacIdx)] = ...
+            evalRFIntensity(RFIntensity, M_ans);
+      end
+      disp( sprintf( ['%20s:'...
+                      '%3d, %3d, %3d, %6d: '...
+                      '%5.1f, %5.1f, %5.1f, %5.1f: '...
+                      '%2.1f %5.3f'],...
+                     filename,...
+                     recn,...
+                     recr*100,...
+                     auc.A(j0,regFacIdx), thresh0) );
       rate(regFacIdx,1:4,j0) = recr*100;
     end
   end
@@ -98,8 +109,9 @@ end
 
 %% ==< plot correct rate >==
 A0 = [4,1,2,3];
-%% '+/0/-','+/1','+','-'
+%% '+/0/-','0','+','-'
 ylabels ={'Total', 'Specificity', 'Excitatory', 'Inhibitory'};
+%% recr(regFacIdx,A0,usedFrame)
 N = 4;
 switch 2 % num of window (odd num)
   case 4
@@ -120,8 +132,6 @@ for ii = 1:(div2)
     hold on;
     for j1 = FROM:uF
       plot(1:uR, rate(:, A0(i+div),j1),'o-','Color',myColor{j1},'LineWidth',2)
-      %      plot(1:uR, rate(:, A0(i+div),j1),'o-','Color',color(j1,:),'LineWidth',2)
-      %      plot(0:(uR-1), rate(:, A0(i+div),j1),'o-','Color',color(j1,:),'LineWidth',2)
     end
     ylabel( ylabels{ i+div})
     xlabel( 'regularization factor' ) 
@@ -141,6 +151,7 @@ grid on;
 for j0 = FROM:uF
   plot(1:uR, auc.A(j0,:),'o-','Color',myColor{j0},'LineWidth',2)
 end
+%ylabel('max AUC about existance of connection')
 ylabel('AUC')
 set(gca, 'XTick', 1:uR, 'XTickLabel', XLABELrf,'ylim',[0.5 1])
 axis([1 uR .5 1.05]) % move figures to the left.

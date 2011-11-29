@@ -88,7 +88,7 @@ for j0 = FROM:uF
                         fFNAME, uFnum{j0}, inFiringUSE{i0});
       load( [inRoot '/' filename], 'Alpha');
       RFIntensity = evalResponseFunc( Alpha );
-      [recn, recr, thresh0 ,auc.A(j0,regFacIdx)] = evalRFIntensity(RFIntensity, M_ans);
+      [recn, recr, thresh0 ,auc.A(j0,regFacIdx)] = evalRFIntensity_omitDiag(RFIntensity, M_ans);
       disp( sprintf( '%20s: %3d, %3d, %3d, %6d: %5.1f, %5.1f, %5.1f, %5.1f: %2.1f',...
                      filename, recn, recr*100, auc.A(j0,regFacIdx)) );
       rate(regFacIdx,1:4,j0) = recr*100;

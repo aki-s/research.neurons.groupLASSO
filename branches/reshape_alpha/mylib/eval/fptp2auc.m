@@ -17,3 +17,10 @@ for i=1:M-1
   % calc area with trapezoid method
   AUC = AUC + ( TP(i+1) + TP(i) ) * ( FP(i+1) - FP(i) ) * 0.5;
 end
+
+%% TP 
+%% / \      ....
+%%  | ..........
+%%  |...........
+%%  |...........  |
+%%  ---------------> FP
