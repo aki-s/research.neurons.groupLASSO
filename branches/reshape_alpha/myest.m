@@ -21,6 +21,7 @@ if strcmp('configure', 'configure') %++conf
   [env status ] = conf_IO(env,status);
   graph = conf_graph();
   run([rootdir_ '/conf/conf_rand.m']);
+  bases = conf_makeSimStruct_glm(); % load parameters.
   run([rootdir_ '/conf/conf_mail.m']);% notify the end of program via mail.
 end
 
@@ -63,7 +64,7 @@ end
 %% bases should be loaded from a mat file.
 %% large argment of makeSimStruct_glm() make small width of basis.
 if 1==0 
-bases = makeSimStruct_glm(length,nonlinear); % Create GLM structure with default params
+bases = makeSimStruct_glm(bases,1/env.Hz.video); % Create GLM structure with default params
 else
 bases = makeSimStruct_glm(0.2); % Create GLM structure with default params
 end
@@ -147,7 +148,7 @@ tstatus = status;%% make 'status' global to local variable 'tstatus'
       fprintf('\n');
 
       %% ( %++parallel? not practical for biological real data.)
-      if ( bases.ihbasprs.NumFrame <= tenv.useFrame(i1) ) && ( tenv.useFrame(i1) <= tenv.genLoop )
+      if ( bases.ihbasprs.numFrame <= tenv.useFrame(i1) ) && ( tenv.useFrame(i1) <= tenv.genLoop )
         DAL.Drow = tenv.useFrame(i1);
         %        if strcmp('crossValidation','crossValidation')
         if (status.crossVal > 1 )
@@ -192,7 +193,7 @@ tstatus = status;%% make 'status' global to local variable 'tstatus'
         end
         %% ==</Start estimation with DAL>==
       else
-        warning('DEBUG:NOTICE','( env.useFrame < bases.ihbasprs.NumFrame) or (env.genLoop < env.useFrame)')
+        warning('DEBUG:NOTICE','( env.useFrame < bases.ihbasprs.numFrame) or (env.genLoop < env.useFrame)')
       end
     end
     %    if (tstatus.parfor_ == 1 ) && strcmp('crossValidation','crossValidation')

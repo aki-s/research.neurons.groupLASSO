@@ -134,7 +134,7 @@ else
         estimateWeightKernel(tmpEnv,graph,status,bases,I(USE,:),DAL,useFrameIdx);
     cost = cost + status_tmp{i1}.time.regFac(useFrameIdx,:);
     [Ealpha Ograph] = reconstruct_Ealpha(tmpEnv,graph,DAL,bases,EbasisWeight{i1});
-    histSize = bases.ihbasprs.NumFrame;
+    histSize = bases.ihbasprs.numFrame;
     %% warning: not exact response function is write out.
     if strcmp('incomplete_RF','incomplete_RF') % RF: response function
       saveResponseFunc(env,Ograph,status,bases,...

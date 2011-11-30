@@ -31,7 +31,7 @@ N = length(regFac);
 method = status.method;
 savedirname = status.savedirname;
 %%
-SIZE = 500; % SIZE > bases.ihbas.iht
+SIZE = 500; % SIZE > bases.ihbas.numFrame
 Alpha_ = cell(1,N);
 len = length(Ealpha{1}{1}{1}(:));
 for i1 = 1:length(regFac)

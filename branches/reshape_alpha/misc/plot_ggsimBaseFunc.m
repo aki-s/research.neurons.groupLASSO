@@ -13,12 +13,12 @@ function plot_ggsimBaseFunc(env,bases)
 if strcmp('show_basis','show_basis')
   figure;
   grid on;
-  %  plot(bases.iht, bases.ih);
-  %  plot(bases.iht*env.Hz.video, bases.ih);
+  %  plot(bases.ihbasprs.numFrame, bases.ih);
+  %  plot(bases.ihbasprs.numFrame*env.Hz.video, bases.ih);
   %plot( bases.ih);
   hold on;
-  %  plot(bases.iht, bases.ihbasis);
-  %  plot(bases.iht*env.Hz.video, bases.ihbasis);
+  %  plot(bases.ihbasprs.numFrame, bases.ihbasis);
+  %  plot(bases.ihbasprs.numFrame*env.Hz.video, bases.ihbasis);
   plot(bases.ihbasis);
   axis tight;
   %xlabel('history index (frames) ');

@@ -117,7 +117,7 @@ else
         estimateWeightKernel(tmpEnv,graph,status,bases,I(USE,:),DAL,regFacIdx);
     %    tic;fprintf(1,'Eapha2Mat:\t');
     Ealpha = reconstruct_Ealpha(tmpEnv,DAL,bases,EbasisWeight);
-    histSize = bases.ihbasprs.NumFrame;
+    histSize = bases.ihbasprs.numFrame;
     [Ealpha_] = EalphaCell2Mat(tmpEnv,Ealpha,regFacLen);
     %    toc
     %{

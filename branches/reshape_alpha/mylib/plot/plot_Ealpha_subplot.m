@@ -47,7 +47,7 @@ if 1 == 1
     if graph.prm.showWeightDistribution == 1
       for i2 = 1:cnum
         tmp2 = bases.ihbasis.*repmat(transpose(EbasisWeight{regFacIndex}{i2to}(:,i2)), ...
-                                     [bases.ihbasprs.NumFrame 1]);
+                                     [bases.ihbasprs.numFrame 1]);
         plot(tmp2)
       end
     end

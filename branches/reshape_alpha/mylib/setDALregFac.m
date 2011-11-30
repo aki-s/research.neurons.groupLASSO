@@ -33,10 +33,10 @@ DALout = DALin;
 
 %% errer handling
 %{
-if ( DAL.Drow > bases.ihbasprs.NumFrame )
+if ( DAL.Drow > bases.ihbasprs.numFrame )
 
 else
-  error('must be (DAL.Drow > bases.ihbasprs.NumFrame)')
+  error('must be (DAL.Drow > bases.ihbasprs.numFrame)')
 end
 
   %}

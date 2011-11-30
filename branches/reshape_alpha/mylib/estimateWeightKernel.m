@@ -38,7 +38,7 @@ elseif strcmp('auto','auto')
 elseif strcmp('allI','allI_')  %++conf
   %%% use all available firing history.
   %% Drow: length of total frames used at loss function.
-  DAL.Drow = env.genLoop - size(bases.iht,1) -1; 
+  DAL.Drow = env.genLoop - size(bases.ihbasprs.numFrame,1) -1; 
 end
 
 %% ==< init variables >==
@@ -49,18 +49,18 @@ method = DAL.method;
 if 1 == 1
   %% dimension reduction to be estimated.
   fprintf('\tGenerating Matrix for DAL\n');
-if ( DAL.Drow > bases.ihbasprs.NumFrame )
+if ( DAL.Drow > bases.ihbasprs.numFrame )
   [D] = gen_designMat(env,status,bases,I,DAL.Drow);
 else
-  error('must be (DAL.Drow > bases.ihbasprs.NumFrame)')
+  error('must be (DAL.Drow > bases.ihbasprs.numFrame)')
 end
   %%+improve:write out for later use and speedup.
-  %  DAL.Drow = Drow.Drow - length(bases.iht);
+  %  DAL.Drow = Drow.Drow - length(bases.ihbasprs.numFrame);
 
   if strcmp(method,'prgl')
-    pI= I( (end - DAL.Drow+ length(bases.iht) +1): end,:);
+    pI= I( (end - DAL.Drow+ length(bases.ihbasprs.numFrame) +1): end,:);
   elseif strcmp(method,'lrgl')
-    pI =  2 * I( (end - DAL.Drow+ length(bases.iht) +1): end,:) - 1;
+    pI =  2 * I( (end - DAL.Drow+ length(bases.ihbasprs.numFrame) +1): end,:) - 1;
   end
 end
 if strcmp('debug','debug_')

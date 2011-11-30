@@ -53,7 +53,7 @@ elseif (status.GEN_TrueValues == 1)
 end
 
 if isfield(env,'Hz') && isfield(env.Hz,'video') % check ability of expression.
-  if (bases.ihbasprs.NumFrame/env.Hz.video) < 0.1 
+  if (bases.ihbasprs.numFrame/env.Hz.video) < 0.1 
     warning(DEBUG:estimate,'range of bases seems to be small');
   end
 end
@@ -62,13 +62,13 @@ end
 if isfield(env,'useFrame') 
   %% check for variable reduction method.
   ODAL.Drow = env.useFrame;
-  %  validIdx = ODAL.Drow > bases.ihbasprs.NumFrame;
-  validIdx = (env.genLoop > ODAL.Drow)&(ODAL.Drow > bases.ihbasprs.NumFrame);
+  %  validIdx = ODAL.Drow > bases.ihbasprs.numFrame;
+  validIdx = (env.genLoop > ODAL.Drow)&(ODAL.Drow > bases.ihbasprs.numFrame);
   Oenv.useFrame = ODAL.Drow(validIdx);
   if length(Oenv.useFrame) ~= sum(validIdx)
-    warning('DEBUG:autoChange',['regularization factor more than bases.ihbasprs.NumFrame=%s '...
+    warning('DEBUG:autoChange',['regularization factor more than bases.ihbasprs.numFrame=%s '...
             'is invalidated']...
-            ,bases.ihbasprs.NumFrame,ODAL.Drow( logical(ODAL.Drow.*(~validIdx) > 0 ))...
+            ,bases.ihbasprs.numFrame,ODAL.Drow( logical(ODAL.Drow.*(~validIdx) > 0 ))...
                                                )
   end
 
