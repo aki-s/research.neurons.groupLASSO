@@ -8,15 +8,15 @@ function [cv,cost,EbasisWeight,Ebias] = crossVal_parfor(env,graph,status_cvDiv,D
 %% vargin)
 %% vargin{1} infile: text file containing filename lists, or directory name
 %% under which all data is to be examined.
-%% 
-
+%% vargin{2}: index, designate number of frames used to estimate
+%% vargin{3}: number of frames used to estimate
 status = status_cvDiv;
 k = status_cvDiv.crossVal;
 parfor_flag = status.parfor_;
 
 tmpEnv = env;
-baseN = 5;
-if (nargin >= baseN+1 )
+argNum = 5;
+if (nargin >= argNum+1 )
   if ismatrix(varargin{1})
     %% varargin{1} is 'I'. 
     I = varargin{1};
@@ -74,7 +74,7 @@ else % artificially generated firing is not reliable at small frame index.
   len = floor(env.genLoop * prm);
 end
 
-if( nargin >= (baseN + 2) ) %++needless?
+if( nargin >= (argNum + 2) ) %++needless?
   tmp = len;
   while mod(tmp,k)
     tmp = tmp -1;
@@ -89,7 +89,7 @@ else
   useFrameIdx = 1; % noncommittal
 end
 
-if( nargin > (baseN + 3) ) %++needless?
+if( nargin > (argNum + 3) ) %++needless?
   Tlen = varargin{3};
   if Tlen > len
     error('Tlen > len')

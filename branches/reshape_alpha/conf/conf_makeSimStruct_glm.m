@@ -6,6 +6,7 @@ ihbasprs.numFrame = 700;
 %% ==  ==
 ihbasprs.xscale = 2; % aim
 %% ihbasprs.hpeaks have precedence.
+%% ihbasprs.hpeaks: first and last peak location of bases.
 %% ==  ==
 if strcmp('comp_stevenson','comp_stevenson_')
   ihbasprs.basisType = 'bar'; % ability of representatation is too much.
@@ -41,12 +42,10 @@ if strcmp('old','old_')
 ihbasprs.hpeaks = [.2 ihbasprs.nbase+2];
 ihbasprs.b = .5;
 else
-ihbasprs.hpeaks = [0 0.3]; % Unit of this is [sec]
+ihbasprs.hpeaks = [0 0.3]; % Unit is [sec]
 ihbasprs.b = 10; % \in [0,1)
 end
 %% <Tweek here/>
-
-
 
 %% ==< Don't touch the following >== 
 bases.ihbasprs = ihbasprs;

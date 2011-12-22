@@ -3,15 +3,18 @@ function plot_AUC_CVL(env,status,graph,DAL,ansMat,CVL,varargin)
 %%
 %% usage)
 % load('./outdir/some_out_data/allVarMat.m')
+%% usage1)
 % ansMat = '/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/indir/sim_kim_ans.mat'
 %% plot all
-% plot_AUC(env,status,graph,DAL,ansMat,CVL)
+% plot_AUC_CVL(env,status,graph,DAL,ansMat,CVL)
 %% or, plot Index_of_env.useFrame
-% plot_AUC(env,status,graph,DAL,ansMat,CVL,Index_of_env.useFrame) 
+% plot_AUC_CVL(env,status,graph,DAL,ansMat,CVL,Index_of_env.useFrame) 
 %%
 %% varargin{1}: index to select and plot only one sample.
 %%            index correspond with index of DAL.regFac.
-
+%% usage2)
+%% ansMat = alpha_fig %alpha_fig: matrix whose entry is 1 or 0.
+% plot_AUC_CVL(env,status,graph,DAL,ansMat,CVL)
 %% ==<conf>==
 
 myColor = graph.prm.myColor;

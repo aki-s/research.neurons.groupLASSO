@@ -1,4 +1,4 @@
-function [ihbas, ihbasis] = make_basis(ihbasprs,dt)
+function [ihbas, ihbasis, Oihbasprs] = make_basis(ihbasprs,dt)
 % [ihbas, ihbasis] = make_basis(ihbasprs,dt,numFrame);
 
 %numFrame = ihbasprs.numFrame;
@@ -53,3 +53,8 @@ if absref >= dt
 end
 
 ihbas = orth(ihbasis);  % use orthogonalized basis
+
+Oihbasprs=ihbasprs;
+Oihbasprs.numFrame = numFrame;
+
+

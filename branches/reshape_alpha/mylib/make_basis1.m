@@ -1,4 +1,7 @@
 function [ihbas, ihbasis, Oihbasprs] = make_basis1(ihbasprs,dt,D2)
+%% ihbasprs: parameter to tweek 'bases'
+%% dt: [sec] per frame
+%% D2: parameter for scaling
 
 %%tail(log(max(1:x))/(pi/2) ) == nbase
 Hz = 1/dt;
@@ -78,9 +81,10 @@ end
 
 ihbas = orth(ihbasis);  % use orthogonalized basis
 
-
+Oihbasprs=ihbasprs;
 Oihbasprs.numFrame = numFrame;
 Oihbasprs.D1 = D1;
+Oihbasprs.D2 = D2;
 Oihbasprs.nbase = nbase;
 
 

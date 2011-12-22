@@ -94,19 +94,20 @@ for i1 = 1:LOOPn
         S.graph.prm.showWeightDistribution = 0;
       end
       S.graph.prm.auto = 0; % make comparison of ResFunc easy.
-      if nargin >= 4 %% to hand 'graph.prm'
+      if nargin >= 4 %% to hand over 'graph.prm'
         S.graph = varargin{4};
       end
-      if 1 == 1
+      if 1 == 0
         plot_Ealpha(S.env,S.graph,S.status,S.DAL,S.bases,S.basisWeight ...
                     ,'',regFacIdx)
       else
         try
-          plot_Ealpha(S.env,S.graph,S.status,S.DAL,S.bases,S.basisWeight ...
+          plot_Ealpha(S.env,S.graph,S.status,S.DAL,S.bases,S.EbasisWeight ...
                       ,'',regFacIdx)
 
         catch errP
           warning('DEBUG:NOTICE','error hundling');
+regFacIdx
           plot_Ealpha(S.env,S.graph,S.status,S.DAL,S.bases,S.EbasisWeight ...
                       ,'',regFacIdx)
           try

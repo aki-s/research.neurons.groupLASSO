@@ -41,13 +41,9 @@ function [D] = gen_designMat(env,status,bases,I,Drow,varargin)
 %[D ] = gen_designMat(env,bases,I,Drow);
 %%
 
-%global status;
-
-
 prs.gen_designMat = 2; % prs: parameters
-if strcmp('debug','debug')
-  histSize = size(bases.ih,1); % default histSize.
-end
+%%histSize = size(bases.ihbasis,1); % default histSize.
+histSize = bases.ihbasprs.numFrame; % default histSize.
 
 %%% ==< check size>==
 if (status.READ_FIRING ~= 1)
@@ -128,8 +124,8 @@ if reportEvery == 0
   reportEvery = 1;
 end
 parforFlag = status.parfor_;
-if strcmp(bases.type,'glm')
-  fprintf(1,'%s : %% ',bases.type);
+if strcmp(bases.ihbasprs.basisType,'glm')
+  fprintf(1,'%s : %% ',bases.ihbasprs.basisType);
   parfor c = 1:C %++bug:test
   %for c = 1:C %++bug:test
     if parforFlag ~= 1
@@ -173,8 +169,8 @@ if strcmp(bases.type,'glm')
   for c = 1:C
     D(:, (c-1)*K + (1:K) ) = Dcell{c};
   end
-elseif strcmp(bases.type,'bar')
-  fprintf(1,'%s : %% ',bases.type);
+elseif strcmp(bases.ihbasprs.basisType,'bar')
+  fprintf(1,'%s : %% ',bases.ihbasprs.basisType);
   for c = 1:C
     if ~mod(c,reportEvery) %% show progress.
   %%      fprintf(1,'%d ',count*10)

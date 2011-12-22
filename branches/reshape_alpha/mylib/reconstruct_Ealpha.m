@@ -25,7 +25,7 @@ else
   FROM = 1;
   regFacLen = length(DAL.regFac);
 end
-if strcmp(bases.type,'bar')
+if strcmp(bases.ihbasprs.basisType,'bar')
   for i0 = FROM:regFacLen
     for i1to = 1:cnum
       for i2from = 1:cnum
@@ -33,7 +33,7 @@ if strcmp(bases.type,'bar')
       end
     end
   end
-elseif  strcmp(bases.type,'glm')
+elseif  strcmp(bases.ihbasprs.basisType,'glm')
   for i0 = FROM:regFacLen
     for i1to = 1:cnum
       for i2from = 1:cnum

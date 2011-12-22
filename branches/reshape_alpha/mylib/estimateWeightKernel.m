@@ -6,7 +6,7 @@ function [EbasisWeight,Ebias,DALstatus,DAL,Ostatus] = estimateWeightKernel(env,g
 %% Ostatus: Ostatus.time.regFac
 % [KerWeight,Ebias,DALstatus,DAL] = ...
 % estimateWeightKernel(env,status,graph,bases,I,DAL);
-
+DEBUG = 1;
 Ostatus = status;
 nargin_NUM = 6;
 in.v1 = 1;
@@ -38,7 +38,8 @@ elseif strcmp('auto','auto')
 elseif strcmp('allI','allI_')  %++conf
   %%% use all available firing history.
   %% Drow: length of total frames used at loss function.
-  DAL.Drow = env.genLoop - size(bases.ihbasprs.numFrame,1) -1; 
+  %  DAL.Drow = env.genLoop - size(bases.iht,1) -1; 
+  DAL.Drow = env.genLoop - bases.ihbasprs.numFrame -1; 
 end
 
 %% ==< init variables >==
@@ -49,25 +50,25 @@ method = DAL.method;
 if 1 == 1
   %% dimension reduction to be estimated.
   fprintf('\tGenerating Matrix for DAL\n');
-if ( DAL.Drow > bases.ihbasprs.numFrame )
-  [D] = gen_designMat(env,status,bases,I,DAL.Drow);
-else
-  error('must be (DAL.Drow > bases.ihbasprs.numFrame)')
-end
-  %%+improve:write out for later use and speedup.
-  %  DAL.Drow = Drow.Drow - length(bases.ihbasprs.numFrame);
-
-  if strcmp(method,'prgl')
-    pI= I( (end - DAL.Drow+ length(bases.ihbasprs.numFrame) +1): end,:);
-  elseif strcmp(method,'lrgl')
-    pI =  2 * I( (end - DAL.Drow+ length(bases.ihbasprs.numFrame) +1): end,:) - 1;
+  if ( DAL.Drow > bases.ihbasprs.numFrame )
+    [D] = gen_designMat(env,status,bases,I,DAL.Drow);
+  else
+    error('must be (DAL.Drow > bases.ihbasprs.numFrame)')
   end
+  %%+improve:write out for later use and speedup.
+  if strcmp(method,'prgl')
+    %    pI= I( (end - DAL.Drow+ length(bases.ihbasis,1) +1): end,:);
+    %    pI= I( (end - DAL.Drow+ bases.ihbasprs.numFrame +1): end,:);%maybe_O.K.
+    pI = I( (end+1-size(D,1)):end, :); 
+  elseif strcmp(method,'lrgl')
+    pI =  2 * I( (end - DAL.Drow+ length(bases.iht) +1): end,:) - 1;
+  end
+  %% must be length(D,1) == length(pI,1) 
 end
 if strcmp('debug','debug_')
-  whos D
-fprintf(1,'Drow:%d, I:',DAL.Drow);
-fprintf(1,' %d',sum(  I((end+1-DAL.Drow):end,:), 1));
-fprintf(1,'\n');
+  fprintf(1,'Drow:%d, I:',DAL.Drow);
+  fprintf(1,' %d',sum(  I((end+1-DAL.Drow):end,:), 1));
+  fprintf(1,'\n');
 end
 if strcmp('calcDAL','calcDAL')
   PRMS = length(DAL.regFac);
@@ -104,8 +105,8 @@ if strcmp('calcDAL','calcDAL')
     cost2 = tic;
     fprintf(1,'\t== Reg.factor: %9.4f == frame: %d<-%d : elapsed: ',...
             DAL.regFac(ii1),DAL.Drow,env.genLoop);
-   %%    parfor i1to = 1:cnum % ++parallelization  %bug: EbasisWeight{ii1}{i1to}, Ebias(ii1,i1to)
-   for i1to = 1:cnum % ++parallelization 
+    %%    parfor i1to = 1:cnum % ++parallelization  %bug: EbasisWeight{ii1}{i1to}, Ebias(ii1,i1to)
+    for i1to = 1:cnum % ++parallelization 
       switch  method
         %%+improve: save all data for various method
         case 'lrgl'
@@ -171,3 +172,7 @@ if strcmp('calcDAL','calcDAL')
   Ostatus.time.estimate_TrueKernel = toc(cost1);
 end
 
+function debug_(DEBUG,varargin)
+if DEBUG == 1
+  whos varargin{:}
+end

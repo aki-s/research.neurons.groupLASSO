@@ -63,7 +63,7 @@ end
 %%++improve
 %% bases should be loaded from a mat file.
 %% large argment of makeSimStruct_glm() make small width of basis.
-if 1==0 
+if 1==1 
 bases = makeSimStruct_glm(bases,1/env.Hz.video); % Create GLM structure with default params
 else
 bases = makeSimStruct_glm(0.2); % Create GLM structure with default params
@@ -104,7 +104,7 @@ if status.estimateConnection == 1
   %% matlabpool close force local
   DAL = setDALregFac(env,DAL,bases);
   regFacLen = length(DAL.regFac);% DAL.prm.regFacLen =
-  %% CVL: cross Validat error
+  %% CVL: cross Validation error
   CVL = cell(1,useNeuroLenIdx);
   status.time.regFac = zeros(useFrameLen,regFacLen);
   CVwhole = cell(1,useNeuroLenIdx);
@@ -127,19 +127,11 @@ tstatus = status;%% make 'status' global to local variable 'tstatus'
     fprintf(1,'#neuron:%5d<-%5d\n',tenv.inFiringUSE(i0),env.cnum);
     I = tmpI(:,1:env.inFiringUSE(i0));
     tenv.cnum = size(I,2);
-    if 1 == 0
-      CVL{i0}        = zeros(regFacLen,tenv.cnum,useFrameLen);
-      CVwhole{i0}    = zeros(useFrameLen,1);
-      RfWholeIdx{i0} = zeros(useFrameLen,1); %Rf: regularization factor
-      CVeach{i0}     = zeros(useFrameLen,tenv.cnum);
-      RfEachIdx{i0}  = zeros(useFrameLen,tenv.cnum);
-    else
       CVL{i0}        = nan(regFacLen,tenv.cnum,useFrameLen);
       CVwhole{i0}    = nan(useFrameLen,1);
       RfWholeIdx{i0} = nan(useFrameLen,1); %Rf: regularization factor
       CVeach{i0}     = nan(useFrameLen,tenv.cnum);
       RfEachIdx{i0}  = nan(useFrameLen,tenv.cnum);
-    end
     %%< loop:useFrameLen >
     for i1 =1:useFrameLen
       fprintf('%s',repmat('=',[30 1]));
@@ -150,7 +142,6 @@ tstatus = status;%% make 'status' global to local variable 'tstatus'
       %% ( %++parallel? not practical for biological real data.)
       if ( bases.ihbasprs.numFrame <= tenv.useFrame(i1) ) && ( tenv.useFrame(i1) <= tenv.genLoop )
         DAL.Drow = tenv.useFrame(i1);
-        %        if strcmp('crossValidation','crossValidation')
         if (status.crossVal > 1 )
           %% ==< choose appropriate regFac >==
           if tstatus.parfor_ == 1

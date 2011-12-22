@@ -12,16 +12,21 @@ if isfield(Sin,'ihbasprs') && strcmp(ihbasprs.basisType,'bar')
   ihbasprs.hpeaks = NaN;
   ihbasprs.b = NaN;
   ihbas = NaN;
-  ihbasis = ones(1,ihbasprs.nbase);
+  ihbasis = ones(ihbasprs.nbase,1);
+  ihbasis.nbase = 100;
+  ihbasprsOld = ihbasprs;
 else
   % -- Nonlinearity -------
   nlinF = @exp;
   % Other natural choice:  nlinF = @(x)log(1+exp(x));
 
 if strcmp('old','old_')
-  [ihbas,ihbasis] = make_basis(ihbasprs,0.2);
+  [ihbas,ihbasis,ihbasprs] = make_basis(ihbasprs,0.2);
+ihbasprsOld = ihbasprs;
 else
-  [ihbas,ihbasis,ihbasprs2] = make_basis1(ihbasprs,dt,0.01);
+  ihbasprsOld = ihbasprs
+  [ihbas,ihbasis,ihbasprs] = make_basis1(ihbasprs,dt,0.01);
+ihbasprs
 end
   %% append basis for absolute refractory period.
   if (ihbasprs.absref < dt) 
@@ -36,6 +41,6 @@ S = struct(...
     'ih', ih, ...
     'dt', dt, ...
     'ihbasprs', ihbasprs, ... % params for ih basis
-    'ihbasprs2', ihbasprs2, ... % params for ih basis
+    'ihbasprsOld', ihbasprsOld, ... % params for ih basis
     'ihbas', ihbas, ... % orthogonalized ihbasis
     'ihbasis', ihbasis); ... % basis

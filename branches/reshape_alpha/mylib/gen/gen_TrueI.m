@@ -12,16 +12,13 @@ if strcmp('setlocal_var','setlocal_var')
   genLoop = env.genLoop; 
   cnum    = env.cnum   ;    
   hnum    = env.hnum   ;    
-  SELF_DEPRESS_BASE = env.SELF_DEPRESS_BASE;
 end
 histSize = hnum*hwind;
 %% ==</ set local variables >==
 
-%I = zeros(histSize+genLoop,cnum); % mallloc
 I = false(histSize+genLoop,cnum); % mallloc logical var.
 
 %% lambda: (genLoop,cnum) matrix. Firing rate per frame. [rate/frame]
-lambda    = zeros(histSize+ genLoop,env.cnum); % mallloc
 loglambda = zeros(histSize+ genLoop,env.cnum); % mallloc
 
 if strcmp('genLoop','genLoop')
@@ -29,8 +26,7 @@ if strcmp('genLoop','genLoop')
   tmp0.showProg = floor(genLoop/10);
   tmp0.count = 0;
   fprintf('generating time serise of firing:\tprogress(%%): ');
-  %  for i1 = 1:genLoop
-  for i1 = (histSize+ 1):(histSize)+ genLoop
+  for i1 = (histSize+ 1):(histSize + genLoop )
     if ~mod(i1- histSize,tmp0.showProg) %% show progress.
       fprintf('%d ',tmp0.count*10)
       tmp0.count = tmp0.count +1;
@@ -59,9 +55,9 @@ if strcmp('genLoop','genLoop')
     %%%% ===== END =====
     loglambda(i1,:) = alpha0 + sum( alpha.*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
     if strcmp('may_bug','may_bug_')
-    %% old: This may be correct non stable poisson process.
-    tmp3 = exp(-exp(loglambda(i1,:))/Hz.video).*(exp(loglambda(i1,:))/Hz.video); 
-    tmp3 = rand(1,cnum) < tmp3;
+      %% old: This may be correct non stable poisson process.
+      tmp3 = exp(-exp(loglambda(i1,:))/Hz.video).*(exp(loglambda(i1,:))/Hz.video); 
+      tmp3 = rand(1,cnum) < tmp3;
     end
 
     tmp3 = exp(-exp(loglambda(i1,:))/Hz.video);
@@ -71,7 +67,6 @@ if strcmp('genLoop','genLoop')
     I(i1,:) = tmp3;
   end
   fprintf('\n');
-  clear Tptr nIs;
 end
 
 lambda = exp(loglambda);

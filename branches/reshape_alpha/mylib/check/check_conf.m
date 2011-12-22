@@ -54,7 +54,7 @@ end
 
 if isfield(env,'Hz') && isfield(env.Hz,'video') % check ability of expression.
   if (bases.ihbasprs.numFrame/env.Hz.video) < 0.1 
-    warning(DEBUG:estimate,'range of bases seems to be small');
+    warning('DEBUG:estimate','range of bases seems to be small');
   end
 end
 
@@ -73,7 +73,8 @@ if isfield(env,'useFrame')
   end
 
 end
-if isfield(status,'crossVal')
+%if isfield(status,'crossVal')
+if status.crossVal > 1
   tmp = Oenv.genLoop;
   k = status.crossVal;
   while mod(tmp,k)
