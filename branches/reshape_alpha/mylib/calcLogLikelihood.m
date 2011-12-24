@@ -1,6 +1,7 @@
-function L = calcLikelihood(loglambda,I)
+function L = calcLogLikelihood(loglambda,I)
 %% 
-%% likelihood of each neuron.
+%% Log likelihood of each neuron.
+%% (Poisson distribution)
 %% L: (1,1:#neuron) matrix
 %L = - sum(sum( (I .* loglambda - exp(loglambda)) ,1));
 L = - sum( (I .* loglambda - exp(loglambda)) ,1);

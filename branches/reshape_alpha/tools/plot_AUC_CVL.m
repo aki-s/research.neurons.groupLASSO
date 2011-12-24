@@ -115,8 +115,9 @@ for j0 = FROM:uF
 
   subplot(2,1,2)
   plot_CVLwhole(env,status,graph,DAL,CVL{1},j0)
-  axis([1 uR 0 1e5/(j0.^5)]) % move figures to the left.
-
+  %  axis([1 uR 0 1e5/(j0.^5)]) % move figures to the left.
+  %  axis([1 uR 0 10]) % move figures to the left.
+  axis([1 uR 0 100/(j0.^3)]) % move figures to the left./ adjust yrange
 end
 %{
 

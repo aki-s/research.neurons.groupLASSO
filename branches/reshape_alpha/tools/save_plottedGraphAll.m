@@ -6,6 +6,7 @@ function save_plottedGraphAll(FnamePrefix,varargin)
 % save_plottedGraphAll('FnamePrefix',status.savedirname,DAL,eval(cnum))
 % save_plottedGraphAll('FnamePrefix',status.savedirname,DAL,eval(cnum),4)
 %%
+%% the name of figure wrote out is print out to sdout.
 
 %% ==< init >==
 figHandles = get(0,'Children');

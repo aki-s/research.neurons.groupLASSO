@@ -60,11 +60,11 @@ switch DEBUG_s
     status.inStructFile = [ rootdir_ '/indir/my_n9.con'];
   case 'test'
     status.crossVal = 8;
-    DAL.regFac = [32 4 1];
-    env.genLoop = 20000;
+    DAL.regFac = [256 128 64 32 16 8 4 2 1];
+    env.genLoop = 100000;
     graph.PLOT_T = 1;
     status.inStructFile = [ rootdir_ '/indir/my_n9.con'];
-    env.useFrame = [5000 10000];%essential @check/check_conf.m
+    env.useFrame = [5000 10000 50000 90000];%essential @check/check_conf.m
   case 'comp_steven_glm'
     %    status.crossVal = 8;
     DAL.regFac = [ 16 10 8 4];

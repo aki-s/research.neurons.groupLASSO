@@ -131,7 +131,7 @@ else
         loglambda(i3,1:cnum) = Ebias_(i2,1:cnum) + sum( Ealpha_(:,1:cnum,i2) .*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
       end
       toc
-        err(i2,:,i1) = err(i2,:,i1) + calcLikelihood(loglambda,I(USE,:));
+        err(i2,:,i1) = err(i2,:,i1) + calcLogLikelihood(loglambda,I(USE,:));
     end
     %% save(EbasisWeight,Ebias_,status,loglambda) 
   end

@@ -16,6 +16,8 @@ parfor_flag = status.parfor_;
 
 tmpEnv = env;
 argNum = 5;
+histSize = bases.ihbasprs.numFrame;
+
 if (nargin >= argNum+1 )
   if ismatrix(varargin{1})
     %% varargin{1} is 'I'. 
@@ -68,13 +70,29 @@ if (nargin >= argNum+1 )
 end
 
 if ( status.READ_FIRING == 1 )
-  len = env.genLoop;
+  len = env.genLoop; % env.genLoop == size(I,1)
 else % artificially generated firing is not reliable at small frame index.
+  %% env.genLoop == size(I,1) + 'init_condition_of_I'
   prm = 0.666;
   len = floor(env.genLoop * prm);
+  %% len ~ env.genLoop - 4000 ?
 end
 
 if( nargin >= (argNum + 2) ) %++needless?
+  useFrameIdx = varargin{2};
+else
+  useFrameIdx = 1; % noncommittal
+end
+
+if( nargin > (argNum + 3) ) %++needless?
+  Tlen = varargin{3};
+  if Tlen > len
+    error(['number of frame demanded for cross validation is too ' ...
+           'large. Tlen > len'])
+  end
+end
+
+%% ==< crossVal check >==
   tmp = len;
   while mod(tmp,k)
     tmp = tmp -1;
@@ -84,17 +102,9 @@ if( nargin >= (argNum + 2) ) %++needless?
     fprintf(1,'To make equally dividable, not all firng was used.\n');
     fprintf(1,'(use %10d out of %10d) <- Original%10d\n',DAL.Drow,Tlen,env.genLoop); 
   end
-  useFrameIdx = varargin{2};
-else
-  useFrameIdx = 1; % noncommittal
-end
-
-if( nargin > (argNum + 3) ) %++needless?
-  Tlen = varargin{3};
-  if Tlen > len
-    error('Tlen > len')
-  end
-end
+%% ==</crossVal check >==
+%% set valid I
+I = I((end+1-Tlen):end,:);
 
 Width = Tlen/k;
 tmpEnv.genLoop = Tlen - Width;
@@ -105,7 +115,6 @@ if isfield(env,'inFiringUSE')
 else
   cnum = env.cnum;
 end
-loglambda = zeros(tmpEnv.genLoop,cnum);
 EbasisWeight = cell(1,k);
 Ebias  = cell(1,k);
 Estatus = cell(1,k);
@@ -130,11 +139,12 @@ else
     USE = (1:Tlen);
     USE = USE - omit;
     USE = USE(USE >0);
+    Icut = I(USE,:);
     [EbasisWeight{i1},Ebias{i1},Estatus{i1},dum1,status_tmp{i1}] =...
-        estimateWeightKernel(tmpEnv,graph,status,bases,I(USE,:),DAL,useFrameIdx);
+        estimateWeightKernel(tmpEnv,graph,status,bases,Icut,DAL,useFrameIdx);
     cost = cost + status_tmp{i1}.time.regFac(useFrameIdx,:);
     [Ealpha Ograph] = reconstruct_Ealpha(tmpEnv,graph,DAL,bases,EbasisWeight{i1});
-    histSize = bases.ihbasprs.numFrame;
+    %    histSize = bases.ihbasprs.numFrame;
     %% warning: not exact response function is write out.
     if strcmp('incomplete_RF','incomplete_RF') % RF: response function
       saveResponseFunc(env,Ograph,status,bases,...
@@ -144,17 +154,17 @@ else
     end
     [Ealpha_] = EalphaCell2Mat(tmpEnv,Ealpha,regFacLen);
     for i2 = 1:regFacLen
-      loglambda = cell(tmpEnv.genLoop,1);
+      loglambda = cell(tmpEnv.genLoop-histSize,1);
       %%++parallel strongly recommended. Especially if 'k' is small
       %% leave 'for-i3' out as 'parfor-i3' may be good.
-      for i3 = 1: tmpEnv.genLoop
-        nIs = I(i3 + histSize - (1:histSize), 1:cnum);
+      for i3 = (1+histSize): ( tmpEnv.genLoop)
+        nIs = Icut(i3 - (1:histSize), 1:cnum);
         %        loglambda(i3,1:cnum) = Ebias(i2,1:cnum) + sum( Ealpha_(:,1:cnum,i2) .*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
         loglambda{i3}(1:cnum) = Ebias{i1}(i2,1:cnum) + sum( Ealpha_(:,1:cnum,i2) .*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
       end
       loglambda = cell2mat(loglambda);
       if parfor_flag == 1
-        err(i2,:,i1) = err(i2,:,i1) + calcLikelihood(loglambda,I(USE,:));
+        err(i2,:,i1) = err(i2,:,i1) + calcLogLikelihood(loglambda,Icut((histSize+1:end),:));
       end
     end
     %% save(EbasisWeight,Ebias,status,loglambda) 
