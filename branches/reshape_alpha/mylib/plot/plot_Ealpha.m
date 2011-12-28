@@ -9,8 +9,9 @@ function plot_Ealpha(env,graph,status,DAL,bases,EbasisWeight,...
 %% regFacIndexIn: e.g. o [1] [1:3] , x [1 3] ++bug
 global rootdir_
 
+%% return connection intensity 'RFIntensity' if ('DEBUG' >1 ).
 DEBUG = status.DEBUG.level;
-
+%%
 regFacLen = length(DAL.regFac);
 regFacIndexIn = (1:regFacLen);
 
@@ -135,17 +136,17 @@ for i0 = FROM:regFacLen
       %% <  subplot background color >
       if RFIntensity(i2to,i3from,i0) > 0
         if DEBUG == 1
-          fprintf(1,'%5.2f: r ,',RFIntensity(i2to,i3from,i0))
+          fprintf(1,'+%5.2f: r ,',RFIntensity(i2to,i3from,i0))
         end
         heat = [1 0.5 0.5];
       elseif RFIntensity(i2to,i3from,i0) < 0
         if DEBUG == 1
-          fprintf(1,'%5.2f: b ,',RFIntensity(i2to,i3from,i0))
+          fprintf(1,'+%5.2f: b ,',RFIntensity(i2to,i3from,i0))
         end
         heat = [0.5 0.5 1];
       else
         if DEBUG == 1
-          fprintf(1,'%5.2f: w ,',RFIntensity(i2to,i3from,i0))
+          fprintf(1,'+%5.2f: w ,',RFIntensity(i2to,i3from,i0))
         end
         heat = [1 1 1];
       end

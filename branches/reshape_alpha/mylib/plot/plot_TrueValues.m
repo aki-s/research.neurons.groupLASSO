@@ -5,7 +5,7 @@ fprintf(1,'\nplotting generated "True Values"\n\n')
 %%% ===== PLOT alpha ===== START =====
 if ( 1 == graph.PLOT_T )
   %% ++bug: func plot_alpha must be given 'env'.
-  plot_alpha(graph,env,alpha,'\alpha: Spatio-temporal Kernels');
+  plot_alpha(graph,env,alpha,'response functions');
 end
 if graph.PRINT_T == 1
   print('-depsc','-tiff',[rootdir_ '/outdir/true_alpha.eps'])

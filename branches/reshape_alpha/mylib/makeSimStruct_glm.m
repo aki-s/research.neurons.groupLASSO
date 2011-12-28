@@ -24,9 +24,8 @@ if strcmp('old','old_')
   [ihbas,ihbasis,ihbasprs] = make_basis(ihbasprs,0.2);
 ihbasprsOld = ihbasprs;
 else
-  ihbasprsOld = ihbasprs
+  ihbasprsOld = ihbasprs;
   [ihbas,ihbasis,ihbasprs] = make_basis1(ihbasprs,dt,0.01);
-ihbasprs
 end
   %% append basis for absolute refractory period.
   if (ihbasprs.absref < dt) 

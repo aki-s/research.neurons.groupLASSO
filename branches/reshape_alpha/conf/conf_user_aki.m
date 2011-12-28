@@ -1,7 +1,7 @@
 %% Set freely your configuration.
 %% Please overload default configuration explicitly by writing here.
 warning('DEBUG:conf','conf_user.m overrides all configuration variables set after this file.');
-if 1 == 0
+if 1 == 1
   DEBUG_s = 'gen_9_non'
 elseif 1 == 0
   DEBUG_s = 'comp_steven_glm'
@@ -9,7 +9,7 @@ elseif 1 == 0
   DEBUG_s = 'comp_steven_bar'
 elseif 1 == 0
   DEBUG_s = 'my_n9.con'
-elseif 1 == 1
+elseif 1 == 0
   DEBUG_s = 'test'
 end
 env.SELF_DEPRESS_BASE = 6.5; % good. c.a. generate firing of 30Hz.
@@ -32,7 +32,7 @@ status.READ_NEURO_CONNECTION = 1; %
 status.GEN_TrueValues = 1;
 status.estimateConnection = 1;
 status.save_vars = 1;
-status.save_warning = 1; %++bug: not yet implemented.
+status.diary = 1;
 status.parfor_ = 1;
 status.mail = 1;
 status.DEBUG.plot = 1; %++bug: not yet implemented.
@@ -60,11 +60,12 @@ switch DEBUG_s
     status.inStructFile = [ rootdir_ '/indir/my_n9.con'];
   case 'test'
     status.crossVal = 8;
-    DAL.regFac = [256 128 64 32 16 8 4 2 1];
-    env.genLoop = 100000;
+    %    DAL.regFac = [256 128 64 32 16 8 4 2 1];
+    DAL.regFac = [16 8 4 2 1];
+    env.genLoop = 10000;
     graph.PLOT_T = 1;
     status.inStructFile = [ rootdir_ '/indir/my_n9.con'];
-    env.useFrame = [5000 10000 50000 90000];%essential @check/check_conf.m
+    %    env.useFrame = [5000 10000 50000 90000];%indispensable
   case 'comp_steven_glm'
     %    status.crossVal = 8;
     DAL.regFac = [ 16 10 8 4];

@@ -71,7 +71,18 @@ if isfield(env,'SELF_DEPRESS_BASE')
 else
   SELF_DEPRESS_BASE = str2num(input('env.SELF_DEPRESS_BASE:= ','s'));
 end
+if ~isfield(env,'useFrame') & ( status.crossVal <= 1 )
+  env.useFrame = genLoop; % use all firing
+elseif ~isfield(env,'useFrame') & ( status.crossVal > 1 )
+  tmp = env.genLoop;
+  cv = status.crossVal;
+  while mod(tmp,cv)
+    tmp = tmp -1;
+  end
+  tmp = tmp * (cv-1) / cv;
 
+  env.useFrame = floor(tmp* (cv - 1 )/ cv);
+end
 
 
 %% ==< clean variables >==
@@ -83,6 +94,6 @@ env.genLoop = genLoop; clear genLoop;
 env.cnum = cnum; clear cnum;
 env.hnum = hnum; clear hnum;
 
-env.SELF_DEPRESS_BASE = SELF_DEPRESS_BASE; clear SELF_DEPRESS_BASE;
+env.SELF_DEPRESS_BASE = SELF_DEPRESS_BASE;
 %% ==</ clean variables >==
 %% ==</ CUSTOMIZE:gen_TrueValue.m >==

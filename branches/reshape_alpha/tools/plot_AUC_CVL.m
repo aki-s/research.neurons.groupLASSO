@@ -45,7 +45,7 @@ end
 if isnumeric(ansMat)
   M_ans = ansMat;  
 else
-load(ansMat,'M_ans');
+  load(ansMat,'M_ans');
 end
 uR = length(DAL.regFac);
 cSET = length(env.inFiringUSE);
@@ -72,82 +72,156 @@ inRoot = status.savedirname;
 %% ==</conf>==
 
 if strcmp('leaveOut_calcAUC','leaveOut_calcAUC')
-%% ==< calcAUC >==
-rate = zeros(uR,4,uF);
-auc.A = zeros(uF,uR);
-spaceLen = length(sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{1}, ...
-                          fFNAME, uFnum{FROM}, inFiringUSE{1}));
+  %% ==< calcAUC >==
+  %  rate = zeros(uR,4,uF);
+  auc.A = zeros(uF,uR);
+  recr = zeros(uF,uR,4);
+  thresh0 = zeros(uF,uR);
+  spaceLen = length(sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{1}, ...
+                            fFNAME, uFnum{FROM}, inFiringUSE{1}));
 
-fprintf(1,'LEGEND) TP:=True Positive, p:=positive, n:=negative\n')
-fprintf(1,['response func mat_file %s : (#)TP0  TPp  TPn  TPtotal'...
-           ':(%%)TP0  TPp   TPn   TPtotal'...
-           ': AUC'...
-           '\n'],...
-        repmat(' ',[1 (spaceLen-28)]) )
-for j0 = FROM:uF
-  for i0 = 1:cSET
-    for regFacIdx = 1:uR
-      filename =sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{regFacIdx}, ...
-                        fFNAME, uFnum{j0}, inFiringUSE{i0});
-      load( [inRoot '/' filename], 'Alpha');
-      RFIntensity = evalResponseFunc( Alpha );
-      [recn, recr, thresh0 ,auc.A(j0,regFacIdx)] = evalRFIntensity_omitDiag(RFIntensity, M_ans);
-      disp( sprintf( '%20s: %3d, %3d, %3d, %6d: %5.1f, %5.1f, %5.1f, %5.1f: %2.1f',...
-                     filename, recn, recr*100, auc.A(j0,regFacIdx)) );
-      rate(regFacIdx,1:4,j0) = recr*100;
+  fprintf(1,'LEGEND) TP:=True Positive, p:=positive, n:=negative\n')
+  fprintf(1,['response func mat_file %s : (#)TP0  TPp  TPn  TPtotal'...
+             ':(%%)TP0  TPp   TPn   TPtotal'...
+             ': AUC threshold'...
+             '\n'],...
+          repmat(' ',[1 (spaceLen-28)]) )
+  for j0 = FROM:uF
+    for i0 = 1:cSET
+      for regFacIdx = 1:uR
+        filename =sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{regFacIdx}, ...
+                          fFNAME, uFnum{j0}, inFiringUSE{i0});
+        load( [inRoot '/' filename], 'Alpha');
+        RFIntensity = evalResponseFunc( Alpha );
+        %      [recn, recr, thresh0(j0,regFacIdx) ,auc.A(j0,regFacIdx)] = evalRFIntensity_omitDiag(RFIntensity, M_ans);
+        [recn, recr(j0,regFacIdx,1:4), thresh0(j0,regFacIdx) ,auc.A(j0,regFacIdx)] = evalRFIntensity(RFIntensity, M_ans);
+        disp( sprintf( ['%20s:'...
+                        ' %3d, %3d, %3d, %6d:'...
+                        ' %5.1f, %5.1f, %5.1f, %5.1f:'...
+                        ' %4.3f',...
+                        ' %5.3f'],...
+                       filename,...
+                       recn, recr(j0,regFacIdx,1:4)*100,...
+                       auc.A(j0,regFacIdx),...
+                       thresh0(j0,regFacIdx)) );
+        %        rate(regFacIdx,1:4,j0) = recr*100;
+      end
     end
+    fprintf(1,'\n');
   end
-  fprintf(1,'\n');
-end
-%% ==</calcAUC >==
+  %% ==</calcAUC >==
 end
 %%
+YRANGE_CVL = sum(median(CVL{1},1),2);
+CHECK_EACH_RATE = 1;
+CHECK_THRESHOLD = 1;
+N = 2;
+if CHECK_THRESHOLD == 1
+  N = N+1;
+end
+if CHECK_EACH_RATE == 1
+  N = N+1;
+end
+
+[maxVal]    = max(auc.A, [], 2);
+[numMaxVal] = max(recr(:,:,4), [], 2);
 for j0 = FROM:uF
+  maxIdx    = find(maxVal(j0)    == auc.A(j0,1:uR) );
+  numMaxIdx = find(numMaxVal(j0) == recr (j0,1:uR,4) );
   figure
 
-  subplot(2,1,1)
+  subplot(N,1,1)
+  plot_CVLwhole(env,status,graph,DAL,CVL{1},j0)
+  %  axis([1 uR 0 1e5/(j0.^5)]) % move figures to the left.
+  %  axis([1 uR 0 10]) % move figures to the left.
+  %% good?
+  %  axis([1 uR 0 100/(j0.^3)]) % move figures to the left./ adjust yrange
+  %% good+?
+  % axis([1 uR 1.e4/env.useFrame(j0) 1.e5/env.useFrame(j0) ])
+  %% good++?
+  axis([1 uR YRANGE_CVL(j0)*[.8 1.2] ])
+
+  subplot(N,1,2)
+  hold on;
   plot(1:uR, auc.A(j0,:),'o-','Color',myColor{j0},'LineWidth',2)
-% plot_AUC(env,status,DAL,ansMat)
   ylabel('AUC')
   set(gca, 'XTick', 1:uR, 'XTickLabel', XLABELrf,'ylim',[0.5 1])
   axis([1 uR .5 1.05]) % move figures to the left.
   xlabel('regularization factor')
+  %% set diamond at maxIdx
+  hLine2 = plot(maxIdx, auc.A(j0,maxIdx),'o-','color',myColor{j0},...
+                'Marker','d','MarkerFaceColor','auto','MarkerSize',10,'LineWidth',3);
+  set(get(get(hLine2,'Annotation'),'LegendInformation'),...
+      'IconDisplayStyle','off');
+  title(['max AUC : ',sprintf('%5.3f',auc.A(j0,maxIdx(1)))]);
 
-  subplot(2,1,2)
-  plot_CVLwhole(env,status,graph,DAL,CVL{1},j0)
-  %  axis([1 uR 0 1e5/(j0.^5)]) % move figures to the left.
-  %  axis([1 uR 0 10]) % move figures to the left.
-  axis([1 uR 0 100/(j0.^3)]) % move figures to the left./ adjust yrange
-end
-%{
-
-%% for paper
-if strcmp('for_publish','for_publish')
-  if 1 == 1
-    %% program started   : 2011-11-10-18:54:29, (firng,method) = (kim,aki)
-    text(11.5 ,0.60,'\color{white}  240','fontsize',12,'BackgroundColor',myColor{1} );
-    text(11.5 ,0.87,'\color{white}  500','fontsize',12,'BackgroundColor',myColor{2} );
-    text( 9.4 ,0.89,'\color{white} 1000','fontsize',12,'BackgroundColor',myColor{3} );
-    text( 7.1 ,0.83,'\color{white} 4000','fontsize',12,'BackgroundColor',myColor{4} );
-    text( 5.5 ,0.88,'\color{white}10000','fontsize',12,'BackgroundColor',myColor{5} );
-    text( 4.0 ,0.80,'\color{white}40000','fontsize',12,'BackgroundColor',myColor{6} );
-    text( 3.0 ,0.88,'\color{white}75000','fontsize',12,'BackgroundColor',myColor{7} );
-
-  else
-    %% program started   : 15-Nov-2011-start-12_49, (firng,method) = (kim,aki)
-    text(11.5 ,0.60,'\color{white}  256','fontsize',12,'BackgroundColor',myColor{1} );
-    text(11.5 ,0.87,'\color{white}  512','fontsize',12,'BackgroundColor',myColor{2} );
-    text( 9.4 ,0.89,'\color{white} 1024','fontsize',12,'BackgroundColor',myColor{3} );
-    text( 7.1 ,0.83,'\color{white} 4096','fontsize',12,'BackgroundColor',myColor{4} );
-    text( 5.5 ,0.88,'\color{white} 8192','fontsize',12,'BackgroundColor',myColor{5} );
-    text( 4.0 ,0.80,'\color{white}33168','fontsize',12,'BackgroundColor',myColor{6} );
-    text( 3.0 ,0.88,'\color{white}66336','fontsize',12,'BackgroundColor',myColor{7} );
-    text( 2.0 ,0.95,'\color{white}87500','fontsize',12,'BackgroundColor',myColor{8} );
+  if CHECK_THRESHOLD == 1
+    subplot(N,1,3)
+    plot(1:uR, thresh0(j0,:),'o-','Color',myColor{j0},'LineWidth',2)
+    set(gcf, 'Color', 'White', 'Position',[WIDTH,800,WIDTH+150,600])
+    set(gca, 'XTick', 1:uR, 'XTickLabel', XLABELrf)
+    axis([1 uR 0 5]) % move figures to the left.
+    xlabel('regularization factor')
+    ylabel('threshold')
+  title(['avg@maxCorrectRate: ',sprintf('%6.3f',sum(thresh0(j0,numMaxIdx))/length(numMaxIdx))]);
   end
-  set(gcf, 'Color', 'White', 'Position',[WIDTH,800,WIDTH,200])
-else
-  legend(uFnum{FROM:uF},'Location','WestOutside')
-  set(gcf, 'Color', 'White', 'Position',[WIDTH,800,WIDTH+150,200])
+
+if CHECK_EACH_RATE == 1
+  subplot(N,1,4)
+  axis([1 uR 0 1.05]) % move figures to the left.
+  hold on;
+  %%TP0
+  plot(1:uR,recr(j0,1:uR,1),'o-k','LineWidth',2)
+  %%TPp
+  plot(1:uR,recr(j0,1:uR,2),'o-r','LineWidth',2)
+  %%TPn
+  plot(1:uR,recr(j0,1:uR,3),'o-b','LineWidth',2)
+  %%TPtotal
+  plot(1:uR,recr(j0,1:uR,4),'o-g','LineWidth',2)
+  hLine3 = plot(numMaxIdx, recr(j0,numMaxIdx,4),'gd',...
+                'MarkerFaceColor','auto','MarkerSize',10,'LineWidth',2);
+  set(get(get(hLine3,'Annotation'),'LegendInformation'),...
+      'IconDisplayStyle','off');
+  title(['max : ',sprintf('%5.3f',recr(j0,numMaxIdx(end),4))]);
+% $$$   hLine4 = plot(maxIdx, auc.A(j0,maxIdx),'o-','color',myColor{j0},...
+% $$$                 'Marker','d','MarkerFaceColor','auto','MarkerSize',10,'LineWidth',3);
+% $$$   set(get(get(hLine2,'Annotation'),'LegendInformation'),...
+% $$$       'IconDisplayStyle','off');
+    xlabel('regularization factor')
+    ylabel('correct rate')
+%  legend({'TP0','TPp','TPn'})
 end
 
-%}
+end
+
+if 1 == 0
+  %% for paper
+  if strcmp('for_publish','for_publish')
+    if 1 == 1
+      %% program started   : 2011-11-10-18:54:29, (firng,method) = (kim,aki)
+      text(11.5 ,0.60,'\color{white}  240','fontsize',12,'BackgroundColor',myColor{1} );
+      text(11.5 ,0.87,'\color{white}  500','fontsize',12,'BackgroundColor',myColor{2} );
+      text( 9.4 ,0.89,'\color{white} 1000','fontsize',12,'BackgroundColor',myColor{3} );
+      text( 7.1 ,0.83,'\color{white} 4000','fontsize',12,'BackgroundColor',myColor{4} );
+      text( 5.5 ,0.88,'\color{white}10000','fontsize',12,'BackgroundColor',myColor{5} );
+      text( 4.0 ,0.80,'\color{white}40000','fontsize',12,'BackgroundColor',myColor{6} );
+      text( 3.0 ,0.88,'\color{white}75000','fontsize',12,'BackgroundColor',myColor{7} );
+
+    else
+      %% program started   : 15-Nov-2011-start-12_49, (firng,method) = (kim,aki)
+      text(11.5 ,0.60,'\color{white}  256','fontsize',12,'BackgroundColor',myColor{1} );
+      text(11.5 ,0.87,'\color{white}  512','fontsize',12,'BackgroundColor',myColor{2} );
+      text( 9.4 ,0.89,'\color{white} 1024','fontsize',12,'BackgroundColor',myColor{3} );
+      text( 7.1 ,0.83,'\color{white} 4096','fontsize',12,'BackgroundColor',myColor{4} );
+      text( 5.5 ,0.88,'\color{white} 8192','fontsize',12,'BackgroundColor',myColor{5} );
+      text( 4.0 ,0.80,'\color{white}33168','fontsize',12,'BackgroundColor',myColor{6} );
+      text( 3.0 ,0.88,'\color{white}66336','fontsize',12,'BackgroundColor',myColor{7} );
+      text( 2.0 ,0.95,'\color{white}87500','fontsize',12,'BackgroundColor',myColor{8} );
+    end
+    set(gcf, 'Color', 'White', 'Position',[WIDTH,800,WIDTH,200])
+  else
+    legend(uFnum{FROM:uF},'Location','WestOutside')
+    set(gcf, 'Color', 'White', 'Position',[WIDTH,800,WIDTH+150,200])
+  end
+
+end

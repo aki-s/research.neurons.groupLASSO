@@ -3,6 +3,7 @@ function  [status] = conf_progress()
 
 global status;
 
+status.diary = 1;
 status.profiler = 0;
 status.save_warning = 1; %++bug: not yet implemented.
 status.parfor_ = 1;

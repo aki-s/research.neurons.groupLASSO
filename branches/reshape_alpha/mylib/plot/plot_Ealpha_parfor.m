@@ -141,7 +141,7 @@ else
       set(gca,'yticklabel',[]);
       zeroFlag = 0;
     else
-      plot( 1:hnum, 0, 'b','LineWidth',4); % emphasize 0.
+      plot( 1:hnum, 0, 'b','LineWidth',2); % emphasize 0.
       grid on;
       if  graph.prm.showWeightDistribution == 1
         for i2 = 1:cnum
@@ -192,7 +192,7 @@ else
 end
 end
 %% h: description about outer x-y axis
-title = sprintf('regFac=%4d frame=%6d  #%4d',DAL.regFac(regFacIndex),DAL.Drow,cnum );
+title = sprintf('regFac=%09.4f frame=%6d  #%4d',DAL.regFac(regFacIndex),DAL.Drow,cnum );
 %{
 if cnum > LIM
   strcat(title,TIMEL);
@@ -219,7 +219,7 @@ ylabel(h,'Target')
 %%% ===== PLOT alpha ===== END =====
 %% write out eps file
 if ( graph.PRINT_T == 1 ) || ( status.parfor_ == 1 )
-  title2 = sprintf('_regFac=%07d_frame=%07d_N=%04d',DAL.regFac(regFacIndex),DAL.Drow,cnum );
+  title2 = sprintf('_regFac=%09.4f_frame=%07d_N=%04d',DAL.regFac(regFacIndex),DAL.Drow,cnum );
   %% fprintf(1,'saved figure: \n')
   fprintf(1,'%s\n', [status.savedirname '/Estimated_alpha' title2 '.png']);
   print('-dpng', [status.savedirname '/Estimated_alpha' title2 '.png'])

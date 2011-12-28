@@ -66,9 +66,9 @@ gnum = hdl / plate;
 switch ARGNUM
   case 1
     for i1 = 1:hdl
-      print(figHandles(i1),'-dpng',sprintf('%s/%s%02d',savedirname,FnamePrefix,i1) ...
-            );
-      fprintf(1,'saved:%s/%s%02d\n',savedirname,FnamePrefix,i1);
+      print(figHandles(i1),'-dpng',[sprintf('%s/%s%02d',savedirname,FnamePrefix,i1) ...
+            '.png']);
+      fprintf(1,'saved:%s/%s%02d.png\n',savedirname,FnamePrefix,i1);
     end
   case 2
     for i1 = 1:hdl

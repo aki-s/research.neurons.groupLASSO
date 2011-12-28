@@ -4,12 +4,17 @@ function  plot_CVLwhole(env,status,graph,DAL,CVL,varargin)
 %% varargin{1}: index to select and plot only one sample.
 %%            index correspond with index of DAL.regFac.
 %% CVL: (regFac idx, cnum, usedFrame) matrix
+%% example)
+% plot_CVLwhole(env,status,graph,DAL,CVL{1})
+%%
 cnum = env.cnum;
 LABEL = num2cell(DAL.regFac);
 regFacLEN = length(DAL.regFac);
 useFrameLen = length(env.useFrame);
 myColor = graph.prm.myColor;
-
+%%
+DEBUG = 0;
+%%
 if strcmp('omitDiag','omitDiag_') %%DEBUG
   zeroIdx = repmat(logical(eye(cnum)),[1 1 useFrameLen]);
   CVL(zeroIdx) = 0;
@@ -26,36 +31,32 @@ if nargin > nargin_NUM
 else
   ALL = 1;
   FROM = 1;
-  %  [dum1 dum2 fnum] = size(CVL);
   fnum = sum( ~isnan(sum(CVLt)) );
 end
 
+%% set legend entry
 LGD = num2cell(reshape(env.useFrame,1,[]));
 LGDT = cell(1,fnum);
-
-%for id = 1: length(LGD)
 for id = FROM : fnum
   %  LGDT = horzcat(LGDT,num2str(LGD{id}));
   LGDT{id} = num2str(LGD{id});
-  %LGDT{id} = LGD{id};
 end
 %%col=hsv(fnum);
 
-%figure
+
+[minVal idx] = min(CVLt);
 for i2 = FROM:fnum
   hold on;
 
-  %% set index of minima as 'sameIdx' ++bug
-  [minVal idx] = min(CVLt);
   minIdx = find(minVal(:,:,i2) == CVLt(1:regFacLEN,:,i2) );
   %% if (minIdx == 1) marker don't appear. Is this MATLAB bug?
   %% line
-  if strcmp('DEBUG','DEBUG')
+  if DEBUG > 0
     fprintf(1,'%02d, useFrame:%10d, myColor:[%f %f %f]\n',...
             i2, env.useFrame(i2), myColor{i2}(1),myColor{i2}(2),myColor{i2}(3));
-    plot(1:regFacLEN,CVLt(1:regFacLEN,1,i2),'color',myColor{i2},'LineWidth',3);
-    axis([1 regFacLEN .5 1.05]) % move figures to the left.
   end
+    plot(1:regFacLEN,CVLt(1:regFacLEN,1,i2),'color',myColor{i2},'LineWidth',3);
+    xlim([1 regFacLEN ]) % move figures to the left.
   %% diamond
   hLine2 = plot(minIdx,CVLt(minIdx,:,i2),'o-','color',myColor{i2},...
                 'Marker','d','MarkerFaceColor','auto','MarkerSize',10,'LineWidth',3);
@@ -76,7 +77,6 @@ for i2 = FROM:fnum
   set(gca,'xticklabel',LABEL)
 end
 
-%legend(LGDT,'FontSize',14,'LineWidth',3);
 legend(LGDT{FROM:fnum},'FontSize',14,'LineWidth',3,'Location','NorthWest');
 xlabel( 'regularization factor' )
 ylabel( 'CVL' )

@@ -65,9 +65,8 @@ alpha_fig = transpose(reshape(alpha_hash, Oenv.cnum , Oenv.cnum));
 
 fclose(tmp.fid);
 
-%% calculate Oenv.spar %++todo ++bug
+%% properly calculate Oenv.spar %++todo ++bug
 if 1 == 1
-Oenv.spar
   Oenv.spar.from = NaN;
   Oenv.spar.to   = NaN;
 else

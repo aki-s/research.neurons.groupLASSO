@@ -3,7 +3,7 @@ function [recn, recr, thresh0, auc] = evalRFIntensity_omitDiag( RFIntensity, Ans
 
 %% Omit diagonal elements
 idx = ~logical(eye(N));
-RFIntensity = RFIntensity( idx );
+RFIntensity = RFIntensity( idx ); % (length(idx), 1) == size(RFIntensity);
 Answer = Answer( idx );
 switch 'V3'
    case 'V1'
@@ -31,7 +31,7 @@ recFPTP = zeros( lenT0, 2);
 for t1 = 1:lenT0
    thresh = thresh0( t1 );
    TP0 = sum( abs(RFIntensity) <= thresh & Answer == 0);
-   FP0 = sum( abs(RFIntensity) <= thresh & Answer == 1);
+   FP0 = sum( abs(RFIntensity) <= thresh & Answer ~= 0);
    TPp = sum( RFIntensity > +thresh & Answer == 1);
    TPn = sum( RFIntensity < -thresh & Answer == -1);
    TPtotal = TP0 + TPp + TPn;

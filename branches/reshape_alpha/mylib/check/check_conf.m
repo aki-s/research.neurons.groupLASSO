@@ -63,17 +63,33 @@ if isfield(env,'useFrame')
   %% check for variable reduction method.
   ODAL.Drow = env.useFrame;
   %  validIdx = ODAL.Drow > bases.ihbasprs.numFrame;
-  validIdx = (env.genLoop > ODAL.Drow)&(ODAL.Drow > bases.ihbasprs.numFrame);
+  validIdx = (env.genLoop >= ODAL.Drow)&(ODAL.Drow > bases.ihbasprs.numFrame);
   Oenv.useFrame = ODAL.Drow(validIdx);
+  %% check relations between the length of bases and the length DAL.Drow
   if length(Oenv.useFrame) ~= sum(validIdx)
-    warning('DEBUG:autoChange',['regularization factor more than bases.ihbasprs.numFrame=%s '...
-            'is invalidated']...
-            ,bases.ihbasprs.numFrame,ODAL.Drow( logical(ODAL.Drow.*(~validIdx) > 0 ))...
-                                               )
+    warning('DEBUG:autoChange',['env.useFrame (%d) is smaller than bases.ihbasprs.numFrame=%s '...
+                        '. invalidated!']...
+            , ODAL.Drow( logical(ODAL.Drow.*(~validIdx) > 0 ))...
+            , bases.ihbasprs.numFrame ...
+            )
   end
-
+  if isempty(Oenv.useFrame) %++bug?
+    error('Properly set env.useFrame')
+  end
+  if ( min(Oenv.useFrame) - bases.ihbasprs.numFrame ) < 1000 
+    %% 1000 is set about
+    warning('DEBUG:WARNING','env.useFrame is too small for estimation.')
+  end
+  %  if (Ostatus.GEN_TrueValues == 1) && ( length(Oenv.useFrame) <=
+  %  1)
+  if (Ostatus.GEN_TrueValues == 1) & ( length(Oenv.useFrame) <=  1)
+if  (env.useFrame == env.genLoop)
+    error(['Generated firing is not reliable at small time frame. Properly ' ...
+           'set env.useFrame at configuration file.'])
 end
-%if isfield(status,'crossVal')
+  end
+end
+
 if status.crossVal > 1
   tmp = Oenv.genLoop;
   k = status.crossVal;
@@ -86,14 +102,20 @@ if status.crossVal > 1
     before = length(env.useFrame);
     ODAL.Drow = env.useFrame(env.useFrame<=DALmax);
     if (before ~= length(ODAL.Drow) )
-      warning('DEBUG:autoChange','demanded frame is large to do cross validation\n make smaller than env.genLoop *(status.crossVal-1)/(status.crossVal)');
+      warning('DEBUG:autoChange',[ '''env.useFrame'' is '...
+              'too large to do cross validation\n'...
+                          'make smaller than env.genLoop *' ...
+                          '(status.crossVal-1)/(status.crossVal)' ]);
+  if length(ODAL.Drow) <= 1  %++bug?
+    error('Properly set env.useFrame')
+  end
     end
   else 
     ODAL.Drow = DALmax;
     Oenv.useFrame = DALmax;
   end
 else
-  ODAL.Drow = env.useFrame;
+  ODAL.Drow = env.useFrame; %++++++++++++++++++++++++++++++++++++++++++++duplicate
 end
 
 if ~isfield(env,'inFiringUSE') % num. of use neuron (subset)

@@ -1,9 +1,8 @@
 warning('DEBUG:conf','conf_user_gaya.m.');
 
 DAL.regFac_UserDef = 1;
-%DAL.regFac = [ 2048 1024 512 256 128 64 32 16 8 4 ];
-DAL.regFac = [ 128 64 32 16 8];
-%DAL.regFac = [30 10];
+DAL.regFac = [ 2048 1024 512 256 128 64 32 16 8 4 2 1 0.5 0.25 0.125];
+%DAL.regFac = [ 128 64 32 16 8];
 
 graph.TIGHT = 0;
 graph.PLOT_MAX_NUM_OF_NEURO = 10;% #neuron to be plotted on a figure.
@@ -17,8 +16,7 @@ graph.prm.diag_Yrange = [-.5 5];
 
 env.inFiringLabel = 's';
 env.inFiringDirect = 2; % time series direction
-%env.inFiringUSE = [10 20];
-env.inFiringUSE = [30 60]; % the number of firing used out of 'env.inFiringLabel'.
+env.inFiringUSE = [10 30 60]; % the number of firing used out of 'env.inFiringLabel'.
 env.Hz.video=1000; %++bug: lookes like set 'nan'
 env.mail.to='aki-s@sys.i.kyoto-u.ac.jp';
 env.mail.smtp='hawaii.sys.i.kyoto-u.ac.jp';
@@ -27,11 +25,12 @@ status.save_vars = 1;
 status.realData = 1;
 status.GEN_TrueValues = 0;
 status.profiler = 1;
-status.save_warning = 1; %++bug: not yet implemented.
-status.parfor_ = 1; %++bug: not yet implemented.
+status.diary = 1;
+status.parfor_ = 1;
 status.mail = 1;
 status.DEBUG.plot = 1; %++bug: not yet implemented.
-status.DEBUG.level = 1; %++bug: not yet implemented.
+status.DEBUG.level = 0;
 status.use.GUI = 0; %++bug: not yet implemented.
 status.READ_FIRING =1; % read gaya FIRING.
 status.inFiring = ['/home/shige-o/rec072b.mat'];
+status.crossVal = 8;

@@ -24,12 +24,16 @@ if strcmp('configure', 'configure') %++conf
   bases = conf_makeSimStruct_glm(); % load parameters.
   run([rootdir_ '/conf/conf_mail.m']);% notify the end of program via mail.
 end
+if status.diary == 1
+  diary([status.savedirname,'/',sprintf('%d_',status.time.start),'diary.txt'])
+end
 
-if strcmp('gaya','gaya_')
+if strcmp('gaya','gaya')
   status.userDef = [rootdir_ '/conf/conf_user_gaya.m'];
 elseif strcmp('kim','kim_')
-  status.userDef = [rootdir_ '/conf/conf_user_kim.m'];
-elseif strcmp('aki','aki')
+  %  status.userDef = [rootdir_ '/conf/conf_user_kim.m'];
+  status.userDef = [rootdir_ '/conf/conf_user_kim_20111110_185429.m']; %
+elseif strcmp('aki','aki_')
   status.userDef = [rootdir_ '/conf/conf_user_aki.m'];
 else
   %% set null file till user defines.
@@ -99,7 +103,8 @@ if status.estimateConnection == 1
   end
   useFrameLen = length(env.useFrame);
   if status.parfor_ == 1 && ( matlabpool('size') == 0 )
-    matlabpool(8);
+    %    matlabpool(8);
+    matlabpool;% automatically use max core?
   end
   %% matlabpool close force local
   DAL = setDALregFac(env,DAL,bases);

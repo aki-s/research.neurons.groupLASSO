@@ -2,7 +2,7 @@ function plot_alpha(graph,env,alpha,title)
 %%
 %% Usage:
 %% Example:
-%  plot_alpha(graph,env,alpha,'\alpha: Spatio-temporal Kernels');
+%  plot_alpha(graph,env,alpha,'response functions');
 %%
 %% == format ==
 %% >> alpha
@@ -24,7 +24,10 @@ function plot_alpha(graph,env,alpha,title)
 %%
 %% -- format 2 --
 %% alpha is (cnum,cnum,hnum) 3D matrix
-
+%% recommend using 'plot_Ealpha.m' or plot_ResFuncALL(varargin)
+% e.g.
+% s=load('outdir/24-Dec-2011-start-20_9/Aki-0001.0000-Aki-0080000-009.mat');
+% plot_alpha(s.graph,s.env,s.Alpha,'');
 
 DEBUG = 0;
 
@@ -48,6 +51,8 @@ if isnan(hwind)
   hwind = 1;
 end
 if isnan(hnum)
+  hnum = size(alpha,3);
+elseif size(alpha,3) > 1 
   hnum = size(alpha,3);
 end
 XSIZE = 1; % obsolete

@@ -73,9 +73,10 @@ if ( status.READ_FIRING == 1 )
   len = env.genLoop; % env.genLoop == size(I,1)
 else % artificially generated firing is not reliable at small frame index.
   %% env.genLoop == size(I,1) + 'init_condition_of_I'
-  prm = 0.666;
+  prm = 0.666;%++bug: user wouldn't know why 'len < env.genLoop' is.
   len = floor(env.genLoop * prm);
   %% len ~ env.genLoop - 4000 ?
+  %%++bug: may cause 'len > DAL.Drow'.
 end
 
 if( nargin >= (argNum + 2) ) %++needless?
@@ -107,6 +108,7 @@ end
 I = I((end+1-Tlen):end,:);
 
 Width = Tlen/k;
+%% taints tmpEnv.genLoop. crossValidation specific problem.
 tmpEnv.genLoop = Tlen - Width;
 regFacLen = length(DAL.regFac);
 if isfield(env,'inFiringUSE')
