@@ -1,15 +1,16 @@
-function DALout = setDALregFac(env,DALin,bases)
+function DALout = setDALregFac(DALin,nbase)
 %%
 %% init DAL regularization factor
 %%
-nbase = bases.ihbasprs.nbase;
+%% nbase = bases.ihbasprs.nbase;
+DALout = DALin;
 
 if DALin.regFac_UserDef == 1
-  DALin.div = NaN;
-  Dlim = 0.01;
+  DALout.div = NaN;
+  Dlim = 1;
   %% ( regFac > Dlim ) is strongly recommended
   %% from a point of calculation speed.
-  a = DALin.regFac > Dlim;
+  a = DALin.regFac >= Dlim;
   b = 1;
   loop = length(DALin.regFac);
   for i1 = 1:loop
@@ -20,27 +21,10 @@ if DALin.regFac_UserDef == 1
     error('DAL.regFac is too small');
   end
 else
-
   if strcmp('setRegFac_auto','setRegFac_auto')
     DALin.regFac(1) = sqrt(nbase)*10; % DALin.regFac: group LASSO parameter.
   else
     DALin.regFac(1) = sqrt(nbase); % DALin.regFac:
   end
-  
 end
-
-DALout = DALin;
-
-%% errer handling
-%{
-if ( DAL.Drow > bases.ihbasprs.numFrame )
-
-else
-  error('must be (DAL.Drow > bases.ihbasprs.numFrame)')
-end
-
-  %}
-% $$$ if isfield(DAL,'Drow')
-% $$$ else
-% $$$   DAL.Drow = env.useFrame;
-% $$$ end
+DALout.regFacLen = length(DAL.regFac);

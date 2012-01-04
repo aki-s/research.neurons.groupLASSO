@@ -101,17 +101,14 @@ if status.estimateConnection == 1
     useNeuroLenIdx = 1;
     env.inFiringUSE(1) = size(I,2);
   end
-  useFrameLen = length(env.useFrame);
-  if status.parfor_ == 1 && ( matlabpool('size') == 0 )
-    %    matlabpool(8);
-    matlabpool;% automatically use max core?
-  end
-  %% matlabpool close force local
-  DAL = setDALregFac(env,DAL,bases);
-  regFacLen = length(DAL.regFac);% DAL.prm.regFacLen =
+  set_matlabpool(status.parfor_,status.crossVal);
+
+  useFrameLen = length(env.useFrame);%++later
+  DAL = setDALregFac(DAL,bases.ihbasprs.nbase);%++later
+
   %% CVL: cross Validation error
   CVL = cell(1,useNeuroLenIdx);
-  status.time.regFac = zeros(useFrameLen,regFacLen);
+  status.time.regFac = zeros(useFrameLen,DAL.regFacLen);
   CVwhole = cell(1,useNeuroLenIdx);
   RfWholeIdx = cell(1,useNeuroLenIdx);
   CVeach     = cell(1,useNeuroLenIdx);
@@ -132,7 +129,7 @@ if status.estimateConnection == 1
     fprintf(1,'#neuron:%5d<-%5d\n',tenv.inFiringUSE(i0),env.cnum);
     I = tmpI(:,1:env.inFiringUSE(i0));
     tenv.cnum = size(I,2);
-    CVL{i0}        = nan(regFacLen,tenv.cnum,useFrameLen);
+    CVL{i0}        = nan(DAL.regFacLen,tenv.cnum,useFrameLen);
     CVwhole{i0}    = nan(useFrameLen,1);
     RfWholeIdx{i0} = nan(useFrameLen,1); %Rf: regularization factor
     CVeach{i0}     = nan(useFrameLen,tenv.cnum);
@@ -150,12 +147,11 @@ if status.estimateConnection == 1
         if (status.crossVal > 1 )
           %% ==< choose appropriate regFac >==
           if tstatus.parfor_ == 1
-            %++bug? calc CVL
-            [ CVL{i0}(1:regFacLen,1:tenv.cnum,i1),tstatus.time.regFac(i1,:), EbasisWeight, Ebias ] =...
+            [ CVL{i0}(1:DAL.regFacLen,1:tenv.cnum,i1),tstatus.time.regFac(i1,:), EbasisWeight, Ebias ] =...
                 crossVal_parfor(tenv,tgraph,tstatus,DAL,bases,I,i1);
           else %++imcomplete
             error('not yet')
-            [ CVL{i0}(1:regFacLen,1:tenv.cnum,i1),tstatus.time.regFac(i1,:), EbasisWeight, Ebias ] =...
+            [ CVL{i0}(1:DAL.regFacLen,1:tenv.cnum,i1),tstatus.time.regFac(i1,:), EbasisWeight, Ebias ] =...
                 crossVal(tenv,tgraph,tstatus,DAL,bases,I,i1);%++bug
           end
           %% ==</choose appropriate regFac >==
@@ -168,7 +164,7 @@ if status.estimateConnection == 1
             plot_CVLwhole(tenv,tstatus,tgraph,DAL,CVL{i0});
           end
 
-        else %
+        else % don't do crossValidation
           [EbasisWeight,Ebias,Estatus,DAL,tstatus] = estimateWeightKernel(tenv,tgraph,tstatus,bases,I,DAL,i1);
           %++bug Ebias isn't correct.
 
@@ -178,7 +174,7 @@ if status.estimateConnection == 1
                            regexprep(tstatus.inFiring,'(.*/)(.*)(.mat)','$2'));
           if tgraph.PLOT_T == 1
             fprintf(1,'\n\n Now plotting estimated kernel\n');
-            for i2 = 1:regFacLen
+            for i2 = 1:DAL.regFacLen
               plot_Ealpha(tenv,tgraph,tstatus,DAL,bases,EbasisWeight,...
                           sprintf('elapsed:%s',num2str(tstatus.time.regFac(i1,i2))),i2 )
             end
@@ -256,7 +252,7 @@ if status.estimateConnection == 1
 end
 %% ==< eval >==
 %{
-for i1 = 1:regFacLen
+for i1 = 1:DAL.regFacLen
   [Ealpha_hash,Ealpha_fig,threshold,Econ] = judge_alpha_ternary(env,Ealpha,alpha_hash,i1,status);
 end
 %}

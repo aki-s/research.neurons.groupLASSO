@@ -41,9 +41,6 @@ for N1 = 1:uF
   filename =sprintf('Aki-%s-%s-%s.mat', L000{L0(N1)}, FNAMEf, N000{N1});
   load( filename ); %Alpha
   Phi = evalResponseFunc( Alpha );
-  %  [recn, recr, thresh0,auc.A(1,N1)] = evaluatePhi(Phi, M_ans);
-  %  [recn, recr, thresh0,auc.A(1,N1)] = evalRFIntensity(Phi,
-  %  M_ans);
   [recn, recr, thresh0,auc.A(1,N1)] = evalRFIntensity_omitDiag(Phi, M_ans);
   disp( sprintf( '%20s: %3d, %3d, %3d, %3d, %5.1f, %5.1f, %5.1f, %5.1f',...
                  filename, recn, recr*100 ) );
