@@ -28,13 +28,18 @@ end
 %% ==</set figure propertiy >==
 
 nargin_NUM = 5;
-if nargin > nargin_NUM % only one frame
-  FROM = varargin{1};
-  uF = FROM;
-else % mix ALL
-  FROM = 1; %++bug
-  uF = status.validUseFrameIdx;
+if 1 == 1
+  F = set_frameRange(nargin,nargin_NUM,varargin{1},status.validUseFrameIdx);
+else
+  if nargin > nargin_NUM % only one frame
+    F.from = varargin{1};
+    F.to = F.from;
+  else % mix ALL
+    F.from = 1; %++bug
+    F.to = status.validUseFrameIdx;
+  end
 end
+
 if isnumeric(ansMat)
   M_ans = ansMat;  
 else
@@ -43,13 +48,13 @@ end
 uR = length(DAL.regFac);
 cSET = length(env.inFiringUSE);
 
-uFnum = cell(1,uF);
-XLABEL = cell(1,uF);
+uFnum = cell(1,F.to);
+XLABEL = cell(1,F.to);
 %XLABELrf = cell(1,uR);
 regFac = cell(1,uR);
 inFiringUSE = cell(1,cSET);
 
-for i1 =1:uF
+for i1 =1:F.to
   uFnum{i1} = num2str(sprintf('%07d',env.useFrame(i1)));
   XLABEL{i1} = num2str(sprintf('%.0e',env.useFrame(i1)));
 end
@@ -62,56 +67,60 @@ for i1 = 1:cSET
   inFiringUSE{i1} = num2str(sprintf('%03d',env.inFiringUSE(i1)));
 end
 fFNAME = regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2');
-%inRoot = regexprep(status.outputfilename,'(.*/)(.*)(.mat)','$1');
 inRoot = status.savedirname;
 %% ==</conf>==
 
 %% ==< calc AUC and correct rate >==
+if 1 == 1
+  print_AUCdescription(status.method,regFac,fFNAME,uFnum,inFiringUSE)
+  [auc recr thresh0 ] = print_AUC(status.method,regFac,fFNAME,uFnum,inFiringUSE,M_ans,F);
+elseif strcmp('leaveOut_calcAUC','leaveOut_calcAUC_')
+  rate = zeros(uR,4,F.to);
+  auc = zeros(F.to,uR);
+  spaceLen = length(sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{1}, ...
+                            fFNAME, uFnum{F.from}, inFiringUSE{1}));
 
-rate = zeros(uR,4,uF);
-auc.A = zeros(uF,uR);
-spaceLen = length(sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{1}, ...
-                          fFNAME, uFnum{FROM}, inFiringUSE{1}));
-
-fprintf(1,'LEGEND) TP:=True Positive, p:=positive, n:=negative, z:=zero\n')
-fprintf(1,['response func mat_file %s : (#)TPz  TPp  TPn  TPtotal'...
-           ':(%%)TPz  TPp   TPn   TPtotal'...
-           ': AUC threshold'...
-           '\n'],...
-        repmat(' ',[1 (spaceLen-28)]) )
-for j0 = FROM:uF
-  for i0 = 1:cSET
-    for regFacIdx = 1:uR
-      filename =sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{regFacIdx}, ...
-                        fFNAME, uFnum{j0}, inFiringUSE{i0});
-      load( [inRoot '/' filename], 'Alpha');
-      RFIntensity = evalResponseFunc( Alpha );
-      if strcmp('omitDiag','omitDiag_')
-        [recn, recr, thresh0 ,auc.A(j0,regFacIdx)] = evalRFIntensity_omitDiag(RFIntensity, M_ans);
-      else
-        [recn, recr, thresh0 ,auc.A(j0,regFacIdx)] = ...
-            evalRFIntensity(RFIntensity, M_ans);
+  fprintf(1,'LEGEND) TP:=True Positive, p:=positive, n:=negative, z:=zero\n')
+  fprintf(1,['response func mat_file %s : (#)TPz  TPp  TPn  TPtotal'...
+             ':(%%)TPz  TPp   TPn   TPtotal'...
+             ': AUC threshold'...
+             '\n'],...
+          repmat(' ',[1 (spaceLen-28)]) )
+  for j0 = F.from:F.to
+    for i0 = 1:cSET
+      for regFacIdx = 1:uR
+        %%
+        filename =sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{regFacIdx}, ...
+                          fFNAME, uFnum{j0}, inFiringUSE{i0});
+        load( [inRoot '/' filename], 'Alpha');
+        RFIntensity = evalResponseFunc( Alpha );
+        if strcmp('omitDiag','omitDiag_')
+          [recn, recr, thresh0 ,auc(j0,regFacIdx)] = evalRFIntensity_omitDiag(RFIntensity, M_ans);
+        else
+          [recn, recr, thresh0 ,auc(j0,regFacIdx)] = ...
+              evalRFIntensity(RFIntensity, M_ans);
+        end
+        disp( sprintf( ['%20s:'...
+                        '%3d, %3d, %3d, %6d: '...
+                        '%5.1f, %5.1f, %5.1f, %5.1f: '...
+                        '%2.1f %5.3f'],...
+                       filename,...
+                       recn,...
+                       recr*100,...
+                       auc(j0,regFacIdx), thresh0) );
       end
-      disp( sprintf( ['%20s:'...
-                      '%3d, %3d, %3d, %6d: '...
-                      '%5.1f, %5.1f, %5.1f, %5.1f: '...
-                      '%2.1f %5.3f'],...
-                     filename,...
-                     recn,...
-                     recr*100,...
-                     auc.A(j0,regFacIdx), thresh0) );
-      rate(regFacIdx,1:4,j0) = recr*100;
     end
+    fprintf(1,'\n');
   end
-  fprintf(1,'\n');
+  %% ==</calc AUC and correct rate >==
 end
-%% ==</calc AUC and correct rate >==
+rate = recr*100;
 
 %% ==< plot correct rate >==
 A0 = [4,1,2,3];
 %% '+/0/-','0','+','-'
 ylabels ={'Total', 'Specificity', 'Excitatory', 'Inhibitory'};
-%% recr(regFacIdx,A0,usedFrame)
+
 N = 4;
 switch 2 % num of window (odd num)
   case 4
@@ -130,7 +139,7 @@ for ii = 1:(div2)
   for i = 1:NN
     subplot(NN,1,i)
     hold on;
-    for j1 = FROM:uF
+    for j1 = F.from:F.to
       plot(1:uR, rate(:, A0(i+div),j1),'o-','Color',myColor{j1},'LineWidth',2)
     end
     ylabel( ylabels{ i+div})
@@ -140,7 +149,7 @@ for ii = 1:(div2)
   end
   div = div + NN;
   set(gcf, 'Color', 'White', 'Position',[WIDTH*(ii-1),200,WIDTH,800/div2+100])
-  legend(uFnum{FROM:uF},'Location',legendLoc)
+  legend(uFnum{F.from:F.to},'Location',legendLoc)
 end
 %% ==</plot correct rate >==
 
@@ -148,8 +157,8 @@ end
 figure
 hold on;
 grid on;
-for j0 = FROM:uF
-  plot(1:uR, auc.A(j0,:),'o-','Color',myColor{j0},'LineWidth',2)
+for j0 = F.from:F.to
+  plot(1:uR, auc(j0,:),'o-','Color',myColor{j0},'LineWidth',2)
 end
 %ylabel('max AUC about existance of connection')
 ylabel('AUC')
@@ -170,7 +179,7 @@ if strcmp('for_publish','for_publish_') % without legend
       text( 4.0 ,0.80,'\color{white}40000','fontsize',12,'BackgroundColor',myColor{6} );
       text( 3.0 ,0.88,'\color{white}75000','fontsize',12,'BackgroundColor',myColor{7} );
     elseif 1 == 0
-      switch FROM
+      switch F.from
         case 1
           text(11.5 ,0.60,'\color{white}  240','fontsize',12,'BackgroundColor',myColor{1} );
         case 2
@@ -200,7 +209,7 @@ if strcmp('for_publish','for_publish_') % without legend
   end
   set(gcf, 'Color', 'White', 'Position',[WIDTH,800,WIDTH,200])
 else % plot legend
-legend(uFnum{FROM:uF},'Location','WestOutside')
+legend(uFnum{F.from:F.to},'Location','WestOutside')
 set(gcf, 'Color', 'White', 'Position',[WIDTH,800,WIDTH+150,200])
 end
 

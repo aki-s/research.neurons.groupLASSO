@@ -159,6 +159,8 @@ tstatus = status;%% make 'status' global to local variable 'tstatus'
                 crossVal(tenv,tgraph,tstatus,DAL,bases,I,i1);%++bug
           end
           %% ==</choose appropriate regFac >==
+          %% get minimum from overall log likelihood of
+          %% crossValidation with different regFac at each used frame.
           [CVwhole{i0}(i1),RfWholeIdx{i0}(i1)]    = min(sum(CVL{i0}(:,:,i1),2),[],1);
           %% corresponding regularization factor: DAL.regFac(RfWholeIdx{i0})
           [CVeach{i0}(i1,1:tenv.cnum),RfEachIdx{i0}(i1,1:tenv.cnum)] = min(CVL{i0}(:,:,i1),[],1); % each neuron

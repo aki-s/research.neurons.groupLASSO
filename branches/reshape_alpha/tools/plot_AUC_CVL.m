@@ -1,4 +1,4 @@
-function plot_AUC_CVL(env,status,graph,DAL,ansMat,CVL,varargin)
+xfunction plot_AUC_CVL(env,status,graph,DAL,ansMat,CVL,varargin)
 %%
 %%
 %% usage)
@@ -34,13 +34,22 @@ end
 %% ==</set figure propertiy >==
 
 nargin_NUM = 6;
+%% set frame range to be used.
+if 1 == 1
+F = set_frameRange(nargin,nargin_NUM,varargin{1},status.validUseFrameIdx);
+
+else
+
 if nargin > nargin_NUM % only one frame
-  FROM = varargin{1};
-  uF = FROM;
+  F.from = varargin{1};
+  F.to = F.from;
 else % mix ALL
-  FROM = 1;
-  uF = status.validUseFrameIdx;
+  F.from = 1;
+  F.to = status.validUseFrameIdx;
 end
+
+end
+%%
 
 if isnumeric(ansMat)
   M_ans = ansMat;  
@@ -48,14 +57,14 @@ else
   load(ansMat,'M_ans');
 end
 uR = length(DAL.regFac);
-cSET = length(env.inFiringUSE);
+cSET.to = length(env.inFiringUSE);
 
-uFnum = cell(1,uF);
-XLABEL = cell(1,uF);
+uFnum = cell(1,F.to);
+XLABEL = cell(1,F.to);
 regFac = cell(1,uR);
-inFiringUSE = cell(1,cSET);
+inFiringUSE = cell(1,cSET.to);
 
-for i1 =1:uF
+for i1 =1:F.to
   uFnum{i1} = num2str(sprintf('%07d',env.useFrame(i1)));
   XLABEL{i1} = num2str(sprintf('%.0e',env.useFrame(i1)));
 end
@@ -63,22 +72,23 @@ for i1 =1:uR
   regFac{i1} = num2str(sprintf('%09.4f',DAL.regFac(i1)));
 end
 XLABELrf = num2cell(DAL.regFac);
-for i1 = 1:cSET
+for i1 = 1:cSET.to
   inFiringUSE{i1} = num2str(sprintf('%03d',env.inFiringUSE(i1)));
 end
 fFNAME = regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2');
-%inRoot = regexprep(status.outputfilename,'(.*/)(.*)(.mat)','$1');
 inRoot = status.savedirname;
 %% ==</conf>==
-
-if strcmp('leaveOut_calcAUC','leaveOut_calcAUC')
+if 1 == 1
+  print_AUCdescription(status.method,regFac,fFNAME,uFnum,inFiringUSE)
+  [auc recr thresh0 ] = print_AUC(status.method,regFac,fFNAME,uFnum,inFiringUSE,M_ans,F);
+elseif strcmp('leaveOut_calcAUC','leaveOut_calcAUC_')
   %% ==< calcAUC >==
-  %  rate = zeros(uR,4,uF);
-  auc.A = zeros(uF,uR);
-  recr = zeros(uF,uR,4);
-  thresh0 = zeros(uF,uR);
+  auc = zeros(F.to,uR);
+  recr = zeros(F.to,uR,4);
+  thresh0 = zeros(F.to,uR);
+
   spaceLen = length(sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{1}, ...
-                            fFNAME, uFnum{FROM}, inFiringUSE{1}));
+                            fFNAME, uFnum{F.from}, inFiringUSE{1}));
 
   fprintf(1,'LEGEND) TP:=True Positive, p:=positive, n:=negative\n')
   fprintf(1,['response func mat_file %s : (#)TP0  TPp  TPn  TPtotal'...
@@ -86,15 +96,15 @@ if strcmp('leaveOut_calcAUC','leaveOut_calcAUC')
              ': AUC threshold'...
              '\n'],...
           repmat(' ',[1 (spaceLen-28)]) )
-  for j0 = FROM:uF
-    for i0 = 1:cSET
+
+  for j0 = F.from:F.to
+    for i0 = 1:cSET.to
       for regFacIdx = 1:uR
         filename =sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{regFacIdx}, ...
                           fFNAME, uFnum{j0}, inFiringUSE{i0});
         load( [inRoot '/' filename], 'Alpha');
         RFIntensity = evalResponseFunc( Alpha );
-        %      [recn, recr, thresh0(j0,regFacIdx) ,auc.A(j0,regFacIdx)] = evalRFIntensity_omitDiag(RFIntensity, M_ans);
-        [recn, recr(j0,regFacIdx,1:4), thresh0(j0,regFacIdx) ,auc.A(j0,regFacIdx)] = evalRFIntensity(RFIntensity, M_ans);
+        [recn, recr(j0,regFacIdx,1:4), thresh0(j0,regFacIdx) ,auc(j0,regFacIdx)] = evalRFIntensity(RFIntensity, M_ans);
         disp( sprintf( ['%20s:'...
                         ' %3d, %3d, %3d, %6d:'...
                         ' %5.1f, %5.1f, %5.1f, %5.1f:'...
@@ -102,9 +112,8 @@ if strcmp('leaveOut_calcAUC','leaveOut_calcAUC')
                         ' %5.3f'],...
                        filename,...
                        recn, recr(j0,regFacIdx,1:4)*100,...
-                       auc.A(j0,regFacIdx),...
+                       auc(j0,regFacIdx),...
                        thresh0(j0,regFacIdx)) );
-        %        rate(regFacIdx,1:4,j0) = recr*100;
       end
     end
     fprintf(1,'\n');
@@ -123,10 +132,10 @@ if CHECK_EACH_RATE == 1
   N = N+1;
 end
 
-[maxVal]    = max(auc.A, [], 2);
+[maxVal]    = max(auc, [], 2);
 [numMaxVal] = max(recr(:,:,4), [], 2);
-for j0 = FROM:uF
-  maxIdx    = find(maxVal(j0)    == auc.A(j0,1:uR) );
+for j0 = F.from:F.to
+  maxIdx    = find(maxVal(j0)    == auc(j0,1:uR) );
   numMaxIdx = find(numMaxVal(j0) == recr (j0,1:uR,4) );
   figure
 
@@ -143,17 +152,17 @@ for j0 = FROM:uF
 
   subplot(N,1,2)
   hold on;
-  plot(1:uR, auc.A(j0,:),'o-','Color',myColor{j0},'LineWidth',2)
+  plot(1:uR, auc(j0,:),'o-','Color',myColor{j0},'LineWidth',2)
   ylabel('AUC')
   set(gca, 'XTick', 1:uR, 'XTickLabel', XLABELrf,'ylim',[0.5 1])
   axis([1 uR .5 1.05]) % move figures to the left.
   xlabel('regularization factor')
   %% set diamond at maxIdx
-  hLine2 = plot(maxIdx, auc.A(j0,maxIdx),'o-','color',myColor{j0},...
+  hLine2 = plot(maxIdx, auc(j0,maxIdx),'o-','color',myColor{j0},...
                 'Marker','d','MarkerFaceColor','auto','MarkerSize',10,'LineWidth',3);
   set(get(get(hLine2,'Annotation'),'LegendInformation'),...
       'IconDisplayStyle','off');
-  title(['max AUC : ',sprintf('%5.3f',auc.A(j0,maxIdx(1)))]);
+  title(['max AUC : ',sprintf('%5.3f',auc(j0,maxIdx(1)))]);
 
   if CHECK_THRESHOLD == 1
     subplot(N,1,3)
@@ -183,7 +192,7 @@ if CHECK_EACH_RATE == 1
   set(get(get(hLine3,'Annotation'),'LegendInformation'),...
       'IconDisplayStyle','off');
   title(['max : ',sprintf('%5.3f',recr(j0,numMaxIdx(end),4))]);
-% $$$   hLine4 = plot(maxIdx, auc.A(j0,maxIdx),'o-','color',myColor{j0},...
+% $$$   hLine4 = plot(maxIdx, auc(j0,maxIdx),'o-','color',myColor{j0},...
 % $$$                 'Marker','d','MarkerFaceColor','auto','MarkerSize',10,'LineWidth',3);
 % $$$   set(get(get(hLine2,'Annotation'),'LegendInformation'),...
 % $$$       'IconDisplayStyle','off');
@@ -220,7 +229,7 @@ if 1 == 0
     end
     set(gcf, 'Color', 'White', 'Position',[WIDTH,800,WIDTH,200])
   else
-    legend(uFnum{FROM:uF},'Location','WestOutside')
+    legend(uFnum{F.from:F.to},'Location','WestOutside')
     set(gcf, 'Color', 'White', 'Position',[WIDTH,800,WIDTH+150,200])
   end
 
