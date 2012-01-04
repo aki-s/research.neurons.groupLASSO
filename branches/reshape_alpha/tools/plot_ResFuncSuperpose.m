@@ -2,10 +2,11 @@ function plot_ResFuncSuperpose(in,DAL,useFrame,cnum,varargin)
 %%
 %% USAGE)
 %% Example:
-%plot_ResFuncSuperpose(status.savedirname,DAL,80000,env.cnum)
-%plot_ResFuncSuperpose(status.savedirname,DAL,80000,env.cnum,xrange)
-%plot_ResFuncSuperpose(status.savedirname,DAL,env.useFrame(end),env.cnum,xrange,yrange)
-%plot_ResFuncSuperpose(status.savedirname,DAL,env.useFrame(end),env.cnum,xrange,yrange,ansMat)
+% plot_ResFuncSuperpose(status.savedirname,DAL,80000,env.cnum)
+% plot_ResFuncSuperpose(status.savedirname,DAL,80000,env.cnum,xrange)
+% plot_ResFuncSuperpose(status.savedirname,DAL,env.useFrame(end),env.cnum,xrange,yrange)
+%%plot_ResFuncSuperpose(status.savedirname,DAL,env.useFrame(end),env.cnum,xrange,yrange,ansMat)
+% plot_ResFuncSuperpose(status.savedirname,DAL,75000,9,[0 bases.ihbasprs.numFrame],[-.1 .1],ansMat)
 %%
 %% ansMat: 'indir/sim_kim_ans.mat' or alpha_fig
 %%

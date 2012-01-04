@@ -1,4 +1,4 @@
-function [auc recr thresh0 ] = print_AUC(method,regFac,fFNAME,uFnum,inFiringUSE,F,M_ans,inRoot)
+function [auc recr thresh0 ] = echo_AUC(method,regFac,fFNAME,uFnum,inFiringUSE,F,M_ans,inRoot)
 
 %% ==< calcAUC >==
 uR = length(regFac);
