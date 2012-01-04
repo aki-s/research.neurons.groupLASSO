@@ -68,9 +68,9 @@ end
 %% bases should be loaded from a mat file.
 %% large argment of makeSimStruct_glm() make small width of basis.
 if 1==1 
-bases = makeSimStruct_glm(bases,1/env.Hz.video); % Create GLM structure with default params
+  bases = makeSimStruct_glm(bases,1/env.Hz.video); % Create GLM structure with default params
 else
-bases = makeSimStruct_glm(0.2); % Create GLM structure with default params
+  bases = makeSimStruct_glm(0.2); % Create GLM structure with default params
 end
 %% 0.2 : 118
 
@@ -123,20 +123,20 @@ if status.estimateConnection == 1
   Ealpha =  cell(1,useNeuroLenIdx);
   %}
   tmpI = I;
-%%< prepare for 'parfor' >
-tenv = env; %% make 'env' global to local variable 'tenv'
-tgraph = graph; %% make 'graph' global to local variable 'tgraph'
-tstatus = status;%% make 'status' global to local variable 'tstatus'
-%%</prepare for 'parfor' >
+  %%< prepare for 'parfor' >
+  tenv = env; %% make 'env' global to local variable 'tenv'
+  tgraph = graph; %% make 'graph' global to local variable 'tgraph'
+  tstatus = status;%% make 'status' global to local variable 'tstatus'
+  %%</prepare for 'parfor' >
   for i0 = 1:useNeuroLenIdx
     fprintf(1,'#neuron:%5d<-%5d\n',tenv.inFiringUSE(i0),env.cnum);
     I = tmpI(:,1:env.inFiringUSE(i0));
     tenv.cnum = size(I,2);
-      CVL{i0}        = nan(regFacLen,tenv.cnum,useFrameLen);
-      CVwhole{i0}    = nan(useFrameLen,1);
-      RfWholeIdx{i0} = nan(useFrameLen,1); %Rf: regularization factor
-      CVeach{i0}     = nan(useFrameLen,tenv.cnum);
-      RfEachIdx{i0}  = nan(useFrameLen,tenv.cnum);
+    CVL{i0}        = nan(regFacLen,tenv.cnum,useFrameLen);
+    CVwhole{i0}    = nan(useFrameLen,1);
+    RfWholeIdx{i0} = nan(useFrameLen,1); %Rf: regularization factor
+    CVeach{i0}     = nan(useFrameLen,tenv.cnum);
+    RfEachIdx{i0}  = nan(useFrameLen,tenv.cnum);
     %%< loop:useFrameLen >
     for i1 =1:useFrameLen
       fprintf('%s',repmat('=',[30 1]));
@@ -196,7 +196,7 @@ tstatus = status;%% make 'status' global to local variable 'tstatus'
     end
     %    if (tstatus.parfor_ == 1 ) && strcmp('crossValidation','crossValidation')
     if (tstatus.parfor_ == 1 ) && (status.crossVal > 1 )
-     %% ==< extract and plot the best response func for each usedFrameNum from the results of crossValidation>==
+      %% ==< extract and plot the best response func for each usedFrameNum from the results of crossValidation>==
       tstatus.validUseFrameIdx = sum(~isnan(CVwhole{i0}));
       tmpDAL = cell(1,tstatus.validUseFrameIdx );
       %%++parallel+bug(global variable: tgraph, tstatus)

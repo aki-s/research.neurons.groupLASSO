@@ -29,7 +29,7 @@ end
 
 nargin_NUM = 5;
 if 1 == 1
-  F = set_frameRange(nargin,nargin_NUM,varargin{1},status.validUseFrameIdx);
+  F = set_frameRange(nargin,nargin_NUM,varargin,status.validUseFrameIdx);
 else
   if nargin > nargin_NUM % only one frame
     F.from = varargin{1};
@@ -73,7 +73,7 @@ inRoot = status.savedirname;
 %% ==< calc AUC and correct rate >==
 if 1 == 1
   print_AUCdescription(status.method,regFac,fFNAME,uFnum,inFiringUSE)
-  [auc recr thresh0 ] = print_AUC(status.method,regFac,fFNAME,uFnum,inFiringUSE,M_ans,F);
+  [auc recr thresh0 ] = print_AUC(status.method,regFac,fFNAME,uFnum,inFiringUSE,F,M_ans,status.savedirname);
 elseif strcmp('leaveOut_calcAUC','leaveOut_calcAUC_')
   rate = zeros(uR,4,F.to);
   auc = zeros(F.to,uR);
@@ -114,7 +114,7 @@ elseif strcmp('leaveOut_calcAUC','leaveOut_calcAUC_')
   end
   %% ==</calc AUC and correct rate >==
 end
-rate = recr*100;
+rate = shiftdim(recr,1)*100;
 
 %% ==< plot correct rate >==
 A0 = [4,1,2,3];
@@ -141,6 +141,7 @@ for ii = 1:(div2)
     hold on;
     for j1 = F.from:F.to
       plot(1:uR, rate(:, A0(i+div),j1),'o-','Color',myColor{j1},'LineWidth',2)
+      %      plot(1:uR, rate(A0(i+div),j1,:),'o-','Color',myColor{j1},'LineWidth',2)
     end
     ylabel( ylabels{ i+div})
     xlabel( 'regularization factor' ) 

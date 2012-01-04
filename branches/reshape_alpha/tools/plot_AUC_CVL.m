@@ -1,4 +1,4 @@
-xfunction plot_AUC_CVL(env,status,graph,DAL,ansMat,CVL,varargin)
+function plot_AUC_CVL(env,status,graph,DAL,ansMat,CVL,varargin)
 %%
 %%
 %% usage)
@@ -36,17 +36,17 @@ end
 nargin_NUM = 6;
 %% set frame range to be used.
 if 1 == 1
-F = set_frameRange(nargin,nargin_NUM,varargin{1},status.validUseFrameIdx);
+  F = set_frameRange(nargin,nargin_NUM,varargin,status.validUseFrameIdx);
 
 else
 
-if nargin > nargin_NUM % only one frame
-  F.from = varargin{1};
-  F.to = F.from;
-else % mix ALL
-  F.from = 1;
-  F.to = status.validUseFrameIdx;
-end
+  if nargin > nargin_NUM % only one frame
+    F.from = varargin{1};
+    F.to = F.from;
+  else % mix ALL
+    F.from = 1;
+    F.to = status.validUseFrameIdx;
+  end
 
 end
 %%
@@ -80,7 +80,7 @@ inRoot = status.savedirname;
 %% ==</conf>==
 if 1 == 1
   print_AUCdescription(status.method,regFac,fFNAME,uFnum,inFiringUSE)
-  [auc recr thresh0 ] = print_AUC(status.method,regFac,fFNAME,uFnum,inFiringUSE,M_ans,F);
+  [auc recr thresh0 ] = print_AUC(status.method,regFac,fFNAME,uFnum,inFiringUSE,F,M_ans,status.savedirname);
 elseif strcmp('leaveOut_calcAUC','leaveOut_calcAUC_')
   %% ==< calcAUC >==
   auc = zeros(F.to,uR);
@@ -172,34 +172,34 @@ for j0 = F.from:F.to
     axis([1 uR 0 5]) % move figures to the left.
     xlabel('regularization factor')
     ylabel('threshold')
-  title(['avg@maxCorrectRate: ',sprintf('%6.3f',sum(thresh0(j0,numMaxIdx))/length(numMaxIdx))]);
+    title(['avg@maxCorrectRate: ',sprintf('%6.3f',sum(thresh0(j0,numMaxIdx))/length(numMaxIdx))]);
   end
 
-if CHECK_EACH_RATE == 1
-  subplot(N,1,4)
-  axis([1 uR 0 1.05]) % move figures to the left.
-  hold on;
-  %%TP0
-  plot(1:uR,recr(j0,1:uR,1),'o-k','LineWidth',2)
-  %%TPp
-  plot(1:uR,recr(j0,1:uR,2),'o-r','LineWidth',2)
-  %%TPn
-  plot(1:uR,recr(j0,1:uR,3),'o-b','LineWidth',2)
-  %%TPtotal
-  plot(1:uR,recr(j0,1:uR,4),'o-g','LineWidth',2)
-  hLine3 = plot(numMaxIdx, recr(j0,numMaxIdx,4),'gd',...
-                'MarkerFaceColor','auto','MarkerSize',10,'LineWidth',2);
-  set(get(get(hLine3,'Annotation'),'LegendInformation'),...
-      'IconDisplayStyle','off');
-  title(['max : ',sprintf('%5.3f',recr(j0,numMaxIdx(end),4))]);
+  if CHECK_EACH_RATE == 1
+    subplot(N,1,4)
+    axis([1 uR 0 1.05]) % move figures to the left.
+    hold on;
+    %%TP0
+    plot(1:uR,recr(j0,1:uR,1),'o-k','LineWidth',2)
+    %%TPp
+    plot(1:uR,recr(j0,1:uR,2),'o-r','LineWidth',2)
+    %%TPn
+    plot(1:uR,recr(j0,1:uR,3),'o-b','LineWidth',2)
+    %%TPtotal
+    plot(1:uR,recr(j0,1:uR,4),'o-g','LineWidth',2)
+    hLine3 = plot(numMaxIdx, recr(j0,numMaxIdx,4),'gd',...
+                  'MarkerFaceColor','auto','MarkerSize',10,'LineWidth',2);
+    set(get(get(hLine3,'Annotation'),'LegendInformation'),...
+        'IconDisplayStyle','off');
+    title(['max : ',sprintf('%5.3f',recr(j0,numMaxIdx(end),4))]);
 % $$$   hLine4 = plot(maxIdx, auc(j0,maxIdx),'o-','color',myColor{j0},...
 % $$$                 'Marker','d','MarkerFaceColor','auto','MarkerSize',10,'LineWidth',3);
 % $$$   set(get(get(hLine2,'Annotation'),'LegendInformation'),...
 % $$$       'IconDisplayStyle','off');
     xlabel('regularization factor')
     ylabel('correct rate')
-%  legend({'TP0','TPp','TPn'})
-end
+    %  legend({'TP0','TPp','TPn'})
+  end
 
 end
 

@@ -1,6 +1,7 @@
-function [auc recr thresh0 ] = print_AUC(method,regFac,fFNAME,uFnum,inFiringUSE,M_ans,F)
+function [auc recr thresh0 ] = print_AUC(method,regFac,fFNAME,uFnum,inFiringUSE,F,M_ans,inRoot)
 
 %% ==< calcAUC >==
+uR = length(regFac);
 auc = zeros(F.to,uR);
 recr = zeros(F.to,uR,4);
 thresh0 = zeros(F.to,uR);
@@ -22,7 +23,6 @@ for j0 = F.from:F.to
                      recn, recr(j0,regFacIdx,1:4)*100,...
                      auc(j0,regFacIdx),...
                      thresh0(j0,regFacIdx)) );
-      %        rate(regFacIdx,1:4,j0) = recr*100;
     end
   end
   fprintf(1,'\n');
