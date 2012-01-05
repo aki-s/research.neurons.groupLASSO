@@ -1,5 +1,5 @@
-function [I,lambda,loglambda] = gen_TrueI(env,alpha0,alpha)
-%function [I,lambda,loglambda] = gen_TrueI(env,alpha0,alpha)
+function [I,lambda,loglambda] = gen_TrueI(env,ResFunc0,ResFunc)
+%function [I,lambda,loglambda] = gen_TrueI(env,ResFunc0,ResFunc)
 
 
 global Tout;
@@ -53,7 +53,7 @@ if strcmp('genLoop','genLoop')
     end
     %%%% ===== renew number of spikes fired by cell c at lag m ===== 
     %%%% ===== END =====
-    loglambda(i1,:) = alpha0 + sum( alpha.*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
+    loglambda(i1,:) = ResFunc0 + sum( ResFunc.*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
     if strcmp('may_bug','may_bug_')
       %% old: This may be correct non stable poisson process.
       tmp3 = exp(-exp(loglambda(i1,:))/Hz.video).*(exp(loglambda(i1,:))/Hz.video); 

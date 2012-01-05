@@ -30,8 +30,8 @@ L000
 for N1 = 1:length(N000)
   for L1 = 1:length(L000)
     filename =sprintf('%s%s%s%s.mat',FNAMEm, L000{L1}, FNAMEf, N000{N1});
-    load( filename ); %Alpha
-    Phi = evalResponseFunc( Alpha );
+    load( filename ); %ResFunc
+    Phi = evalResponseFunc( ResFunc );
     [recn, recr, thresh0] = evaluatePhi(Phi, M_ans);
     disp( sprintf( '%20s: %3d, %3d, %3d, %3d, %5.1f, %5.1f, %5.1f, %5.1f',...
                    filename, recn, recr*100 ) )
@@ -43,8 +43,8 @@ end
 for N1 = 1:length(N000)
     for L1 = 1:length(L000)
         filename =sprintf('Aki-%s-Aki-%s.mat', L000{L1}, N000{N1});
-        load( filename ); %Alpha
-        Phi = evalResponseFunc( Alpha );
+        load( filename ); %ResFunc
+        Phi = evalResponseFunc( ResFunc );
         [recn, recr, thresh0] = evaluatePhi(Phi, M_ans);
         disp( sprintf( '%20s: %3d, %3d, %3d, %3d, %5.1f, %5.1f, %5.1f, %5.1f',...
             filename, recn, recr*100 ) )

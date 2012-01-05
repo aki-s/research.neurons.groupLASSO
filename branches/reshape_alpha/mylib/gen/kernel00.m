@@ -1,4 +1,4 @@
-function [alpha] = kernel00(alpha_hash,env)
+function [ResFunc] = kernel00(ResFunc_hash,env)
 
 global graph;
 cnum = env.cnum;
@@ -41,24 +41,24 @@ end
 ABS = max(weight_kernel_1);
 graph.prm.diag_Yrange = 1 * [ -ABS, ABS ];
 
-alpha = zeros(cnum*hnum,cnum);
+ResFunc = zeros(cnum*hnum,cnum);
 i3 =0;
 for i1 = 1:cnum %%++parallel
   for i2 = 1:cnum
     i3 = i3 + 1;
-    flag = alpha_hash(i3); %flag: +/0/-, exitatory/0/inhibitory
+    flag = ResFunc_hash(i3); %flag: +/0/-, exitatory/0/inhibitory
     ptr = (i2-1)*hnum; %ptr: pointer
 
     if i1 == i2 
-      alpha(ptr+1:ptr+hnum,i1) = flag*(weight_kernel_1);
+      ResFunc(ptr+1:ptr+hnum,i1) = flag*(weight_kernel_1);
     else
       switch ( flag ) 
         case +1
-          alpha(ptr+1:ptr+hnum,i1) = flag*(weight_kernel);
+          ResFunc(ptr+1:ptr+hnum,i1) = flag*(weight_kernel);
         case -1                 
-          alpha(ptr+1:ptr+hnum,i1) = flag*(weight_kernel);
+          ResFunc(ptr+1:ptr+hnum,i1) = flag*(weight_kernel);
         case 0                  
-          alpha(ptr+1:ptr+hnum,i1) = zeros(1,hnum);
+          ResFunc(ptr+1:ptr+hnum,i1) = zeros(1,hnum);
       end
     end
   end

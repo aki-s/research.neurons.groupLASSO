@@ -1,3 +1,5 @@
+% 2012/01/05 this file is not maintained...
+
 == PREAMBLE == 
 I've intensively debuged and tested this software,
 though there's no warranty about using this software.
@@ -55,7 +57,17 @@ If you don't want to be annoyed about what you have to set, just do like the fol
 The numver after message 'Warning' is error code.
 Plese consult the section "WARNING CODE".
 
+*Q2: I cannot rmdirectory from MATLAB terminal after running 'myest.m'
+Do the follwing at MATLAB terminal
+>> diary off;rmdir(status.savedirname,'s'); 
+
 == WARNING CODE ==
 *#1
 If you want to generate artificial time seriese of firing, 
 set 'status.GEN = 1' otherwise set 'status.GEN = 0'.
+
+*#2
+Warning: Number of basis used to estimate, and number of frames applied to
+penalty function may be relatively too large for generated frames. 
+
+*#3

@@ -15,7 +15,7 @@ run([rootdir_ '/conf/setpaths.m']);
 %% read user custom configuration.
 %% This overrides all configurations below.
 
-if strcmp('configure', 'configure') %++conf
+if strcmp('configure', 'configure')
   conf_progress();
   [DAL] = conf_DAL(); % configuration for solver 'DAL'.
   [env status ] = conf_IO(env,status);
@@ -53,11 +53,11 @@ gen_defaultEnv_ask(); % set default params
 if (status.realData ~= 1 )
   if (status.READ_NEURO_CONNECTION == 1) % from I/O % (status.READ_FIRING ~= 1)
     %% e.g. Enter 'indir/KimFig1.con' when asked.
-    [alpha_fig,alpha_hash,env,status] = readTrueConnection(env,status);
-    Tout = get_neuronType(env,status,alpha_fig,Tout);
+    [ResFunc_fig,ResFunc_hash,env,status] = readTrueConnection(env,status);
+    Tout = get_neuronType(env,status,ResFunc_fig,Tout);
   elseif (status.GEN_TrueValues == 1)  % generate artifical random network connection
-    [alpha_fig,alpha_hash,status] = gen_alpha_hash(env,status);
-    Tout = get_neuronType(env,status,alpha_fig,Tout);
+    [ResFunc_fig,ResFunc_hash,status] = gen_ResFunc_hash(env,status);
+    Tout = get_neuronType(env,status,ResFunc_fig,Tout);
   end
 else
   status.inStructFile = '';
@@ -71,8 +71,8 @@ if 1==1
   bases = makeSimStruct_glm(bases,1/env.Hz.video); % Create GLM structure with default params
 else
   bases = makeSimStruct_glm(0.2); % Create GLM structure with default params
-end
-%% 0.2 : 118
+end%% if 0.2 ,then 118 == length(bases)
+
 
 [env status Tout graph DAL] = check_conf(env,status,Tout,graph,bases,DAL);
 status = check_genState(status);
@@ -82,9 +82,9 @@ if ( status.GEN_TrueValues == 1 )
   %% 1.  Set parameters and display for GLM % =============================
   %% prepare 'TrueValues'.
   tic;
-  [alpha ] = gen_TrueWeightKernel(env,status,alpha_hash);
-  [alpha0] = gen_TrueWeightSelf(env,status);
-  [I,lambda,loglambda] = gen_TrueI(env,alpha0,alpha);
+  [ResFunc ] = gen_TrueWeightKernel(env,status,ResFunc_hash);
+  [ResFunc0] = gen_TrueWeightSelf(env,status);
+  [I,lambda,loglambda] = gen_TrueI(env,ResFunc0,ResFunc);
   echo_TrueValueStatus(env,status,lambda,I);
 
   run([rootdir_ '/mylib/plot/plot_TrueValues']);
@@ -103,12 +103,9 @@ if status.estimateConnection == 1
   end
   set_matlabpool(status.parfor_,status.crossVal);
 
-  useFrameLen = length(env.useFrame);%++later
-  DAL = setDALregFac(DAL,bases.ihbasprs.nbase);%++later
-
   %% CVL: cross Validation error
   CVL = cell(1,useNeuroLenIdx);
-  status.time.regFac = zeros(useFrameLen,DAL.regFacLen);
+  status.time.regFac = zeros(env.useFrameLen,DAL.regFacLen);
   CVwhole = cell(1,useNeuroLenIdx);
   RfWholeIdx = cell(1,useNeuroLenIdx);
   CVeach     = cell(1,useNeuroLenIdx);
@@ -117,7 +114,7 @@ if status.estimateConnection == 1
   %% not yet
   EbasisWeight = cell(1,useNeuroLenIdx);
   Ebias = cell(1,useNeuroLenIdx);
-  Ealpha =  cell(1,useNeuroLenIdx);
+  EResFunc =  cell(1,useNeuroLenIdx);
   %}
   tmpI = I;
   %%< prepare for 'parfor' >
@@ -129,13 +126,13 @@ if status.estimateConnection == 1
     fprintf(1,'#neuron:%5d<-%5d\n',tenv.inFiringUSE(i0),env.cnum);
     I = tmpI(:,1:env.inFiringUSE(i0));
     tenv.cnum = size(I,2);
-    CVL{i0}        = nan(DAL.regFacLen,tenv.cnum,useFrameLen);
-    CVwhole{i0}    = nan(useFrameLen,1);
-    RfWholeIdx{i0} = nan(useFrameLen,1); %Rf: regularization factor
-    CVeach{i0}     = nan(useFrameLen,tenv.cnum);
-    RfEachIdx{i0}  = nan(useFrameLen,tenv.cnum);
-    %%< loop:useFrameLen >
-    for i1 =1:useFrameLen
+    CVL{i0}        = nan(DAL.regFacLen,tenv.cnum,env.useFrameLen);
+    CVwhole{i0}    = nan(env.useFrameLen,1);
+    RfWholeIdx{i0} = nan(env.useFrameLen,1); %Rf: regularization factor
+    CVeach{i0}     = nan(env.useFrameLen,tenv.cnum);
+    RfEachIdx{i0}  = nan(env.useFrameLen,tenv.cnum);
+    %%< loop:env.useFrameLen >
+    for i1 =1:env.useFrameLen
       fprintf('%s',repmat('=',[30 1]));
       fprintf(' useFrame:%08d ',tenv.useFrame(i1));
       fprintf('%s',repmat('=',[30 1]));
@@ -160,7 +157,8 @@ if status.estimateConnection == 1
           [CVwhole{i0}(i1),RfWholeIdx{i0}(i1)]    = min(sum(CVL{i0}(:,:,i1),2),[],1);
           %% corresponding regularization factor: DAL.regFac(RfWholeIdx{i0})
           [CVeach{i0}(i1,1:tenv.cnum),RfEachIdx{i0}(i1,1:tenv.cnum)] = min(CVL{i0}(:,:,i1),[],1); % each neuron
-          if ( tgraph.PLOT_T == 1 ) && ( i1 == useFrameLen )
+          if ( tgraph.PLOT_T == 1 ) && ( i1 == env.useFrameLen )
+            figure;
             plot_CVLwhole(tenv,tstatus,tgraph,DAL,CVL{i0});
           end
 
@@ -168,14 +166,14 @@ if status.estimateConnection == 1
           [EbasisWeight,Ebias,Estatus,DAL,tstatus] = estimateWeightKernel(tenv,tgraph,tstatus,bases,I,DAL,i1);
           %++bug Ebias isn't correct.
 
-          [Ealpha tgraph] = reconstruct_Ealpha(tenv,tgraph,DAL,bases,EbasisWeight);
+          [EResFunc tgraph] = reconstruct_EResFunc(tenv,tgraph,DAL,bases,EbasisWeight);
           saveResponseFunc(tenv,tgraph,tstatus,bases,...
-                           EbasisWeight,Ealpha,Ebias,DAL,...
+                           EbasisWeight,EResFunc,Ebias,DAL,...
                            regexprep(tstatus.inFiring,'(.*/)(.*)(.mat)','$2'));
           if tgraph.PLOT_T == 1
             fprintf(1,'\n\n Now plotting estimated kernel\n');
             for i2 = 1:DAL.regFacLen
-              plot_Ealpha(tenv,tgraph,tstatus,DAL,bases,EbasisWeight,...
+              plot_EResFunc(tenv,tgraph,tstatus,DAL,bases,EbasisWeight,...
                           sprintf('elapsed:%s',num2str(tstatus.time.regFac(i1,i2))),i2 )
             end
           end
@@ -209,9 +207,9 @@ if status.estimateConnection == 1
           [EbasisWeight,Ebias,Estatus,tmpDAL{i2}] = ...
               estimateWeightKernel(tenv,tgraph,...
                                    tstatus,bases,I,tmpDAL{i2},i2);
-          [Ealpha,tmpGraph] = reconstruct_Ealpha(tenv,tgraph,tmpDAL{i2},bases,EbasisWeight);
+          [EResFunc,tmpGraph] = reconstruct_EResFunc(tenv,tgraph,tmpDAL{i2},bases,EbasisWeight);
           saveResponseFunc(tenv,tgraph,tstatus,bases,...
-                           EbasisWeight,Ealpha,Ebias,tmpDAL{i2},...
+                           EbasisWeight,EResFunc,Ebias,tmpDAL{i2},...
                            regexprep(tstatus.inFiring,'(.*/)(.*)(.mat)','$2')...
                            );
         else 
@@ -230,7 +228,7 @@ if status.estimateConnection == 1
         if tgraph.PLOT_T == 1
           try
             fprintf(1,'estimated rename func:'); %??
-            plot_Ealpha_parfor(tenv,tmpGraph,tstatus,tmpDAL{i2},bases,EbasisWeight,...
+            plot_EResFunc_parfor(tenv,tmpGraph,tstatus,tmpDAL{i2},bases,EbasisWeight,...
                                sprintf('elapsed:%s', ...
                                        num2str(tstatus.time.regFac(i2,RfWholeIdx{i0}(i2)))),...
                                RfWholeIdx{i0}(i2) )%++bug? why '1'
@@ -242,7 +240,7 @@ if status.estimateConnection == 1
       %% ==</extract and plot the best response func for each usedFrameNum from the results of crossValidation>==
     end
   end
-  %%</ loop:useFrameLen >
+  %%</ loop:env.useFrameLen >
   I = tmpI;
   %  env = tmpEnv;
   status = tstatus; %% status.time.regFac is modified.
@@ -253,45 +251,18 @@ end
 %% ==< eval >==
 %{
 for i1 = 1:DAL.regFacLen
-  [Ealpha_hash,Ealpha_fig,threshold,Econ] = judge_alpha_ternary(env,Ealpha,alpha_hash,i1,status);
+  [EResFunc_hash,EResFunc_fig,threshold,Econ] = judge_ResFunc_ternary(env,EResFunc,ResFunc_hash,i1,status);
 end
 %}
 if (graph.PLOT_T == 1)
   %{
-  plot_CausalMatrix(Ealpha_fig,'Estimated,group LASSO');
-  plot_CausalMatrix(alpha_fig,'True connection')
+  plot_CausalMatrix(EResFunc_fig,'Estimated,group LASSO');
+  plot_CausalMatrix(ResFunc_fig,'True connection')
   %}
 end
 %% ==</eval >==
 
 status.time.end = fix(clock);
-
-
-%% ==< clean >==
-%% clean variables before save
-if status.clean == 1
-  run([rootdir_ '/mylib/clean.m'])
-end
-
-%% ==< save >==
-if status.save_vars == 1
-  fprintf(1,'Saving variables....\n');
-  if status.use.GUI == 1
-    uisave(who,strcat(status.savedirname,'/', 'frame', num2str(sprintf('%05d',env.genLoop)), 'hwind', num2str(sprintf('%04d',env.hwind)), 'hnum' , num2str(sprintf('%02d',env.hnum))));
-  else 
-    tmp.v = datevec(date);
-    status.outputfilename = [status.savedirname,'/',num2str(tmp.v(3)),'_',num2str(tmp.v(2)),'_',num2str(tmp.v(1)),'__',num2str(status.time.start(4)),'_',num2str(status.time.start(5)),'.mat'];
-    save(status.outputfilename);
-  end
-  fprintf(1,'outputfilename:\n %s\n',status.outputfilename)
-end
-
-status.profile=profile('info');
-
-
-if status.estimateConnection == 1
-  mailMe(env,status,DAL,bases,'Finished myest.m')
-end
 
 %% ==< bulk save all plotted graph  >==
 if (graph.SAVE_ALL == 1)
@@ -309,16 +280,38 @@ if (graph.SAVE_ALL == 1)
     end
   end
 end 
-%{
+
 %% ==< clean >==
+%% clean variables before save
 if status.clean == 1
-  run([rootdir_ '/mylib/clean.m'])
+run  clean
 end
-%}
+
+%% ==< save >==
+if status.save_vars == 1
+  fprintf(1,'Saving variables....\n');
+  if status.use.GUI == 1
+    my_uisave(status.savedirname,status.time);
+  else 
+    status.outputfilename = setSavedDataName(status.savedirname,status.time);
+    save(status.outputfilename);
+  fprintf(1,'outputfilename:\n %s\n',status.outputfilename)
+  end
+end
+
+status.profile=profile('info');
+
+
+if status.estimateConnection == 1
+  mailMe(env,status,DAL,bases,'Finished myest.m')
+end
+
+diary off;
+
 %{
 %fin();
 t=readTrueConnection(env,status,status.inStructFile);
-et=reshape(Ealpha_hash,[],env.cnum);
+et=reshape(EResFunc_hash,[],env.cnum);
 calcCorrectNum(t,et)
-[Ealpha_hash,threshold,Econ] = judge_alpha_ternary(env,Ealpha,alpha_hash,4);
+[EResFunc_hash,threshold,Econ] = judge_ResFunc_ternary(env,EResFunc,ResFunc_hash,4);
 %}

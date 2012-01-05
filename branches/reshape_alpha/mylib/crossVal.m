@@ -24,8 +24,8 @@ if (nargin >= baseN+1 )
   elseif ischar(varargin{1})
     infile = varargin{1};
 
-    %inRoot_ = '/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/indir'
-    %infile ='/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/indir/Real_data/crossVal_dataLists.txt'
+    %inRoot_ = '/home/aki-s/svn.d/art_repo2/branches/reshape_ResFunc/indir'
+    %infile ='/home/aki-s/svn.d/art_repo2/branches/reshape_ResFunc/indir/Real_data/crossVal_dataLists.txt'
 
     infile_root = '';
     if isdir(infile)
@@ -116,9 +116,9 @@ else
     [EbasisWeight,Ebias_,Estatus,dum1,status] =...
         estimateWeightKernel(tmpEnv,graph,status,bases,I(USE,:),DAL,regFacIdx);
     %    tic;fprintf(1,'Eapha2Mat:\t');
-    Ealpha = reconstruct_Ealpha(tmpEnv,DAL,bases,EbasisWeight);
+    EResFunc = reconstruct_EResFunc(tmpEnv,DAL,bases,EbasisWeight);
     histSize = bases.ihbasprs.numFrame;
-    [Ealpha_] = EalphaCell2Mat(tmpEnv,Ealpha,regFacLen);
+    [EResFunc_] = EResFuncCell2Mat(tmpEnv,EResFunc,regFacLen);
     %    toc
     %{
     fprintf(1,'Ebias2Mat:\t')
@@ -128,7 +128,7 @@ else
       tic
       for i3 = 1: tmpEnv.genLoop %++parallel
         nIs = I(i3 + histSize - (1:histSize), 1:cnum);
-        loglambda(i3,1:cnum) = Ebias_(i2,1:cnum) + sum( Ealpha_(:,1:cnum,i2) .*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
+        loglambda(i3,1:cnum) = Ebias_(i2,1:cnum) + sum( EResFunc_(:,1:cnum,i2) .*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
       end
       toc
         err(i2,:,i1) = err(i2,:,i1) + calcLogLikelihood(loglambda,I(USE,:));

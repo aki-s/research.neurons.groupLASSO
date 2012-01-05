@@ -1,7 +1,7 @@
 %% Set freely your configuration.
 %% Please overload default configuration explicitly by writing here.
 warning('DEBUG:conf','conf_user.m overrides all configuration variables set after this file.');
-if 1 == 1
+if 1 == 0
   DEBUG_s = 'gen_9_non'
 elseif 1 == 0
   DEBUG_s = 'comp_steven_glm'
@@ -9,8 +9,8 @@ elseif 1 == 0
   DEBUG_s = 'comp_steven_bar'
 elseif 1 == 0
   DEBUG_s = 'my_n9.con'
-elseif 1 == 0
-  DEBUG_s = 'test'
+elseif 1 == 1
+  DEBUG_s = 'dev-test'
 end
 env.SELF_DEPRESS_BASE = 6.5; % good. c.a. generate firing of 30Hz.
 env.mail.to='aki-s@sys.i.kyoto-u.ac.jp';
@@ -37,7 +37,7 @@ status.parfor_ = 1;
 status.mail = 1;
 status.DEBUG.plot = 1; %++bug: not yet implemented.
 status.DEBUG.level = 0;
-status.use.GUI = 0; %++bug: not yet implemented.
+status.use.GUI = 0; % ask where to save
 status.profiler = 0; % run MATLAB profiler
 
 
@@ -58,14 +58,14 @@ switch DEBUG_s
     env.useFrame = [10000 20000 40000 80000 160000]; % essential
     graph.PLOT_T = 1;
     status.inStructFile = [ rootdir_ '/indir/my_n9.con'];
-  case 'test'
-    status.crossVal = 8;
-    %    DAL.regFac = [256 128 64 32 16 8 4 2 1];
-    DAL.regFac = [16 8 4 2 1];
-    env.genLoop = 10000;
+  case 'dev-test'
+    status.crossVal = 4;
+    DAL.regFac = [8 2];
+    env.genLoop = 20001;
     graph.PLOT_T = 1;
     status.inStructFile = [ rootdir_ '/indir/my_n9.con'];
     %    env.useFrame = [5000 10000 50000 90000];%indispensable
+    env.useFrame = [5000 9392 50000 90000];%indispensable
   case 'comp_steven_glm'
     %    status.crossVal = 8;
     DAL.regFac = [ 16 10 8 4];

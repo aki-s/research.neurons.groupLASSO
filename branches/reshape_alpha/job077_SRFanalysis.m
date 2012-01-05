@@ -1,6 +1,6 @@
 load('/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/outdir/23-Oct-2011-start-20_50/Aki-0000016-rec072b-0044976-020.mat')
 
-[Pk, Lt, Cn] = SRF_analysis( Alpha );
+[Pk, Lt, Cn] = SRF_analysis( ResFunc );
 thresh = 0.1;
 N = 20;
 

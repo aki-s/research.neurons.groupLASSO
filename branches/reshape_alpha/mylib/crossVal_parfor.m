@@ -27,8 +27,8 @@ if (nargin >= argNum+1 )
     %% cross validation.
     infile = varargin{1};
 
-    %inRoot_ = '/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/indir'
-    %infile ='/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/indir/Real_data/crossVal_dataLists.txt'
+    %inRoot_ = '/home/aki-s/svn.d/art_repo2/branches/reshape_ResFunc/indir'
+    %infile ='/home/aki-s/svn.d/art_repo2/branches/reshape_ResFunc/indir/Real_data/crossVal_dataLists.txt'
 
     infile_root = '';
     if isdir(infile)
@@ -128,8 +128,14 @@ cost = zeros(1,regFacLen);
 status_tmp = cell(1,k);
 err = zeros(regFacLen,cnum,k);
 if (tmpEnv.genLoop < DAL.Drow)
+% $$$   warning('DEBUG:NOTICE',...
+% $$$           ['env.useFrame=%d is too large for crossValidation, skipping...\n',...
+% $$$            'make env.genLoop larger than %d, or make env.useFrame smaller than '],...
+% $$$   DAL.Drow, env.genLoop*ceil(1/prm), tmpEnv.genLoop - bases.ihbasprs.numFrame )
   warning('DEBUG:NOTICE',...
-          'env.useFrame=%s is too large for crossValidation, skipping...',DAL.Drow)
+          ['env.useFrame=%d is too large for crossValidation, skipping...\n',...
+           'set env.useFrame smaller than %d at your configulation file.'],...
+  DAL.Drow, tmpEnv.genLoop - bases.ihbasprs.numFrame )
   cv = nan(regFacLen,cnum);
   cost = nan(1,regFacLen);
 else
@@ -145,24 +151,24 @@ else
     [EbasisWeight{i1},Ebias{i1},Estatus{i1},dum1,status_tmp{i1}] =...
         estimateWeightKernel(tmpEnv,graph,status,bases,Icut,DAL,useFrameIdx);
     cost = cost + status_tmp{i1}.time.regFac(useFrameIdx,:);
-    [Ealpha Ograph] = reconstruct_Ealpha(tmpEnv,graph,DAL,bases,EbasisWeight{i1});
+    [EResFunc Ograph] = reconstruct_EResFunc(tmpEnv,graph,DAL,bases,EbasisWeight{i1});
     %    histSize = bases.ihbasprs.numFrame;
     %% warning: not exact response function is write out.
     if strcmp('incomplete_RF','incomplete_RF') % RF: response function
       saveResponseFunc(env,Ograph,status,bases,...
-                       EbasisWeight{i1},Ealpha,Ebias{i1},DAL,...
+                       EbasisWeight{i1},EResFunc,Ebias{i1},DAL,...
                        regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2'),...
                        'CV',i1);% for later use 
     end
-    [Ealpha_] = EalphaCell2Mat(tmpEnv,Ealpha,regFacLen);
+    [EResFunc_] = EResFuncCell2Mat(tmpEnv,EResFunc,regFacLen);
     for i2 = 1:regFacLen
       loglambda = cell(tmpEnv.genLoop-histSize,1);
       %%++parallel strongly recommended. Especially if 'k' is small
       %% leave 'for-i3' out as 'parfor-i3' may be good.
       for i3 = (1+histSize): ( tmpEnv.genLoop)
         nIs = Icut(i3 - (1:histSize), 1:cnum);
-        %        loglambda(i3,1:cnum) = Ebias(i2,1:cnum) + sum( Ealpha_(:,1:cnum,i2) .*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
-        loglambda{i3}(1:cnum) = Ebias{i1}(i2,1:cnum) + sum( Ealpha_(:,1:cnum,i2) .*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
+        %        loglambda(i3,1:cnum) = Ebias(i2,1:cnum) + sum( EResFunc_(:,1:cnum,i2) .*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
+        loglambda{i3}(1:cnum) = Ebias{i1}(i2,1:cnum) + sum( EResFunc_(:,1:cnum,i2) .*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
       end
       loglambda = cell2mat(loglambda);
       if parfor_flag == 1

@@ -2,10 +2,10 @@
 
 fprintf(1,'\nplotting generated "True Values"\n\n')
 
-%%% ===== PLOT alpha ===== START =====
+%%% ===== PLOT ResFunc ===== START =====
 if ( 1 == graph.PLOT_T )
-  %% ++bug: func plot_alpha must be given 'env'.
-  plot_alpha(graph,env,alpha,'response functions');
+  %% ++bug: func plot_ResFunc must be given 'env'.
+  plot_ResFunc(graph,env,ResFunc,'response functions');
 end
 if graph.PRINT_T == 1
   print('-depsc','-tiff',[rootdir_ '/outdir/true_responseFunc.eps'])

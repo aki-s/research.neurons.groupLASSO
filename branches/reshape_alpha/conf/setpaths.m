@@ -7,11 +7,13 @@ else
 end
 
 addpath([rundir '/conf/']);
-addpath([rundir '/dal_mod/']);
-addpath([rundir '/dal_ver1.05/']);
+addpath([rundir 'imports/']);
+addpath([rundir 'imports/dal_mod/']);
+addpath([rundir 'imports/dal_ver1.05/']);
 addpath([rundir '/mylib/']);
 addpath([rundir '/mylib/check']);
 addpath([rundir '/mylib/conv']);
+addpath([rundir '/mylib/echo']);
 addpath([rundir '/mylib/eval']);
 addpath([rundir '/mylib/gen']);
 addpath([rundir '/mylib/get']);
@@ -20,7 +22,6 @@ addpath([rundir '/mylib/init']);
 addpath([rundir '/mylib/plot']);
 addpath([rundir '/mylib/postproc']);
 addpath([rundir '/mylib/preproc']);
-addpath([rundir '/mylib/print']);
 addpath([rundir '/mylib/set']);
 
 %% no need to set to run myest.m

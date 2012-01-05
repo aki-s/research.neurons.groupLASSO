@@ -1,4 +1,4 @@
-function DALout = setDALregFac(DALin,nbase)
+function DALout = check_DALregFac(DALin,nbase)
 %%
 %% init DAL regularization factor
 %%
@@ -27,4 +27,4 @@ else
     DALin.regFac(1) = sqrt(nbase); % DALin.regFac:
   end
 end
-DALout.regFacLen = length(DAL.regFac);
+DALout.regFacLen = length(DALin.regFac);

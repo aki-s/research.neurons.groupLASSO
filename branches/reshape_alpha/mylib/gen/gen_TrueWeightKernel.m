@@ -1,7 +1,7 @@
-function [alpha] = gen_TrueWeightKernel(env,status,alpha_hash)
+function [ResFunc] = gen_TrueWeightKernel(env,status,ResFunc_hash)
 %%
 %% Usage:)
-%% [alpha] = gen_TrueWeightKernel(env,status,alpha_hash);
+%% [ResFunc] = gen_TrueWeightKernel(env,status,ResFunc_hash);
 global Tout;
 
 %% ==< set local variables >==
@@ -9,10 +9,10 @@ cnum    = env.cnum   ;
 hnum    = env.hnum   ;    
 %% ==</set local variables >==
 
-alpha = zeros(hnum*cnum,cnum);
+ResFunc = zeros(hnum*cnum,cnum);
 
 if ( status.READ_NEURO_CONNECTION == 1 )
-  alpha = kernel00(alpha_hash,env);
+  ResFunc = kernel00(ResFunc_hash,env);
 end
 
 if ( status.READ_NEURO_CONNECTION ~= 1 )
@@ -28,7 +28,7 @@ if ( status.READ_NEURO_CONNECTION ~= 1 )
 
 % $$$   for i1 = 1:cnum
 % $$$     error('temporary this functionality is under development.');
-% $$$     %   alpha=;
+% $$$     %   ResFunc=;
 % $$$   end
-  alpha = kernel00(alpha_hash,env);
+  ResFunc = kernel00(ResFunc_hash,env);
 end

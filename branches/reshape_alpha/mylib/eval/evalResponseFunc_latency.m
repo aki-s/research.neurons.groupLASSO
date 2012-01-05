@@ -1,7 +1,7 @@
 function [peak latency ] = evalResponseFunc_latency( A )
 %% usage)
 %load('outdir/23-Oct-2011-start-20_50/Aki-0000008-rec072b-0044976-020.mat');
-%[peak latency] = evalResponseFunc_latency(Alpha);
+%[peak latency] = evalResponseFunc_latency(ResFunc);
 
 [N1, N2, M] = size( A );
 
@@ -40,17 +40,17 @@ end
 
 %% example
 %{
-j0=c( (sum(evalResponseFunc(Alpha) >0 )) >0);
+j0=c( (sum(evalResponseFunc(ResFunc) >0 )) >0);
 
-[a b]=sort(sum(evalResponseFunc(Alpha)>0),'descend')
+[a b]=sort(sum(evalResponseFunc(ResFunc)>0),'descend')
 %}
 %{
 cnum=20;
 j0=1:cnum;
 A = zeros(cnum);
 for th = 0.1:0.1:1A=zeros(cnum);
-A=A+(evalResponseFunc_peak(Alpha)>th);
-A=A-(evalResponseFunc_peak(Alpha)<-th);
+A=A+(evalResponseFunc_peak(ResFunc)>th);
+A=A-(evalResponseFunc_peak(ResFunc)<-th);
 A(logical(eye(cnum))) = 0;
 figure
 [mx, my] = plot_ROI( u, j0 ); % ( mx(i) , my(i) ) は、i番目ROIの中

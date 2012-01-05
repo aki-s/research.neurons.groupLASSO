@@ -1,4 +1,4 @@
-function  [alpha_fig,alpha_hash,Oenv,Ostatus] = readTrueConnection(env,status,varargin)
+function  [ResFunc_fig,ResFunc_hash,Oenv,Ostatus] = readTrueConnection(env,status,varargin)
 %% read true connection of neurons
 %% ============ about: input file ============
 %% input file format)
@@ -6,10 +6,10 @@ function  [alpha_fig,alpha_hash,Oenv,Ostatus] = readTrueConnection(env,status,va
 %%    '+'        denotes excitatory neuron from
 %%    '0'        denotes no connection
 %%    '-'        denotes inhibitory neuron from
-%% The shape of alpha_hash is 
+%% The shape of ResFunc_hash is 
 %%           1:N         => [from #neuron]
 %%   1  ---------------
-%%  ||  |  alpha_fig |
+%%  ||  |  ResFunc_fig |
 %%  \/  ---------------
 %%   N
 %% [to #neuron]
@@ -36,31 +36,31 @@ tmp.fid = fopen(tmp.in,'rt');
 
 %% Need exception hundler: if (#column ~= #row )  %%++improve
 %% fscanf repeat reading in dimention 2
-[alpha_hash, Oenv.cnum ] = fscanf(tmp.fid,'%s'); % don't read LF.
-                                                 %[alpha_hash, Oenv.cnum ] = fscanf(tmp.fid,'%s[+0-]'); % don't read LF.
-alpha_hash = strrep(alpha_hash, '+','+1 ');
-alpha_hash = strrep(alpha_hash, '0','0 ');
-alpha_hash = strrep(alpha_hash, '-','-1 ');
+[ResFunc_hash, Oenv.cnum ] = fscanf(tmp.fid,'%s'); % don't read LF.
+                                                 %[ResFunc_hash, Oenv.cnum ] = fscanf(tmp.fid,'%s[+0-]'); % don't read LF.
+ResFunc_hash = strrep(ResFunc_hash, '+','+1 ');
+ResFunc_hash = strrep(ResFunc_hash, '0','0 ');
+ResFunc_hash = strrep(ResFunc_hash, '-','-1 ');
 %% remove comment line.
-alpha_hash = regexprep(alpha_hash,'[a-z,A-Z,'','',''.'']','#');
-alpha_hash = regexprep(alpha_hash,'(\#[0-9\ ]*)','');
+ResFunc_hash = regexprep(ResFunc_hash,'[a-z,A-Z,'','',''.'']','#');
+ResFunc_hash = regexprep(ResFunc_hash,'(\#[0-9\ ]*)','');
 
-alpha_hash = str2num(alpha_hash);
-[garbage,N] = size(alpha_hash);
+ResFunc_hash = str2num(ResFunc_hash);
+[garbage,N] = size(ResFunc_hash);
 Oenv.cnum = uint64(sqrt(N));
 if Oenv.cnum*Oenv.cnum ~= N
   error('Check your inputfile')
 end
 Oenv.cnum = double(Oenv.cnum);
 
-%% The shape of alpha_hash is 
+%% The shape of ResFunc_hash is 
 %                =>[to #neuron]
 %      ---------------
-%  ||  |  alpha_hash |
+%  ||  |  ResFunc_hash |
 %  \/  ---------------
 % [from #neuron]
 
-alpha_fig = transpose(reshape(alpha_hash, Oenv.cnum , Oenv.cnum));
+ResFunc_fig = transpose(reshape(ResFunc_hash, Oenv.cnum , Oenv.cnum));
 
 
 fclose(tmp.fid);
@@ -70,8 +70,8 @@ if 1 == 1
   Oenv.spar.from = NaN;
   Oenv.spar.to   = NaN;
 else
-  Oenv.spar.from = sum(sum((alpha_fig ~= 0),1)>0)/Oenv.cnum;
-  Oenv.spar.to =  sum(sum((alpha_fig ~= 0),2)>0)/Oenv.cnum;
+  Oenv.spar.from = sum(sum((ResFunc_fig ~= 0),1)>0)/Oenv.cnum;
+  Oenv.spar.to =  sum(sum((ResFunc_fig ~= 0),2)>0)/Oenv.cnum;
 end
 
 Ostatus.inStructFile = tmp.in;

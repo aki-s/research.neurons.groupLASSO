@@ -4,7 +4,7 @@ function plot_AUC_CVL(env,status,graph,DAL,ansMat,CVL,varargin)
 %% usage)
 % load('./outdir/some_out_data/allVarMat.m')
 %% usage1)
-% ansMat = '/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/indir/sim_kim_ans.mat'
+% ansMat = '/home/aki-s/svn.d/art_repo2/branches/reshape_ResFunc/indir/sim_kim_ans.mat'
 %% plot all
 % plot_AUC_CVL(env,status,graph,DAL,ansMat,CVL)
 %% or, plot Index_of_env.useFrame
@@ -13,7 +13,7 @@ function plot_AUC_CVL(env,status,graph,DAL,ansMat,CVL,varargin)
 %% varargin{1}: index to select and plot only one sample.
 %%            index correspond with index of DAL.regFac.
 %% usage2)
-%% ansMat = alpha_fig %alpha_fig: matrix whose entry is 1 or 0.
+%% ansMat = ResFunc_fig %ResFunc_fig: matrix whose entry is 1 or 0.
 % plot_AUC_CVL(env,status,graph,DAL,ansMat,CVL)
 %% ==<conf>==
 
@@ -102,8 +102,8 @@ elseif strcmp('leaveOut_calcAUC','leaveOut_calcAUC_')
       for regFacIdx = 1:uR
         filename =sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{regFacIdx}, ...
                           fFNAME, uFnum{j0}, inFiringUSE{i0});
-        load( [inRoot '/' filename], 'Alpha');
-        RFIntensity = evalResponseFunc( Alpha );
+        load( [inRoot '/' filename], 'ResFunc');
+        RFIntensity = evalResponseFunc( ResFunc );
         [recn, recr(j0,regFacIdx,1:4), thresh0(j0,regFacIdx) ,auc(j0,regFacIdx)] = evalRFIntensity(RFIntensity, M_ans);
         disp( sprintf( ['%20s:'...
                         ' %3d, %3d, %3d, %6d:'...

@@ -1,7 +1,7 @@
-function  saveResponseFunc(env,graph,status,bases,EbasisWeight,Ealpha,Ebias,DAL,fire,varargin)
+function  saveResponseFunc(env,graph,status,bases,EbasisWeight,EResFunc,Ebias,DAL,fire,varargin)
 %
-% saveResponseFunc(Ealpha,DAL,'FNAME')
-% saveResponseFunc(Ealpha,DAL,'FNAME','relative_dirname')
+% saveResponseFunc(EResFunc,DAL,'FNAME')
+% saveResponseFunc(EResFunc,DAL,'FNAME','relative_dirname')
 
 INBASE = 9;
 
@@ -22,7 +22,7 @@ else
 end
 
 EbasisWeight = EbasisWeight; %good, rename in transition
-AlphaSelf = Ebias; %bad, rename in transition
+ResFuncSelf = Ebias; %bad, rename in transition
 %%
 cnum = env.cnum;
 frame = DAL.Drow;
@@ -32,17 +32,17 @@ method = status.method;
 savedirname = status.savedirname;
 %%
 SIZE = 500; % SIZE > bases.ihbas.numFrame
-Alpha_ = cell(1,N);
-len = length(Ealpha{1}{1}{1}(:));
+ResFunc_ = cell(1,N);
+len = length(EResFunc{1}{1}{1}(:));
 for i1 = 1:length(regFac)
-  Alpha_{i1} = zeros(cnum,cnum,SIZE);
+  ResFunc_{i1} = zeros(cnum,cnum,SIZE);
   for i1to =1:cnum
     for i2from =1:cnum
-      Alpha_{i1}(i1to,i2from,1:len) = Ealpha{i1}{i1to}{i2from}(:);
-      %      Alpha(i1to,i2from,:) = Ealpha{i1}{i1to}{i2from}(1:SIZE)
+      ResFunc_{i1}(i1to,i2from,1:len) = EResFunc{i1}{i1to}{i2from}(:);
+      %      ResFunc(i1to,i2from,:) = EResFunc{i1}{i1to}{i2from}(1:SIZE)
     end
   end
-  %plotalpha(Alpha_{i1})
+  %plotResFunc(ResFunc_{i1})
 end
 %%
 if isempty(crossValIdx)
@@ -52,7 +52,7 @@ else
 end
 if nargin == INBASE + 2
   for i1 = 1:N
-    Alpha = Alpha_{i1};
+    ResFunc = ResFunc_{i1};
     save([savedirname,'/',outFolder,'/',...
           method,'-', ...
           sprintf('%09.4f',regFac(i1)),...
@@ -60,18 +60,18 @@ if nargin == INBASE + 2
           sprintf('-%07d',frame),...
           sprintf('-%03d',cnum),...
           K,...
-          '.mat' ],'env','graph','savedirname','Alpha','AlphaSelf','EbasisWeight','DAL','bases');
+          '.mat' ],'env','graph','savedirname','ResFunc','ResFuncSelf','EbasisWeight','DAL','bases');
   end
 
 else
   for i1 = 1:N
-    Alpha = Alpha_{i1};
+    ResFunc = ResFunc_{i1};
     save([savedirname,'/',method,'-', ...
           sprintf('%09.4f',regFac(i1)),...
           '-',fire, ...
           sprintf('-%07d',frame),...
           sprintf('-%03d',cnum),...
           K,...
-          '.mat' ],'env','graph','status','savedirname','Alpha','AlphaSelf','EbasisWeight','DAL','bases');
+          '.mat' ],'env','graph','status','savedirname','ResFunc','ResFuncSelf','EbasisWeight','DAL','bases');
   end
 end

@@ -92,8 +92,8 @@ elseif strcmp('leaveOut_calcAUC','leaveOut_calcAUC_')
         %%
         filename =sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{regFacIdx}, ...
                           fFNAME, uFnum{j0}, inFiringUSE{i0});
-        load( [inRoot '/' filename], 'Alpha');
-        RFIntensity = evalResponseFunc( Alpha );
+        load( [inRoot '/' filename], 'ResFunc');
+        RFIntensity = evalResponseFunc( ResFunc );
         if strcmp('omitDiag','omitDiag_')
           [recn, recr, thresh0 ,auc(j0,regFacIdx)] = evalRFIntensity_omitDiag(RFIntensity, M_ans);
         else

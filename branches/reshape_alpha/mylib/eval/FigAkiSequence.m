@@ -35,8 +35,8 @@ FNAMEf = regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2');
 AkiAcc = zeros(uF,4);
 for N1 = 1:uF
   filename =sprintf('Aki-%s-%s-%s.mat', L000{L0(N1)}, FNAMEf, N000{N1});
-  load( filename ); %Alpha
-  Phi = evalResponseFunc( Alpha );
+  load( filename ); %ResFunc
+  Phi = evalResponseFunc( ResFunc );
   [recn, recr, thresh0] = evaluatePhi(Phi, M_ans);
   %{
   disp( sprintf( '%20s: %3d, %3d, %3d, %3d, %5.1f, %5.1f, %5.1f, %5.1f',...
@@ -51,8 +51,8 @@ fprintf(1,'\n');
 for N1 = 1:uF
   for reg = 1:uR
     filename =sprintf('Aki-%s-%s-%s.mat', L000{reg}, FNAMEf, N000{N1});
-    load( filename ); %Alpha
-    Phi = evalResponseFunc( Alpha );
+    load( filename ); %ResFunc
+    Phi = evalResponseFunc( ResFunc );
     [recn, recr, thresh00] = evaluatePhi(Phi, M_ans);
     disp( sprintf( '%20s: %3d, %3d, %3d, %3d,: %5.1f, %5.1f, %5.1f, %5.1f, :%f',...
                    filename, recn, recr*100, thresh00 ) );

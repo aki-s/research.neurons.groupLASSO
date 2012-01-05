@@ -1,11 +1,11 @@
-function [OTout] = get_neuronType(env,status,alpha_fig,Tout)
+function [OTout] = get_neuronType(env,status,ResFunc_fig,Tout)
 
 OTout = Tout;
 
 %% ==< get neuron type >==
-tmp_alpha_fig = alpha_fig;
+tmp_ResFunc_fig = ResFunc_fig;
 %% ignore property of diagonal elements.
-tmp_alpha_fig( logical( eye( env.cnum))) = 0;
+tmp_ResFunc_fig( logical( eye( env.cnum))) = 0;
 
 inhibitory = 0; % number of inhibitory neurons.
 excitatory = 0; % number of excitatory neurons
@@ -14,8 +14,8 @@ zeroConnection =     0; % number of zero connection neurons
 %%  OTout.ctype = false(1,env.cnum);
 OTout.ctype = zeros(1,env.cnum);
 for i1 = 1:env.cnum %++parallel
-  notI = isempty(find(tmp_alpha_fig(:,i1)<0));
-  notE = isempty(find(tmp_alpha_fig(:,i1)>0));
+  notI = isempty(find(tmp_ResFunc_fig(:,i1)<0));
+  notE = isempty(find(tmp_ResFunc_fig(:,i1)>0));
   logicZ = notI & notE ;
   switch( logicZ )
     case 0

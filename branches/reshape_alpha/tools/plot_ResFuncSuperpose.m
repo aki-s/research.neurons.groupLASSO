@@ -7,7 +7,7 @@ function plot_ResFuncSuperpose(in,DAL_regFac,useFrame,cnum,varargin)
 % plot_ResFuncSuperpose(status.savedirname,DAL.regFac,env.useFrame(end),env.cnum,xrange,yrange)
 %%plot_ResFuncSuperpose(status.savedirname,DAL.regFac,env.useFrame(end),env.cnum,xrange,yrange,ansMat)
 % plot_ResFuncSuperpose(status.savedirname,DAL.regFac,75000,9,[0 bases.ihbasprs.numFrame],[-.5 .5],ansMat)
-%% ansMat: 'indir/sim_kim_ans.mat' or alpha_fig
+%% ansMat: 'indir/sim_kim_ans.mat' or ResFunc_fig
 %%
 % plot_ResFuncSuperpose(status.savedirname,DAL.regFac,75000,9,[0 bases.ihbasprs.numFrame],[-.5 .5],ansMat,Fpeaks)
 %% Fpeaks: Fpeaks = get_basisPeaks(bases.ihbasis);
@@ -70,7 +70,7 @@ for i1 = 1:N
   fprintf('loaded: %s\n',list{1});
   S = load(list{1});
 
-  RFIntensity(:,:,i1) = evalResponseFunc( S.Alpha );
+  RFIntensity(:,:,i1) = evalResponseFunc( S.ResFunc );
   if CHECK_NOISE == 1
     [dum1 dum2 thresh] = evalRFIntensity( RFIntensity(:,:,i1), M_ans);
   end
@@ -85,11 +85,11 @@ for i1 = 1:N
   %%
   if DEBUG > 0
     figure
-    BG = reshape(sum(sum(S.Alpha,1),2)/cnum2cnum,1,[]);
+    BG = reshape(sum(sum(S.ResFunc,1),2)/cnum2cnum,1,[]);
     plot(BG)
   end
 
-  %%% ===== PLOT alpha ===== START =====
+  %%% ===== PLOT ResFunc ===== START =====
   figure;
 
   %% positive
@@ -100,7 +100,7 @@ for i1 = 1:N
     if TYPE(i2) -thresh > 0
       col = ceil(i2 / cnum);
       row = i2 - (col-1)*cnum;
-      plot(reshape(S.Alpha(row,col,:),1,[]),'r')
+      plot(reshape(S.ResFunc(row,col,:),1,[]),'r')
     end
   end
   bar(Fpeaks,repmat(+HEIGHT,[FF 1]),WIDTH)
@@ -115,7 +115,7 @@ for i1 = 1:N
     if TYPE(i2) +thresh < 0
       col = ceil(i2 / cnum);
       row = i2 - (col-1)*cnum;
-      plot(reshape(S.Alpha(row,col,:),1,[]),'b')
+      plot(reshape(S.ResFunc(row,col,:),1,[]),'b')
     end
   end
   bar(Fpeaks,repmat(-HEIGHT,[FF 1]),WIDTH)
@@ -130,7 +130,7 @@ for i1 = 1:N
     if ~( (TYPE(i2) -thresh > 0) || (TYPE(i2) +thresh < 0) )
       col = ceil(i2 / cnum);
       row = i2 - (col-1)*cnum;
-      plot(reshape(S.Alpha(row,col,:),1,[]),'k')
+      plot(reshape(S.ResFunc(row,col,:),1,[]),'k')
     end
   end
   bar(Fpeaks,repmat(+HEIGHT,[FF 1]),WIDTH)
@@ -155,7 +155,7 @@ for i1 = 1:N
 
 end
 
-%%% ===== PLOT alpha ===== END =====
+%%% ===== PLOT ResFunc ===== END =====
 if N == 0
   fprintf(1,'nothing to plot\n');
 end

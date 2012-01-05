@@ -1,6 +1,6 @@
 function [Ograph] = conf_graph()
 %%% default Ograph options apply to all function
-%%> gen_TrueBalue.m plot_alpha.m
+%%> gen_TrueBalue.m plot_ResFunc.m
 global graph
 
 Ograph = graph;

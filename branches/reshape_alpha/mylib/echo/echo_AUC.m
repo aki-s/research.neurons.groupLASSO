@@ -11,8 +11,8 @@ for j0 = F.from:F.to
     for regFacIdx = 1:length(regFac)
       filename =sprintf('%s-%s-%s-%s-%s.mat',method, regFac{regFacIdx}, ...
                         fFNAME, uFnum{j0}, inFiringUSE{i0});
-      load( [inRoot '/' filename], 'Alpha');
-      RFIntensity = evalResponseFunc( Alpha );
+      load( [inRoot '/' filename], 'ResFunc');
+      RFIntensity = evalResponseFunc( ResFunc );
       [recn, recr(j0,regFacIdx,1:4), thresh0(j0,regFacIdx) ,auc(j0,regFacIdx)] = evalRFIntensity(RFIntensity, M_ans);
       disp( sprintf( ['%20s:'...
                       ' %3d, %3d, %3d, %6d:'...

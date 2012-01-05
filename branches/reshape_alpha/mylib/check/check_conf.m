@@ -99,13 +99,14 @@ if status.crossVal > 1
   DALmax = tmp * (k-1) / k;
   %% check for cross valication.
   if isfield(env,'useFrame')
-    before = length(env.useFrame);
-    ODAL.Drow = env.useFrame(env.useFrame<=DALmax);
-    if (before ~= length(ODAL.Drow) )
+    idxUSE = (env.useFrame<=DALmax );
+    ODAL.Drow = env.useFrame(idxUSE);
+    if ( ~idxUSE )
       warning('DEBUG:autoChange',[ '''env.useFrame'' is '...
               'too large to do cross validation\n'...
                           'make smaller than env.genLoop *' ...
-                          '(status.crossVal-1)/(status.crossVal)' ]);
+                          '(status.crossVal-1)/(status.crossVal)\n'...
+                          'diabled env.useFrame=[%d]',(~idxUSE).*ENV.useFrame]);
   if length(ODAL.Drow) <= 1  %++bug?
     error('Properly set env.useFrame')
   end
@@ -118,12 +119,15 @@ else
   ODAL.Drow = env.useFrame; %++++++++++++++++++++++++++++++++++++++++++++duplicate
 end
 
+ODAL = check_DALregFac(ODAL,bases.ihbasprs.nbase); % ++bug?
+
 if ~isfield(env,'inFiringUSE') % num. of use neuron (subset)
   env.inFiringUSE = env.cnum;
 end
 
 %% auto color scaling
-useFrameLen = length(env.useFrame);
-if length(graph.prm.myColor) ~= useFrameLen
-  Ograph.prm.myColor = setMyColor(useFrameLen);
+Oenv.useFrameLen = length(Oenv.useFrame);
+if length(graph.prm.myColor) ~= Oenv.useFrameLen
+  Ograph.prm.myColor = setMyColor(Oenv.useFrameLen);
 end
+

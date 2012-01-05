@@ -39,8 +39,8 @@ auc.B = auc.A;
 for N1 = 1:uF
   %Aki method Aki firing
   filename =sprintf('Aki-%s-%s-%s.mat', L000{L0(N1)}, FNAMEf, N000{N1});
-  load( filename ); %Alpha
-  Phi = evalResponseFunc( Alpha );
+  load( filename ); %ResFunc
+  Phi = evalResponseFunc( ResFunc );
   [recn, recr, thresh0,auc.A(1,N1)] = evalRFIntensity_omitDiag(Phi, M_ans);
   disp( sprintf( '%20s: %3d, %3d, %3d, %3d, %5.1f, %5.1f, %5.1f, %5.1f',...
                  filename, recn, recr*100 ) );
@@ -53,8 +53,8 @@ fprintf(1,'\n');
 for N1 = 1:uF
   for reg = 1:uR
     filename =sprintf('Aki-%s-%s-%s.mat', L000{reg}, FNAMEf, N000{N1});
-    load( filename ); %Alpha
-    Phi = evalResponseFunc( Alpha );
+    load( filename ); %ResFunc
+    Phi = evalResponseFunc( ResFunc );
     %    [recn, recr, thresh00,auc.tmp] = evalRFIntensity(Phi, M_ans);
     [recn, recr, thresh00,auc.tmp] = evalRFIntensity_omitDiag(Phi, M_ans);
     disp( sprintf( '%20s: %3d, %3d, %3d, %3d,: %5.1f, %5.1f, %5.1f, %5.1f, :%f',...
