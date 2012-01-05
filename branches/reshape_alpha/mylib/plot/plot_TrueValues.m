@@ -8,7 +8,7 @@ if ( 1 == graph.PLOT_T )
   plot_alpha(graph,env,alpha,'response functions');
 end
 if graph.PRINT_T == 1
-  print('-depsc','-tiff',[rootdir_ '/outdir/true_alpha.eps'])
+  print('-depsc','-tiff',[rootdir_ '/outdir/true_responseFunc.eps'])
 end
 
 
@@ -18,7 +18,7 @@ if 1 == graph.PLOT_T
   %%% ===== PLOT LAMBDA ===== END =====
   %% write out eps file
   if graph.PRINT_T == 1
-    print('-depsc','-tiff',[rootdir_ '/outdir/artificial_lambda.eps'])
+    print('-depsc','-tiff',[rootdir_ '/outdir/artificial_FiringRate.eps'])
   end
 end
 %%% ===== PLOT LAMBDA ===== END =====
@@ -29,7 +29,7 @@ if 1 == graph.PLOT_T
   %%% ===== PLOT I(t) ===== END =====
   %% write out eps file
   if graph.PRINT_T == 1
-    print('-depsc','-tiff',[rootdir_ '/outdir/artificial_I.eps'])
+    print('-depsc','-tiff',[rootdir_ '/outdir/artificial_SpikeTrain.eps'])
   end
 end
 %%% ===== PLOT I(t) ===== START =====

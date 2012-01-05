@@ -216,11 +216,10 @@ xlabel(h,'Trigger')
 ylabel(h,'Target')
 %}
 
-%%% ===== PLOT alpha ===== END =====
-%% write out eps file
+%%% ===== PLOT ResponseFunc ===== END =====
 if ( graph.PRINT_T == 1 ) || ( status.parfor_ == 1 )
   title2 = sprintf('_regFac=%09.4f_frame=%07d_N=%04d',DAL.regFac(regFacIndex),DAL.Drow,cnum );
   %% fprintf(1,'saved figure: \n')
-  fprintf(1,'%s\n', [status.savedirname '/Estimated_alpha' title2 '.png']);
-  print('-dpng', [status.savedirname '/Estimated_alpha' title2 '.png'])
+  fprintf(1,'%s\n', [status.savedirname '/Estimated_ResponseFunc' title2 '.png']);
+  print('-dpng', [status.savedirname '/Estimated_ResponseFunc' title2 '.png'])
 end

@@ -7,7 +7,6 @@ function plot_Ealpha(env,graph,status,DAL,bases,EbasisWeight,...
 % plot_Ealpha(env,graph,status,DAL,bases,EbasisWeight,'titleAddMemo',regFacIndexIn)
 %%
 %% regFacIndexIn: e.g. o [1] [1:3] , x [1 3] ++bug
-global rootdir_
 
 %% return connection intensity 'RFIntensity' if ('DEBUG' >1 ).
 DEBUG = status.DEBUG.level;
@@ -234,9 +233,9 @@ for i0 = FROM:regFacLen
   end
 end
 %%% ===== PLOT alpha ===== END =====
-%% write out eps file
-%{
-if graph.PRINT_T == 1
-  print('-depsc','-tiff', [rootdir_ '/outdir/Estimated_alpha.eps'])
+if ( graph.PRINT_T == 1 )
+  title2 = sprintf('_regFac=%09.4f_frame=%07d_N=%04d',DAL.regFac(regFacIndex),DAL.Drow,cnum );
+  %% fprintf(1,'saved figure: \n')
+  fprintf(1,'%s\n', [status.savedirname '/Estimated_ResponseFunc' title2 '.png']);
+  print('-dpng', [status.savedirname '/Estimated_ResponseFunc' title2 '.png'])
 end
-%}
