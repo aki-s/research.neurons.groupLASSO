@@ -1,6 +1,6 @@
-function [Ealpha_hash,Ealpha_fig,threshold,Econ] = judge_alpha_ternary(env,Ealpha,varargin)
+function [EResFunc_hash,EResFunc_fig,threshold,Econ] = judge_ResFunc_ternary(env,EResFunc,varargin)
 %%
-%function [Ealpha_hash] = judge_alpha_ternary(env,Ealpha,alpha_hash,regFacindex,Ebias)
+%function [EResFunc_hash] = judge_ResFunc_ternary(env,EResFunc,ResFunc_hash,regFacindex,Ebias)
 %%
 
 
@@ -8,7 +8,7 @@ if size(varargin,2) > 0
   for k = 1:size(varargin,2)
     switch k
       case 1
-        alpha_hash = varargin{k};
+        ResFunc_hash = varargin{k};
       case 2
         regFac = varargin{k};
       case 3
@@ -34,7 +34,7 @@ Eb_threshold = 5;
 
 var_threshold = 0.1;
 
-Ealpha_hash = zeros(cnum*cnum,1);
+EResFunc_hash = zeros(cnum*cnum,1);
 rateZeroEach = zeros(cnum,1);
 
 kdelta = inline('a1 == a2','a1','a2'); % kronecker's delta
@@ -47,8 +47,8 @@ kdelta = inline('a1 == a2','a1','a2'); % kronecker's delta
 Mmat = zeros(cnum); % Mmat: matrix of Mean
 Vmat = zeros(cnum); % Vmat: matrix of valiance
 threshold = zeros(2,cnum);
-if iscell(Ealpha)
-  [garbage, num ] = size(Ealpha);
+if iscell(EResFunc)
+  [garbage, num ] = size(EResFunc);
   if num > 0
     TcountTotal = 0;
     rateZero = zeros(cnum,1); 
@@ -56,15 +56,15 @@ if iscell(Ealpha)
       Tcount = 0; % True count
       Rmean = 0; % Row mean
       RVmean = 0;% Row variance mean
-      [threshold(1,i1to), threshold(2,i1to)] = calcThreshold(cnum,Ealpha,regFac,i1to);
+      [threshold(1,i1to), threshold(2,i1to)] = calcThreshold(cnum,EResFunc,regFac,i1to);
       for i2from = 1:cnum
-        Mmat(i1to,i2from) = mean( Ealpha{regFac}{i1to}{i2from} );
+        Mmat(i1to,i2from) = mean( EResFunc{regFac}{i1to}{i2from} );
 
         Eb = Ebias{i1to}(regFac);
 
-        Vmat(i1to,i2from) = sum(( Ealpha{regFac}{i1to}{i2from}).^2);
+        Vmat(i1to,i2from) = sum(( EResFunc{regFac}{i1to}{i2from}).^2);
         %{
-        v = var( Ealpha{regFac}{i1to}{i2from} );
+        v = var( EResFunc{regFac}{i1to}{i2from} );
         if v > var_threshold
         end
         %}
@@ -80,7 +80,7 @@ if iscell(Ealpha)
         else
           Etype = -1; % inhibitory
         end
-        Tact = alpha_hash( (i1to-1)*cnum + i2from) ;
+        Tact = ResFunc_hash( (i1to-1)*cnum + i2from) ;
         if ( status.DEBUG.level > 3 )
           fprintf(1,'#%2d<-%2d M%10f V%10f Etype %2d Tact %2d Eact %2d\n' ...
                   , i1to ...
@@ -94,7 +94,7 @@ if iscell(Ealpha)
         end
         Tcount = Tcount + kdelta(Tact,Eact);
         rateZero(i1to) = rateZero(i1to) + kdelta(0,Eact);
-        Ealpha_hash((i1to-1)*cnum+i2from,1) = Eact;
+        EResFunc_hash((i1to-1)*cnum+i2from,1) = Eact;
         Rmean = Rmean + Mmat(i1to,i2from);
         RVmean = RVmean + Vmat(i1to,i2from);
       end
@@ -107,7 +107,7 @@ if iscell(Ealpha)
       TcountTotal = TcountTotal + Tcount;
       rateZeroEach(i1to) = sum(rateZero)/cnum;
     end
-    Ealpha_hash = transpose(Ealpha_hash);
+    EResFunc_hash = transpose(EResFunc_hash);
     Econ.rateT = TcountTotal/(cnum*cnum);
     Econ.rateZero = sum(rateZero)/cnum;
     Econ.rateZeroEach = rateZeroEach;
@@ -125,9 +125,9 @@ end
 Econ.Mmat = Mmat;
 Econ.Vmat = Vmat;
 Econ.filter = filter; % valid under high regFac. (Econ.Mmat).*(Econ.filter);
-Ealpha_fig = reshape(Ealpha_hash,[],env.cnum);
+EResFunc_fig = reshape(EResFunc_hash,[],env.cnum);
 
-function [ Pthreshold, Nthreshold] =  calcThreshold(cnum, Ealpha,regFac, i1to )
+function [ Pthreshold, Nthreshold] =  calcThreshold(cnum, EResFunc,regFac, i1to )
 Pthreshold = 0;
 P = 0;
 Nthreshold = 0;
@@ -135,7 +135,7 @@ N = 0;
 
 H = 0;
 for i2from = 1:cnum
-  m = mean( Ealpha{regFac}{i1to}{i2from} );
+  m = mean( EResFunc{regFac}{i1to}{i2from} );
   if i1to == i2from
 
   elseif m > 0 % excitatory

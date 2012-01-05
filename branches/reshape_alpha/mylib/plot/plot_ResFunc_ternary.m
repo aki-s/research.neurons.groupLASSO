@@ -1,6 +1,6 @@
-function plot_alpha_ternary(graph,env,alpha_hash,description)
+function plot_ResFunc_ternary(graph,env,ResFunc_hash,description)
 %% 
-% plot_alpha_binary(graph,env,alpha_hash)
+% plot_ResFunc_binary(graph,env,ResFunc_hash)
 %% 
 
 cnum = env.cnum;
@@ -26,10 +26,10 @@ if cnum < MAX
         norm = base + [i2from*SS SS SS SS]/cnum;
         subplot('Position',norm);
       end
-      tmp1 = N* (alpha_hash((i1to-1)*cnum+i2from) +1 );
+      tmp1 = N* (ResFunc_hash((i1to-1)*cnum+i2from) +1 );
       %% < chage color ploted according to cell type >
       if i1to == i2from
-        %        graph.param.alphaY = max(tmp1);
+        %        graph.param.ResFuncY = max(tmp1);
       end
       hold on;
 

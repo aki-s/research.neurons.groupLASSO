@@ -1,10 +1,10 @@
-function plot_Ealpha_parfor(env,graph,status,DAL,bases,EbasisWeight,...
+function plot_EResFunc_parfor(env,graph,status,DAL,bases,EbasisWeight,...
                             titleIn,varargin)
 %%
 %% USAGE)
 %% Example:
-% plot_Ealpha(env,graph,DAL,bases,EbasisWeight,'titleAddMemo')
-% plot_Ealpha(env,graph,DAL,bases,EbasisWeight,'titleAddMemo',regFacIndexIn)
+% plot_EResFunc(env,graph,DAL,bases,EbasisWeight,'titleAddMemo')
+% plot_EResFunc(env,graph,DAL,bases,EbasisWeight,'titleAddMemo',regFacIndexIn)
 %%
 
 DEBUG = status.DEBUG.level;
@@ -49,13 +49,13 @@ else
 end
 
 %%% == useful func ==
-if (nargin == IN + 1) %++bug %get only Ealpha{regFacIndexIn},
-                      %Ealpha{others}=[]
-  [Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EbasisWeight,regFacIndexIn(regFacLen));
+if (nargin == IN + 1) %++bug %get only EResFunc{regFacIndexIn},
+                      %EResFunc{others}=[]
+  [EResFunc,graph] = reconstruct_EResFunc(env,graph,DAL,bases,EbasisWeight,regFacIndexIn(regFacLen));
 else
-[Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EbasisWeight);
+[EResFunc,graph] = reconstruct_EResFunc(env,graph,DAL,bases,EbasisWeight);
 end
-%%% ===== PLOT alpha ===== START =====
+%%% ===== PLOT ResFunc ===== START =====
 if strcmp('set_xticks','set_xticks')
   Lnum = 2;
   dh = floor((hnum*hwind)/Lnum); %dh: width of each tick.
@@ -86,7 +86,7 @@ else % you'd better collect max and min range of response functions
 end
 RFIntensity = nan(cnum,cnum,regFacLen);
 for i1 = FROM:regFacLen
-  tmp = EalphaCell2Mat(env,Ealpha,regFacIndexIn(regFacLen),i1);
+  tmp = EResFuncCell2Mat(env,EResFunc,regFacIndexIn(regFacLen),i1);
   RFIntensity(:,:,i1) = evalResponseFunc( ResponseFuncMat2DtoMat3D(tmp(:,:,i1)) );
 end
 
@@ -94,7 +94,7 @@ for i0 = FROM:regFacLen
   regFacIndex = regFacIndexIn(i0);
 if (cnum > LIM )
   warning('DEBUG:notice','too much of neurons to be plotted.');
-  %%plot_Ealpha_subplot()
+  %%plot_EResFunc_subplot()
 else
   figure;
   i2to = 1; % cell to
@@ -124,7 +124,7 @@ else
       end
     end
     subplot('position',pos + [i3from -i2to 1 1 ]/(cnum+3),'Color',heat );
-    tmp1 = Ealpha{regFacIndex}{i2to}{i3from};
+    tmp1 = EResFunc{regFacIndex}{i2to}{i3from};
     %% <  chage color ploted according to cell type >
     hold on;
     if tmp1 == 0
@@ -141,7 +141,7 @@ else
       set(gca,'yticklabel',[]);
       zeroFlag = 0;
     else
-      plot( 1:hnum, 0, 'b','LineWidth',2); % emphasize 0.
+      plot( 1:hnum, 0, 'k','LineWidth',1); % emphasize 0.
       grid on;
       if  graph.prm.showWeightDistribution == 1
         for i2 = 1:cnum

@@ -1,10 +1,10 @@
-function plot_Ealpha(env,graph,status,DAL,bases,EbasisWeight,...
+function plot_EResFunc(env,graph,status,DAL,bases,EbasisWeight,...
                      titleAddMemo,varargin)
 %%
 %% USAGE)
 %% Example:
-% plot_Ealpha(env,graph,status,DAL,bases,EbasisWeight,'titleAddMemo')
-% plot_Ealpha(env,graph,status,DAL,bases,EbasisWeight,'titleAddMemo',regFacIndexIn)
+% plot_EResFunc(env,graph,status,DAL,bases,EbasisWeight,'titleAddMemo')
+% plot_EResFunc(env,graph,status,DAL,bases,EbasisWeight,'titleAddMemo',regFacIndexIn)
 %%
 %% regFacIndexIn: e.g. o [1] [1:3] , x [1 3] ++bug
 
@@ -48,10 +48,10 @@ else
 end
 %%% ==< reconstruct response func >==
 
-if (nargin == IN + 1) %++bug %get only Ealpha{regFacIndexIn}, Ealpha{others}=[]
-  [Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EbasisWeight,regFacIndexIn(regFacLen));
+if (nargin == IN + 1) %++bug %get only EResFunc{regFacIndexIn}, EResFunc{others}=[]
+  [EResFunc,graph] = reconstruct_EResFunc(env,graph,DAL,bases,EbasisWeight,regFacIndexIn(regFacLen));
 else
-  [Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EbasisWeight);
+  [EResFunc,graph] = reconstruct_EResFunc(env,graph,DAL,bases,EbasisWeight);
 end
 %%% ==</reconstruct response func >==
 
@@ -88,7 +88,7 @@ end
 
 RFIntensity = nan(cnum,cnum,regFacLen);
 for i1 = FROM:regFacLen
-  tmp = EalphaCell2Mat(env,Ealpha,regFacIndexIn(regFacLen),i1);
+  tmp = EResFuncCell2Mat(env,EResFunc,regFacIndexIn(regFacLen),i1);
   RFIntensity(:,:,i1) = evalResponseFunc( ResponseFuncMat2DtoMat3D(tmp(:,:,i1)) );
 end
 
@@ -109,7 +109,7 @@ for i0 = FROM:regFacLen
   title = strcat(title,titleAddMemo);
   %% ==</set title >==
 
-  %%% ===== PLOT alpha ===== START =====
+  %%% ===== PLOT ResFunc ===== START =====
   if (cnum > LIM )
     prm = struct('regFacIndex',regFacIndex,...
                  'xtickwidth',dh,...
@@ -120,7 +120,7 @@ for i0 = FROM:regFacLen
     shift = 1/fignum;
     for Fdim1 = 1:fignum
       for Fdim2 = 1:fignum
-        plot_Ealpha_subplot(env,graph,Fdim1,Fdim2,LIM,Ealpha,prm,...
+        plot_EResFunc_subplot(env,graph,Fdim1,Fdim2,LIM,EResFunc,prm,...
                             EbasisWeight,bases);
         set(gcf, 'menubar','none','Color','White','units','normalized',...
                  'outerposition',[(Fdim2-1)*shift,(fignum-Fdim1)*shift,shift,shift])
@@ -157,7 +157,7 @@ for i0 = FROM:regFacLen
       end
       %% </ subplot background color >
       subplot('position',pos + [i3from -i2to 1 1 ]/(cnum+3),'Color',heat );
-      tmp1 = Ealpha{regFacIndex}{i2to}{i3from};
+      tmp1 = EResFunc{regFacIndex}{i2to}{i3from};
       %% <  chage color ploted according to cell type >
       hold on;
       if tmp1 == 0
@@ -232,7 +232,7 @@ for i0 = FROM:regFacLen
 
   end
 end
-%%% ===== PLOT alpha ===== END =====
+%%% ===== PLOT ResFunc ===== END =====
 if ( graph.PRINT_T == 1 )
   title2 = sprintf('_regFac=%09.4f_frame=%07d_N=%04d',DAL.regFac(regFacIndex),DAL.Drow,cnum );
   %% fprintf(1,'saved figure: \n')

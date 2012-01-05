@@ -1,4 +1,4 @@
-function plot_Ealpha_subplot(env,graph,Fdim1,Fdim2,LIM,Ealpha,prm,...
+function plot_EResFunc_subplot(env,graph,Fdim1,Fdim2,LIM,EResFunc,prm,...
                              varargin)
 cnum = env.cnum;
 hnum = env.hnum;
@@ -27,7 +27,7 @@ if 1 == 1
   for i1 = 1:LIM*LIM % subplot select
     subplot('position',pos + [from -to 1 1 ]/(LIM+3) );
     if (i2to <= cnum) && (i3from <= cnum )
-      tmp1 = Ealpha{regFacIndex}{i2to}{i3from};
+      tmp1 = EResFunc{regFacIndex}{i2to}{i3from};
     else
       tmp1 = nan;
     end

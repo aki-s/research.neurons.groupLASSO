@@ -1,9 +1,9 @@
-function plot_Ealpha_parfor_(env,graph,status,DAL,bases,Ealpha,regFacIndex,titleIn)
-%function plot_Ealpha(env,graph,Ealpha,DAL,regFacIndex,titleIn)
+function plot_EResFunc_parfor_(env,graph,status,DAL,bases,EResFunc,regFacIndex,titleIn)
+%function plot_EResFunc(env,graph,EResFunc,DAL,regFacIndex,titleIn)
 %%
 %% USAGE)
 %% Example:
-% plot_Ealpha(env,graph,Ealpha,DAL,regFacIndex,'title')
+% plot_EResFunc(env,graph,EResFunc,DAL,regFacIndex,'title')
 %%
 
 DEBUG = 0;
@@ -39,8 +39,8 @@ if MAX > LIM
 end
 %}
 %%% == useful func ==
-%[Ealpha,graph] = reconstruct_Ealpha(env,graph,DAL,bases,EbasisWeight);
-%%% ===== PLOT alpha ===== START =====
+%[EResFunc,graph] = reconstruct_EResFunc(env,graph,DAL,bases,EbasisWeight);
+%%% ===== PLOT ResFunc ===== START =====
 if strcmp('set_xticks','set_xticks')
   Lnum = 2;
   dh = floor((hnum*hwind)/Lnum); %dh: width of each tick.
@@ -73,7 +73,7 @@ if cnum <= MAX
   pos = [ .5 (cnum+.5) 0 0 ]/(cnum+2);
   for i1 = 1:cnum*cnum % subplot select
     subplot('position',pos + [i3from -(i2to+.5) 1 1 ]/(cnum+3) );
-    tmp1 = Ealpha{regFacIndex}{i2to}{i3from};
+    tmp1 = EResFunc{regFacIndex}{i2to}{i3from};
     %% <  chage color ploted according to cell type >
     hold on;
 
@@ -150,10 +150,10 @@ xlabel(h,'Trigger')
 ylabel(h,'Target')
 %}
 
-%%% ===== PLOT alpha ===== END =====
+%%% ===== PLOT ResFunc ===== END =====
 %% write out eps file
 title2 = sprintf('_regFac=%08d_frame=%010d',DAL.regFac(regFacIndex),DAL.Drow );
 if ( graph.PRINT_T == 1 ) || ( status.parfor_ == 1 )
-  fprintf(1,'%s\n', [status.savedirname '/Estimated_alpha' title2 '.png']);
-  print('-dpng', [status.savedirname '/Estimated_alpha' title2 '.png'])
+  fprintf(1,'%s\n', [status.savedirname '/Estimated_ResFunc' title2 '.png']);
+  print('-dpng', [status.savedirname '/Estimated_ResFunc' title2 '.png'])
 end

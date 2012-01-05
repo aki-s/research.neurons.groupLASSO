@@ -1,15 +1,15 @@
-function plot_alpha(graph,env,alpha,title)
+function plot_ResFunc(graph,env,ResFunc,title)
 %%
 %% Usage:
 %% Example:
-%  plot_alpha(graph,env,alpha,'response functions');
+%  plot_ResFunc(graph,env,ResFunc,'response functions');
 %%
 %% == format ==
-%% >> alpha
+%% >> ResFunc
 %% suppose the num. of neruon is 'N', length of response func is 'L'.
 %%
 %% -- format 1 --
-%% alpha is (cnum*hnum,cnum) 2D matrix
+%% ResFunc is (cnum*hnum,cnum) 2D matrix
 %%   Idx\Idx || (to #1)   (to #2)  ...  (to #N-1)  (to #N) |
 %% _________ ||_________ _________ ...  _________  ________|
 %% |from #1  |||  1:L  | |  1:L  | ...  |  1:L  |  |  1:L  |
@@ -23,11 +23,11 @@ function plot_alpha(graph,env,alpha,title)
 %% _________ ||_________ _________ ...  _________  ________|
 %%
 %% -- format 2 --
-%% alpha is (cnum,cnum,hnum) 3D matrix
-%% recommend using 'plot_Ealpha.m' or plot_ResFuncALL(varargin)
+%% ResFunc is (cnum,cnum,hnum) 3D matrix
+%% recommend using 'plot_EResFunc.m' or plot_ResFuncALL(varargin)
 % e.g.
 % s=load('outdir/24-Dec-2011-start-20_9/Aki-0001.0000-Aki-0080000-009.mat');
-% plot_alpha(s.graph,s.env,s.Alpha,'');
+% plot_ResFunc(s.graph,s.env,s.ResFunc,'');
 
 DEBUG = 0;
 
@@ -36,6 +36,7 @@ if DEBUG == 1
 end
 
 global rootdir_
+% rootdir_ = status.rootdir
 
 cnum = env.cnum;
 hnum = env.hnum;
@@ -46,14 +47,14 @@ MAX = graph.PLOT_MAX_NUM_OF_NEURO;
 
 %%% == useful func ==
 %kdelta = inline('n == 0'); % kronecker's delta
-%%% ===== PLOT alpha ===== START =====
+%%% ===== PLOT ResFunc ===== START =====
 if isnan(hwind)
   hwind = 1;
 end
 if isnan(hnum)
-  hnum = size(alpha,3);
-elseif size(alpha,3) > 1 
-  hnum = size(alpha,3);
+  hnum = size(ResFunc,3);
+elseif size(ResFunc,3) > 1 
+  hnum = size(ResFunc,3);
 end
 XSIZE = 1; % obsolete
 
@@ -86,10 +87,10 @@ else
 end
 
 if cnum < MAX
-  if size(alpha,3) > 1 
-    alphaH = sprintf('%s','shiftdim(alpha(i1to,i2from,:),2)');
+  if size(ResFunc,3) > 1 
+    ResFuncH = sprintf('%s','shiftdim(ResFunc(i1to,i2from,:),2)');
   else
-    alphaH = sprintf('%s','alpha((1:hnum)+(i2from-1)*hnum,i1to)');
+    ResFuncH = sprintf('%s','ResFunc((1:hnum)+(i2from-1)*hnum,i1to)');
   end
   figure;
   pos = [ .5 (cnum) 0 0 ]/(cnum+2);
@@ -97,7 +98,7 @@ if cnum < MAX
     for i2from = 1:cnum;
       %% subplot() delete existing Axes property.
       subplot('position',pos + [i2from -i1to 1 1 ]/(cnum+3) );
-      tmp1 = eval(alphaH);
+      tmp1 = eval(ResFuncH);
       %% < chage color ploted according to cell type >
       set(gcf,'color','white')
       hold on;
@@ -169,10 +170,10 @@ if cnum < MAX
   ylabel(h,'Target')
   %}
 
-  %%% ===== PLOT alpha ===== END =====
+  %%% ===== PLOT ResFunc ===== END =====
   %% write out eps file
   if graph.SAVE_EPS == 1
-    print('-depsc', '-tiff' ,[rootdir_ '/outdir/artificial_alpha.eps'])
+    print('-depsc', '-tiff' ,[rootdir_ '/outdir/artificial_ResFunc.eps'])
   end
 else
   fprintf(1,'graph.PLOT_MAX_NUM_OF_NEURO= %3d\n',graph.PLOT_MAX_NUM_OF_NEURO);

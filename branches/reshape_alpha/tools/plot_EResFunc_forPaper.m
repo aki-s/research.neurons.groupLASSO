@@ -1,19 +1,19 @@
-%function plot_Ealpha_forPapr(env,graph,Ealpha,alpha,title)
+%function plot_EResFunc_forPapr(env,graph,EResFunc,ResFunc,title)
 %%
 %% USAGE)
 %% Example:
-% plot_Ealpha(env,graph,alpha,Ealpha,'title')
+% plot_EResFunc(env,graph,ResFunc,EResFunc,'title')
 %%
 global rootdir_
 
 %%
 S = load([rootdir_ '/outdir/15-Aug-2011-start-08/15-Aug-201108.mat']);
-St = S.Ealpha{1};
+St = S.EResFunc{1};
 
-alpha = S.alpha;
+ResFunc = S.ResFunc;
 
 A = load([rootdir_ '/outdir/15-Aug-2011-start-23_6/15-Aug-201123_6.mat']);
-At = A.Ealpha{1};
+At = A.EResFunc{1};
 
 %%
 
@@ -39,7 +39,7 @@ MAX = graph.PLOT_MAX_NUM_OF_NEURO;
 
 %%% == useful func ==
 %kdelta = inline('n == 0'); % kronecker's delta
-%%% ===== PLOT alpha ===== START =====
+%%% ===== PLOT ResFunc ===== START =====
 
 if strcmp('set_xticks','set_xticks')
   Lnum = 2;
@@ -64,9 +64,9 @@ if cnum < MAX
   for i1 = 1:NUM*NUM % subplot select
     subplot(NUM,NUM,i1);
 
-    Aki_Ealpha = At{i2to}{i3from};
-    TrueAlpha = alpha((1:hnum)+(i3from-1)*hnum,i2to);
-    Stevenson_Ealpha = St{i2to}{i3from};
+    Aki_EResFunc = At{i2to}{i3from};
+    TrueResFunc = ResFunc((1:hnum)+(i3from-1)*hnum,i2to);
+    Stevenson_EResFunc = St{i2to}{i3from};
     %% <  chage color ploted according to cell type >
     if i2to == i3from
       %      ylim(diag_Yrange)
@@ -75,13 +75,13 @@ if cnum < MAX
     set(gcf,'color','white')
 
 if strcmp('uneasy_to_watch','uneasy_to_watch_')
-    plot(Aki_Ealpha,'r','LineWidth',1);
-    plot(TrueAlpha,'--b','LineWidth',1);
-    plot(Stevenson_Ealpha,'k','LineWidth',3);
+    plot(Aki_EResFunc,'r','LineWidth',1);
+    plot(TrueResFunc,'--b','LineWidth',1);
+    plot(Stevenson_EResFunc,'k','LineWidth',3);
 else
-    plot(Aki_Ealpha,'r','LineWidth',1);
-    plot(TrueAlpha,'b','LineWidth',3);
-    plot(Stevenson_Ealpha,'--k','LineWidth',1);
+    plot(Aki_EResFunc,'r','LineWidth',1);
+    plot(TrueResFunc,'b','LineWidth',3);
+    plot(Stevenson_EResFunc,'--k','LineWidth',1);
 end
     %    plot( 1:hnum, 0, 'k','LineWidth',4); % emphasize 0.
     grid on;

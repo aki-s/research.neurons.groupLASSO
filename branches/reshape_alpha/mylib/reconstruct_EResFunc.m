@@ -1,12 +1,12 @@
-function [Ealpha, Ograph] = reconstruct_Ealpha(env,graph,DAL,bases,EbasisWeight,varargin)
+function [EResFunc, Ograph] = reconstruct_EResFunc(env,graph,DAL,bases,EbasisWeight,varargin)
 
-%% Ealpha:
+%% EResFunc:
 %%
 Ograph = graph;
 
 cnum = env.cnum;
 
-Ealpha = cell(zeros(1,length(DAL.regFac)));
+EResFunc = cell(zeros(1,length(DAL.regFac)));
 %%  -----> regFac
 %% |
 %% |
@@ -29,7 +29,7 @@ if strcmp(bases.ihbasprs.basisType,'bar')
   for i0 = FROM:regFacLen
     for i1to = 1:cnum
       for i2from = 1:cnum
-        Ealpha{i0}{i1to}{i2from} =  EbasisWeight{i0}{i1to}(:,i2from);
+        EResFunc{i0}{i1to}{i2from} =  EbasisWeight{i0}{i1to}(:,i2from);
       end
     end
   end
@@ -37,9 +37,9 @@ elseif  strcmp(bases.ihbasprs.basisType,'glm')
   for i0 = FROM:regFacLen
     for i1to = 1:cnum
       for i2from = 1:cnum
-        Ealpha{i0}{i1to}{i2from} = (bases.ihbasis* EbasisWeight{i0}{i1to}(:,i2from));
-        M = max(Ealpha{i0}{i1to}{i2from});
-        m = min(Ealpha{i0}{i1to}{i2from});
+        EResFunc{i0}{i1to}{i2from} = (bases.ihbasis* EbasisWeight{i0}{i1to}(:,i2from));
+        M = max(EResFunc{i0}{i1to}{i2from});
+        m = min(EResFunc{i0}{i1to}{i2from});
         if ( i1to ~= i2from )
           if ( M > Mt )
             Mt = M;
