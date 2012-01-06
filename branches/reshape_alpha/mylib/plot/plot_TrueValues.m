@@ -5,10 +5,10 @@ fprintf(1,'\nplotting generated "True Values"\n\n')
 %%% ===== PLOT ResFunc ===== START =====
 if ( 1 == graph.PLOT_T )
   %% ++bug: func plot_ResFunc must be given 'env'.
-  plot_ResFunc(graph,env,ResFunc,'response functions');
+  plot_ResFunc(graph,env,status.savedirname,ResFunc,'response functions');
 end
 if graph.PRINT_T == 1
-  print('-depsc','-tiff',[rootdir_ '/outdir/true_responseFunc.eps'])
+  print('-depsc','-tiff',[status.savedirname '/true_responseFunc.eps'])
 end
 
 
@@ -18,7 +18,7 @@ if 1 == graph.PLOT_T
   %%% ===== PLOT LAMBDA ===== END =====
   %% write out eps file
   if graph.PRINT_T == 1
-    print('-depsc','-tiff',[rootdir_ '/outdir/artificial_FiringRate.eps'])
+    print('-depsc','-tiff',[status.savedirname '/artificial_FiringRate.eps'])
   end
 end
 %%% ===== PLOT LAMBDA ===== END =====
@@ -29,7 +29,7 @@ if 1 == graph.PLOT_T
   %%% ===== PLOT I(t) ===== END =====
   %% write out eps file
   if graph.PRINT_T == 1
-    print('-depsc','-tiff',[rootdir_ '/outdir/artificial_SpikeTrain.eps'])
+    print('-depsc','-tiff',[status.savedirname '/artificial_SpikeTrain.eps'])
   end
 end
 %%% ===== PLOT I(t) ===== START =====

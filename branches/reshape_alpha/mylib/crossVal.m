@@ -113,8 +113,8 @@ else
     USE = (1:Tlen);
     USE = USE - omit;
     USE = USE(USE >0);
-    [EbasisWeight,Ebias_,Estatus,dum1,status] =...
-        estimateWeightKernel(tmpEnv,graph,status,bases,I(USE,:),DAL,regFacIdx);
+    [EbasisWeight,Ebias_,Estatus,status] =...
+        estimateWeightKernel(tmpEnv,status,bases,I(USE,:),DAL,regFacIdx);
     %    tic;fprintf(1,'Eapha2Mat:\t');
     EResFunc = reconstruct_EResFunc(tmpEnv,DAL,bases,EbasisWeight);
     histSize = bases.ihbasprs.numFrame;

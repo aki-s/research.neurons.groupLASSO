@@ -148,8 +148,8 @@ else
     USE = USE - omit;
     USE = USE(USE >0);
     Icut = I(USE,:);
-    [EbasisWeight{i1},Ebias{i1},Estatus{i1},dum1,status_tmp{i1}] =...
-        estimateWeightKernel(tmpEnv,graph,status,bases,Icut,DAL,useFrameIdx);
+    [EbasisWeight{i1},Ebias{i1},Estatus{i1},status_tmp{i1}] =...
+        estimateWeightKernel(tmpEnv,status,bases,Icut,DAL,useFrameIdx);
     cost = cost + status_tmp{i1}.time.regFac(useFrameIdx,:);
     [EResFunc Ograph] = reconstruct_EResFunc(tmpEnv,graph,DAL,bases,EbasisWeight{i1});
     %    histSize = bases.ihbasprs.numFrame;

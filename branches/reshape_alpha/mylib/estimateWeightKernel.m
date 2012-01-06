@@ -1,4 +1,4 @@
-function [EbasisWeight,Ebias,DALstatus,DAL,Ostatus] = estimateWeightKernel(env,graph,status,bases,I,DAL,varargin)
+function [EbasisWeight,Ebias,DALstatus,Ostatus] = estimateWeightKernel(env,status,bases,I,DAL,varargin)
 %%
 %%
 %% return)
@@ -8,7 +8,7 @@ function [EbasisWeight,Ebias,DALstatus,DAL,Ostatus] = estimateWeightKernel(env,g
 % estimateWeightKernel(env,status,graph,bases,I,DAL);
 DEBUG = 1;
 Ostatus = status;
-nargin_NUM = 6;
+nargin_NUM = 5;
 in.v1 = 1;
 
 if nargin < nargin_NUM + in.v1;
@@ -33,7 +33,7 @@ if isfield(DAL,'Drow')
     error('DAL.Drow > env.genLoop' )
   end
 elseif strcmp('auto','auto')
-  DAL.Drow = floor(env.genLoop/4);
+  DAL.Drow = floor(env.genLoop/4); % ODAL
 
 elseif strcmp('allI','allI_')  %++conf
   %%% use all available firing history.
@@ -95,9 +95,7 @@ if strcmp('calcDAL','calcDAL')
     otherwise
       error('This function is under developement.')
 
-      %      EbasisWeight = cell(cnum, 1, DAL.loop);
       EbasisWeight{i1to}{1} = zeros(nbase,cnum);
-      %      Ebias = cell(DAL.loop,1);
   end
   %  fprintf(1,'\n');
   DAL.speedup = 0;
@@ -163,7 +161,7 @@ if strcmp('calcDAL','calcDAL')
     DAL.speedup = 1;
     if ii1 <= PRMS && DAL.regFac_UserDef ~= 1
       %      DAL.regFac(ii1+1) = DAL.regFac(ii1)/5;
-      DAL.regFac(ii1+1) = DAL.regFac(ii1)/DAL.div;
+      DAL.regFac(ii1+1) = DAL.regFac(ii1)/DAL.div; % ODAL
     end
     cost2 =  toc(cost2);
     fprintf(1,'%5.1f\n',cost2);

@@ -1,6 +1,6 @@
-%function S = makeSimStruct_glm(dt)
 function S = makeSimStruct_glm(Sin,dt)
-%
+%% if dt==0.2 ,then 118 == length(bases)
+
 ihbasprs = Sin.ihbasprs;
 
 %global rootdir_

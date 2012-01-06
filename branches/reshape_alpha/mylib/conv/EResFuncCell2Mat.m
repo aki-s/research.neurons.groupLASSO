@@ -14,7 +14,6 @@ else
 end
 
 histSize = length(EResFunc{regFacLen}{1}{1});
-%EResFunc_ = zeros(histSize*cnum,cnum,regFacLen);
 EResFunc_ = nan(histSize*cnum,cnum,regFacLen);
 
 for ito = 1:cnum

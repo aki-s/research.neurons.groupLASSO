@@ -121,13 +121,22 @@ end
 
 ODAL = check_DALregFac(ODAL,bases.ihbasprs.nbase); % ++bug?
 
-if ~isfield(env,'inFiringUSE') % num. of use neuron (subset)
-  env.inFiringUSE = env.cnum;
-end
-
 %% auto color scaling
 Oenv.useFrameLen = length(Oenv.useFrame);
 if length(graph.prm.myColor) ~= Oenv.useFrameLen
   Ograph.prm.myColor = setMyColor(Oenv.useFrameLen);
 end
 
+if status.diary ~= 1
+  rmdir([status.savedirname,'/',sprintf('%d_',status.time.start),'diary.txt'])
+end
+
+if isfield(env,'inFiringUSE')
+  Oenv.useNeuroLen = length(env.inFiringUSE);
+else
+  Oenv.useNeuroLen = 1;
+  env.inFiringUSE = env.cnum;
+end
+for i1 = 1:env.useNeuroLen
+  Ostatus.time.regFac{i1} = zeros(Oenv.useFrameLen,ODAL.regFacLen);
+end

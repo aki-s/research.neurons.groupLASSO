@@ -1,15 +1,16 @@
 function plot_EResFunc(env,graph,status,DAL,bases,EbasisWeight,...
-                     titleAddMemo,varargin)
+                       titleAddMemo,varargin)
 %%
 %% USAGE)
 %% Example:
 % plot_EResFunc(env,graph,status,DAL,bases,EbasisWeight,'titleAddMemo')
 % plot_EResFunc(env,graph,status,DAL,bases,EbasisWeight,'titleAddMemo',regFacIndexIn)
-%%
-%% regFacIndexIn: e.g. o [1] [1:3] , x [1 3] ++bug
-
+%% regFacIndexIn: e.g. if [1] [1:3] o.k. , if [1 3] error.
 %% return connection intensity 'RFIntensity' if ('DEBUG' >1 ).
 DEBUG = status.DEBUG.level;
+
+
+
 %%
 regFacLen = length(DAL.regFac);
 regFacIndexIn = (1:regFacLen);
@@ -18,7 +19,7 @@ IN = 7;
 if nargin >= IN +1
   FROM =  varargin{ 1};
   regFacLen  = FROM(end);
-  %  regFacIndexIn(regFacLen) =  varargin{ 1};
+  regFacIndexIn = FROM;%%++bug?
 else
   FROM = 1;
 end
@@ -28,6 +29,7 @@ if 1 == 1
 else
   LIM = 10;
 end
+
 cnum = env.cnum;
 if isfield(env,'hnum') && ~isnan(env.hnum)
   hnum = env.hnum;
@@ -38,7 +40,7 @@ end
 if isfield(env,'hwind') && ~isnan(env.hwind)
   hwind = env.hwind;
 else
-  env.hwind = 1;
+  %  env.hwind = 1; %++needless?
   hwind = 1;
 end
 if isfield(env,'Hz') && isfield(env.Hz,'video')
@@ -54,7 +56,6 @@ else
   [EResFunc,graph] = reconstruct_EResFunc(env,graph,DAL,bases,EbasisWeight);
 end
 %%% ==</reconstruct response func >==
-
 if strcmp('set_xticks','set_xticks')
   Lnum = 2; % Lnum: the number of x label
   dh = floor((hnum*hwind)/Lnum); %dh: width of each tick.
@@ -77,7 +78,6 @@ else % you'd better collect max and min range of response functions
   diag_Yrange = graph.prm.diag_Yrange_auto;
   Yrange      = graph.prm.Yrange_auto;     
   newYrange = [ min(Yrange(1),diag_Yrange(1)) max(Yrange(2),diag_Yrange(2)) ];
-  %    newYrange = round([ Yrange(1) diag_Yrange(2) ]*100)/100;
   if newYrange == 0
     newYrange = [-0.1 0.1 ];
     zeroFlag = 1;
@@ -121,7 +121,7 @@ for i0 = FROM:regFacLen
     for Fdim1 = 1:fignum
       for Fdim2 = 1:fignum
         plot_EResFunc_subplot(env,graph,Fdim1,Fdim2,LIM,EResFunc,prm,...
-                            EbasisWeight,bases);
+                              EbasisWeight,bases);
         set(gcf, 'menubar','none','Color','White','units','normalized',...
                  'outerposition',[(Fdim2-1)*shift,(fignum-Fdim1)*shift,shift,shift])
       end

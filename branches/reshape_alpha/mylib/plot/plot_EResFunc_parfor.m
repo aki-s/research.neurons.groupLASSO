@@ -1,5 +1,5 @@
 function plot_EResFunc_parfor(env,graph,status,DAL,bases,EbasisWeight,...
-                            titleIn,varargin)
+                              titleAddMemo,varargin)
 %%
 %% USAGE)
 %% Example:
@@ -11,9 +11,8 @@ DEBUG = status.DEBUG.level;
 if DEBUG == 1
   title = 'DEBUG:';
 end
-%myColor = graph.prm.myColor;
 %%<copy>
-regFacLen = length(DAL.regFac);
+regFacLen = DAL.regFacLen;
 regFacIndexIn = (1:regFacLen);
 
 IN = 7;
@@ -40,6 +39,7 @@ end
 if isfield(env,'hwind') && ~isnan(env.hwind)
   hwind = env.hwind;
 else
+
   hwind = 1;
 end
 if isfield(env,'Hz') && isfield(env.Hz,'video')
@@ -49,11 +49,10 @@ else
 end
 
 %%% == useful func ==
-if (nargin == IN + 1) %++bug %get only EResFunc{regFacIndexIn},
-                      %EResFunc{others}=[]
+if (nargin == IN + 1)
   [EResFunc,graph] = reconstruct_EResFunc(env,graph,DAL,bases,EbasisWeight,regFacIndexIn(regFacLen));
 else
-[EResFunc,graph] = reconstruct_EResFunc(env,graph,DAL,bases,EbasisWeight);
+  [EResFunc,graph] = reconstruct_EResFunc(env,graph,DAL,bases,EbasisWeight);
 end
 %%% ===== PLOT ResFunc ===== START =====
 if strcmp('set_xticks','set_xticks')
@@ -72,6 +71,7 @@ if strcmp('set_range','set_range_')
   diag_Yrange = graph.prm.diag_Yrange;
   Yrange      = graph.prm.Yrange;
   zeroFlag = 0;
+
 else % you'd better collect max and min range of response functions
      % in advance.
   diag_Yrange = graph.prm.diag_Yrange_auto;
@@ -84,6 +84,7 @@ else % you'd better collect max and min range of response functions
     zeroFlag = 0;
   end
 end
+
 RFIntensity = nan(cnum,cnum,regFacLen);
 for i1 = FROM:regFacLen
   tmp = EResFuncCell2Mat(env,EResFunc,regFacIndexIn(regFacLen),i1);
@@ -91,105 +92,121 @@ for i1 = FROM:regFacLen
 end
 
 for i0 = FROM:regFacLen
+  %% ==< set title >==
   regFacIndex = regFacIndexIn(i0);
-if (cnum > LIM )
-  warning('DEBUG:notice','too much of neurons to be plotted.');
-  %%plot_EResFunc_subplot()
-else
-  figure;
-  i2to = 1; % cell to
-  i3from = 1; % cell from
-  pos = [ .5 (cnum) 0 0 ]/(cnum+2);
-  for i1 = 1:cnum*cnum % subplot select
-    if RFIntensity(i2to,i3from,i0) > 0
-      if DEBUG == 1
-        fprintf(1,'%5.2f: r ,',RFIntensity(i2to,i3from,i0))
-      end
-      heat = [1 0.5 0.5];
-    elseif RFIntensity(i2to,i3from,i0) < 0
-      if DEBUG == 1
-        fprintf(1,'%5.2f: b ,',RFIntensity(i2to,i3from,i0))
-      end
-      heat = [0.5 0.5 1];
-    else
-      if DEBUG == 1
-        fprintf(1,'%5.2f: w ,',RFIntensity(i2to,i3from,i0))
-      end
-      heat = [1 1 1];
-    end
-    if DEBUG == 1
-      fprintf(1,'%2d<-%2d | ',i2to,i3from);
-      if i3from == cnum
-        fprintf(1,'\n');
-      end
-    end
-    subplot('position',pos + [i3from -i2to 1 1 ]/(cnum+3),'Color',heat );
-    tmp1 = EResFunc{regFacIndex}{i2to}{i3from};
-    %% <  chage color ploted according to cell type >
-    hold on;
-    if tmp1 == 0
-      zeroFlag = 1;
-    elseif tmp1 > 0
-      plot(tmp1,'r','LineWidth',3);
-    elseif tmp1 < 0
-      plot(tmp1,'b','LineWidth',3);
-    else           
-      plot(tmp1,'k','LineWidth',3);
-    end
 
-    if (zeroFlag == 1)
-      set(gca,'yticklabel',[]);
-      zeroFlag = 0;
-    else
-      plot( 1:hnum, 0, 'k','LineWidth',1); % emphasize 0.
-      grid on;
-      if  graph.prm.showWeightDistribution == 1
-        for i2 = 1:cnum
-          tmp2 = bases.ihbasis.*repmat(transpose(EbasisWeight{regFacIndex}{i2to}(:,i2)), ...
-                                       [bases.ihbasprs.numFrame 1]);
-          for i3 = 1:bases.ihbasprs.nbase
-            bar(tmp2(:,i3));
+
+
+
+
+
+
+
+
+
+
+
+
+
+  %%% ===== PLOT ResFunc ===== START =====
+  if (cnum > LIM )
+    warning('DEBUG:notice','too much of neurons to be plotted.');
+    %%plot_EResFunc_subplot()
+  else
+    figure;
+    i2to = 1; % cell to
+    i3from = 1; % cell from
+    pos = [ .5 (cnum) 0 0 ]/(cnum+2);
+    for i1 = 1:cnum*cnum % subplot select
+      if RFIntensity(i2to,i3from,i0) > 0
+        if DEBUG == 1
+          fprintf(1,'%5.2f: r ,',RFIntensity(i2to,i3from,i0))
+        end
+        heat = [1 0.5 0.5];
+      elseif RFIntensity(i2to,i3from,i0) < 0
+        if DEBUG == 1
+          fprintf(1,'%5.2f: b ,',RFIntensity(i2to,i3from,i0))
+        end
+        heat = [0.5 0.5 1];
+      else
+        if DEBUG == 1
+          fprintf(1,'%5.2f: w ,',RFIntensity(i2to,i3from,i0))
+        end
+        heat = [1 1 1];
+      end
+      if DEBUG == 1
+        fprintf(1,'%2d<-%2d | ',i2to,i3from);
+        if i3from == cnum
+          fprintf(1,'\n');
+        end
+      end
+      subplot('position',pos + [i3from -i2to 1 1 ]/(cnum+3),'Color',heat );
+      tmp1 = EResFunc{regFacIndex}{i2to}{i3from};
+      %% <  chage color ploted according to cell type >
+      hold on;
+      if tmp1 == 0
+        zeroFlag = 1;
+      elseif tmp1 > 0
+        plot(tmp1,'r','LineWidth',3);
+      elseif tmp1 < 0
+        plot(tmp1,'b','LineWidth',3);
+      else           
+        plot(tmp1,'k','LineWidth',3);
+      end
+
+      if (zeroFlag == 1)
+        set(gca,'yticklabel',[]);
+        zeroFlag = 0;
+      else
+        plot( 1:hnum, 0, 'k','LineWidth',1); % emphasize 0.
+        grid on;
+        if  graph.prm.showWeightDistribution == 1
+          for i2 = 1:cnum
+            tmp2 = bases.ihbasis.*repmat(transpose(EbasisWeight{regFacIndex}{i2to}(:,i2)), ...
+                                         [bases.ihbasprs.numFrame 1]);
+            for i3 = 1:bases.ihbasprs.nbase
+              bar(tmp2(:,i3));
+            end
           end
         end
       end
-    end
-    %% </ chage color ploted according to cell type >
-    xlim([0,hnum*hwind*XSIZE]);  
-    %{
-    newYrange = round([ Yrange(1) diag_Yrange(2) ]*100)/100;
-    %}
-    ylim(newYrange)
+      %% </ chage color ploted according to cell type >
+      xlim([0,hnum*hwind*XSIZE]);  
+      %{
+      newYrange = round([ Yrange(1) diag_Yrange(2) ]*100)/100;
+      %}
+      ylim(newYrange)
 
-    if  graph.TIGHT == 1;
-      axis tight;
-    end
-    set(gca,'XAxisLocation','top');
-    set(gca,'XTick' , 1:dh:hnum*hwind);
-    set(gca,'xticklabel',[])
-    Y_LABEL = get(gca,'yTickLabel');
-    set(gca,'yticklabel',[]);
-    %% < from-to cell label >
-    if (i2to == 1)     % When in the topmost margin.
-      xlabel(i3from);
-      set(gca,'XTickLabel',TIMEL);
-    end
-    if (i3from == 1) % When in the leftmost margin.
-      ylabel(i2to);
-      if zeroFlag == 0
-        set(gca,'yticklabel',Y_LABEL);
+      if  graph.TIGHT == 1;
+        axis tight;
       end
-    end
-    %% </ from-to cell label >
+      set(gca,'XAxisLocation','top');
+      set(gca,'XTick' , 1:dh:hnum*hwind);
+      set(gca,'xticklabel',[])
+      Y_LABEL = get(gca,'yTickLabel');
+      set(gca,'yticklabel',[]);
+      %% < from-to cell label >
+      if (i2to == 1)     % When in the topmost margin.
+        xlabel(i3from);
+        set(gca,'XTickLabel',TIMEL);
+      end
+      if (i3from == 1) % When in the leftmost margin.
+        ylabel(i2to);
+        if zeroFlag == 0
+          set(gca,'yticklabel',Y_LABEL);
+        end
+      end
+      %% </ from-to cell label >
 
-    %% < index config >
-    if (i3from == cnum ) % When in the righmost margin.
-      i2to = i2to +1; i3from = 0;
+      %% < index config >
+      if (i3from == cnum ) % When in the righmost margin.
+        i2to = i2to +1; i3from = 0;
+      end
+      i3from = i3from +1;
+      %% </ index config >
     end
-    i3from = i3from +1;
-    %% </ index config >
+    set(gcf,'color','white')
   end
-  set(gcf,'color','white')
-end
 end
 %% h: description about outer x-y axis
 title = sprintf('regFac=%09.4f frame=%6d  #%4d',DAL.regFac(regFacIndex),DAL.Drow,cnum );
@@ -198,7 +215,7 @@ if cnum > LIM
   strcat(title,TIMEL);
 end
 %}
-strcat(title,titleIn);
+strcat(title,titleAddMemo);
 h = axes('Position',[0 0 1 1],'Visible','off'); 
 set(gcf,'CurrentAxes',h)
 text(.2,.95,title,'FontSize',12)

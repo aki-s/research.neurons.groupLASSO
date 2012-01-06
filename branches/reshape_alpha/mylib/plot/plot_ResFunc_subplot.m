@@ -1,15 +1,18 @@
-function plot_EResFunc_subplot(env,graph,Fdim1,Fdim2,LIM,EResFunc,prm,...
+function plot_ResFunc_subplot(env,graph,Fdim1,Fdim2,LIM,ResFunc,prm,...
                              varargin)
 cnum = env.cnum;
 hnum = env.hnum;
 hwind = env.hwind;
+
 regFacIndex = prm.regFacIndex;
 TIMEL = prm.xlabel;
 dh = prm.xtickwidth;
 newYrange = prm.yrange;
 zeroFlag = prm.zeroFlag;
 title = prm.title;
+savedirname = prm.savedirname;
 
+%% 
 ARGNUM = 7;
 if nargin >= (ARGNUM + 1 ) 
   if nargin >= (ARGNUM + 2 ) 
@@ -17,6 +20,17 @@ if nargin >= (ARGNUM + 1 )
     bases = varargin{ 2 };
   end
 end
+%% 
+  if size(ResFunc,3) > 1 
+    XRANGE = size(ResFunc,3);
+    ResFuncH = sprintf('%s','shiftdim(ResFunc(i2to,i3from,:),2)');
+  else
+    XRANGE = hnum*hwind;
+    ResFuncH = sprintf('%s','ResFunc((1:hnum)+(i3from-1)*hnum,to)'); ...
+    %++bug?
+  end
+
+%% 
 if 1 == 1
   figure;
   i2to = 1 + (Fdim1-1)*LIM; % cell to
@@ -27,7 +41,8 @@ if 1 == 1
   for i1 = 1:LIM*LIM % subplot select
     subplot('position',pos + [from -to 1 1 ]/(LIM+3) );
     if (i2to <= cnum) && (i3from <= cnum )
-      tmp1 = EResFunc{regFacIndex}{i2to}{i3from};
+      %      tmp1 = EResFunc{regFacIndex}{i2to}{i3from};
+      tmp1 = eval(ResFuncH);
     else
       tmp1 = nan;
     end
@@ -56,7 +71,7 @@ if 1 == 1
       axis tight;
     end
     %}
-    xlim([0,hnum*hwind]);  
+    xlim([0,XRANGE]);  
     set(gca,'XAxisLocation','top');
     set(gca,'XTick' , 1:dh:hnum*hwind);
     set(gca,'xticklabel',[]);
@@ -78,7 +93,7 @@ if 1 == 1
     %% When in the leftmost margin of a figure.
     if (i3from == (1+LIM*(Fdim2-1))) && (i2to <= cnum)
       ylabel(i2to); 
-      if zeroFlag == 0 && (LIM < 10)
+      if zeroFlag == 0 && (LIM < 10) %++bug?
         set(gca,'yticklabel',Y_LABEL);
       end
     end
@@ -111,3 +126,7 @@ text(pos1(1)+.15,pos1(2) +.05,title,'FontSize',12)
 text(pos2(1)+.05*MUL,pos2(2) +.02*MUL,'Triggers')
 text(pos2(1)+.02*MUL,pos2(2) -.01*MUL,'Targets')
 
+if  ( graph.PRINT_T == 1 )
+  print('-dpng', [savedirname,'/Estimated_ResponseFunc',...
+                  sprintf('_%d-%d_%03d',Fdim1,Fdim2,cnum),'.png'])
+end

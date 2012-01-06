@@ -15,6 +15,8 @@ myColor = graph.prm.myColor;
 %%
 DEBUG = 0;
 %%
+figure;
+
 if strcmp('omitDiag','omitDiag_') %%DEBUG
   zeroIdx = repmat(logical(eye(cnum)),[1 1 useFrameLen]);
   CVL(zeroIdx) = 0;
@@ -89,4 +91,5 @@ end
 if ( graph.PRINT_T == 1 )
   fprintf(1,'%s', [status.savedirname '/' title2 '.png']);
   print('-dpng', [status.savedirname '/' title2 '.png'])
+  close;
 end

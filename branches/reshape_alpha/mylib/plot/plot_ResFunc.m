@@ -1,4 +1,4 @@
-function plot_ResFunc(graph,env,ResFunc,title)
+function plot_ResFunc(graph,env,status,ResFunc,title)
 %%
 %% Usage:
 %% Example:
@@ -35,15 +35,12 @@ if DEBUG == 1
   title = 'DEBUG';
 end
 
-global rootdir_
-% rootdir_ = status.rootdir
-
 cnum = env.cnum;
 hnum = env.hnum;
 hwind = env.hwind;
 Hz = env.Hz.video;
 
-MAX = graph.PLOT_MAX_NUM_OF_NEURO;
+LIM = graph.PLOT_MAX_NUM_OF_NEURO;
 
 %%% == useful func ==
 %kdelta = inline('n == 0'); % kronecker's delta
@@ -86,12 +83,13 @@ else
   end
 end
 
-if cnum < MAX
   if size(ResFunc,3) > 1 
     ResFuncH = sprintf('%s','shiftdim(ResFunc(i1to,i2from,:),2)');
   else
     ResFuncH = sprintf('%s','ResFunc((1:hnum)+(i2from-1)*hnum,i1to)');
   end
+
+if cnum < LIM
   figure;
   pos = [ .5 (cnum) 0 0 ]/(cnum+2);
   for i1to = 1:cnum %++parallel
@@ -172,10 +170,27 @@ if cnum < MAX
 
   %%% ===== PLOT ResFunc ===== END =====
   %% write out eps file
-  if graph.SAVE_EPS == 1
-    print('-depsc', '-tiff' ,[rootdir_ '/outdir/artificial_ResFunc.eps'])
+  if  ( graph.PRINT_T == 1 )
+    %    print('-depsc', '-tiff' ,[status.savedirname '/artificial_ResFunc.eps'])
+  print('-dpng', [status.savedirname '/Estimated_ResponseFunc' title '.png'])
   end
 else
-  fprintf(1,'graph.PLOT_MAX_NUM_OF_NEURO= %3d\n',graph.PLOT_MAX_NUM_OF_NEURO);
-  warning('plot:aborted','Too large number of cells to plot.\n Plot aborted.')
+    prm = struct('regFacIndex',1,...
+                 'xtickwidth',dh,...
+                 'yrange',newYrange,'zeroFlag',zeroFlag);
+    prm.xlabel = TIMEL;
+    prm.title = title;
+    prm.savedirname = status.savedirname;
+
+    LIM = graph.PLOT_MAX_NUM_OF_NEURO;
+    fignum = ceil(cnum/LIM);
+    shift = 1/fignum;
+    for Fdim1 = 1:fignum
+      for Fdim2 = 1:fignum
+        plot_ResFunc_subplot(env,graph,Fdim1,Fdim2,LIM,ResFunc,prm)
+        set(gcf, 'menubar','none','Color','White','units','normalized',...
+                 'outerposition',[(Fdim2-1)*shift,(fignum-Fdim1)*shift,shift,shift])
+      end
+    end
+    %%
 end
