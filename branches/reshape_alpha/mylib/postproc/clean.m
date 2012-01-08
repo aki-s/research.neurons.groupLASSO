@@ -6,4 +6,4 @@ clear ans
 clear -regexp ^tmp([0-9_]*)
 clear -regexp ^i([0-9]*)
 
-clear   tenv   tgraph  tstatus 
+clear   tenv   tgraph  tstatus tDAL

@@ -3,7 +3,6 @@ function [I,lambda,loglambda] = gen_TrueI(env,ResFunc0,ResFunc)
 
 
 global Tout;
-global status;
 
 %% ==< set local variables >==
 if strcmp('setlocal_var','setlocal_var')
@@ -76,5 +75,3 @@ lambda = exp(loglambda);
 Tout.I = (sum(I,1));
 
 %I = logical(sparse(I)); %<->full(), logical()
-
-

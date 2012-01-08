@@ -1,20 +1,19 @@
-function [EbasisWeight,Ebias,DALstatus,Ostatus] = estimateWeightKernel(env,status,bases,I,DAL,varargin)
+function [EbasisWeight,Ebias,DALstatus,Ostatus] = estimateBasisWeight(env,status,bases,I,DAL,varargin)
 %%
 %%
 %% return)
 %% DAL: DAL.Drow, DAL.regFac
 %% Ostatus: Ostatus.time.regFac
 % [KerWeight,Ebias,DALstatus,DAL] = ...
-% estimateWeightKernel(env,status,graph,bases,I,DAL);
+% estimateBasisWeight(env,status,graph,bases,I,DAL);
 DEBUG = 1;
 Ostatus = status;
 nargin_NUM = 5;
-in.v1 = 1;
 
-if nargin < nargin_NUM + in.v1;
+if nargin < nargin_NUM + 1;
   useFrameIdx = 1;
 else
-  useFrameIdx = varargin{in.v1};
+  useFrameIdx = varargin{1};
 end
 
 cost1 = tic;
@@ -57,9 +56,8 @@ if 1 == 1
   end
   %%+improve:write out for later use and speedup.
   if strcmp(method,'prgl')
-    %    pI= I( (end - DAL.Drow+ length(bases.ihbasis,1) +1): end,:);
-    %    pI= I( (end - DAL.Drow+ bases.ihbasprs.numFrame +1): end,:);%maybe_O.K.
-    pI = I( (end+1-size(D,1)):end, :); 
+        pI= I( (end - DAL.Drow+ bases.ihbasprs.numFrame +1): end,:);%maybe_O.K.
+    %    pI = I( (end+1-size(D,1)):end, :); 
   elseif strcmp(method,'lrgl')
     pI =  2 * I( (end - DAL.Drow+ length(bases.iht) +1): end,:) - 1;
   end
@@ -99,12 +97,14 @@ if strcmp('calcDAL','calcDAL')
   end
   %  fprintf(1,'\n');
   DAL.speedup = 0;
-  for ii1 = 1:PRMS % search appropriate parameter.
+  for ii1 = 1:PRMS
+    %% search appropriate parameter.
+    %% you'd better not to make for-'ii1' parallelize. 
     cost2 = tic;
     fprintf(1,'\t== Reg.factor: %9.4f == frame: %d<-%d : elapsed: ',...
             DAL.regFac(ii1),DAL.Drow,env.genLoop);
     %%    parfor i1to = 1:cnum % ++parallelization  %bug: EbasisWeight{ii1}{i1to}, Ebias(ii1,i1to)
-    for i1to = 1:cnum % ++parallelization 
+    for i1to = 1:cnum % ++parallelization:strongly recommended to develop.
       switch  method
         %%+improve: save all data for various method
         case 'lrgl'
@@ -166,6 +166,7 @@ if strcmp('calcDAL','calcDAL')
     cost2 =  toc(cost2);
     fprintf(1,'%5.1f\n',cost2);
     Ostatus.time.regFac(useFrameIdx,ii1) = cost2;
+    %    Ostatus.time.regFac{}(useFrameIdx,ii1) = cost2;
   end 
   Ostatus.time.estimate_TrueKernel = toc(cost1);
 end

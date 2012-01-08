@@ -11,11 +11,6 @@ if (graph.PLOT_T == 0 ) && ( graph.SAVE_EPS == 1) %++obsolete
   Ograph.SAVE_EPS = 0;
 elseif (graph.PLOT_T == 0 ) && (graph.PRINT_T == 1 )
   Ograph.PRINT_T = 0; 
-  %%++refactoring
-  %% if (graph.PLOT_T) == 1
-  %%   if (graph.PRINT_T) == 1
-  %%   end
-  %% end
 end
 
 if (status.READ_FIRING == 1)
@@ -38,23 +33,29 @@ if (status.READ_FIRING == 1)
     Ostatus.READ_NEURO_CONNECTION = '';
   end
 elseif (status.GEN_TrueValues == 1)
-  Tout.weightKernelSec = (env.hnum*env.hwind)/env.Hz.video;
-  SEC = 0.05;
-  if Tout.weightKernelSec < SEC % history kernel size [sec]
-    fprintf(1,'Weight Kernel size seems to be small: %e [sec]\n',Tout.weightKernelSec);
+  OTout.effectiveHistorySec = (env.hnum*env.hwind)/env.Hz.video;
+  SEC = 0.1; % SEC [<sec>] == SEC/env.Hz.video [ 1/env.Hz.video*<sec> ]
+  %%  SEC = 0.05; % SEC [<sec>] == SEC/env.Hz.video [ 1/env.Hz.video*<sec> ]
+  if OTout.effectiveHistorySec < SEC % history kernel size [sec]
+    fprintf(1,'History size which have efflect on the next firing seems to be small: %e [sec]\n',OTout.effectiveHistorySec);
     fprintf(1,'%s > %d seems to be appropriate.\n','(env.hnum*env.hwind)/env.Hz.video',SEC)
   end
+  if env.genLoop < 40000 % threshold from huristic knowledge
+    warning('DEBUG:estimation','Time of simulation may be small')
+  end
   OTout.simtime = env.genLoop/env.Hz.video;
-  OTout.weightKernelSec = (env.hnum*env.hwind)/env.Hz.video;
+  OTout.effectiveHistorySec = (env.hnum*env.hwind)/env.Hz.video;
   %% AUTO firing rate in [sec]
   OTout.hypoAutoFiringRate =  (1-exp(-exp(env.SELF_DEPRESS_BASE)/env.Hz.video))*env.Hz.video; 
-  Ostatus.inFiring = 'Aki';
-
+  if (status.realData == 1)%++bug?
+    error(['confliction: Do you want to estimate with realData or ' ...
+           'with simulation data?'])
+  end
 end
 
 if isfield(env,'Hz') && isfield(env.Hz,'video') % check ability of expression.
   if (bases.ihbasprs.numFrame/env.Hz.video) < 0.1 
-    warning('DEBUG:estimate','range of bases seems to be small');
+    warning('DEBUG:estimation','range of bases seems to be small');
   end
 end
 
@@ -73,8 +74,8 @@ if isfield(env,'useFrame')
             , bases.ihbasprs.numFrame ...
             )
   end
-  if isempty(Oenv.useFrame) %++bug?
-    error('Properly set env.useFrame')
+  if isempty(Oenv.useFrame)
+    error(['Properly set env.useFrame to be env.genLoop - bases.ihbasprs.numFrame > env.useFrame > than bases.ihbasprs.numFrame'])
   end
   if ( min(Oenv.useFrame) - bases.ihbasprs.numFrame ) < 1000 
     %% 1000 is set about
@@ -83,10 +84,10 @@ if isfield(env,'useFrame')
   %  if (Ostatus.GEN_TrueValues == 1) && ( length(Oenv.useFrame) <=
   %  1)
   if (Ostatus.GEN_TrueValues == 1) & ( length(Oenv.useFrame) <=  1)
-if  (env.useFrame == env.genLoop)
-    error(['Generated firing is not reliable at small time frame. Properly ' ...
-           'set env.useFrame at configuration file.'])
-end
+    if  (env.useFrame == env.genLoop)
+      error(['Generated firing is not reliable at small time frame. Properly ' ...
+             'set env.useFrame at configuration file.'])
+    end
   end
 end
 
@@ -103,13 +104,13 @@ if status.crossVal > 1
     ODAL.Drow = env.useFrame(idxUSE);
     if ( ~idxUSE )
       warning('DEBUG:autoChange',[ '''env.useFrame'' is '...
-              'too large to do cross validation\n'...
+                          'too large to do cross validation\n'...
                           'make smaller than env.genLoop *' ...
                           '(status.crossVal-1)/(status.crossVal)\n'...
-                          'diabled env.useFrame=[%d]',(~idxUSE).*ENV.useFrame]);
-  if length(ODAL.Drow) <= 1  %++bug?
-    error('Properly set env.useFrame')
-  end
+                          'diabled env.useFrame=[%d]',(~idxUSE).*env.useFrame]);
+      if length(ODAL.Drow) <= 1  %++bug?
+        error('Properly set env.useFrame')
+      end
     end
   else 
     ODAL.Drow = DALmax;
@@ -124,7 +125,7 @@ ODAL = check_DALregFac(ODAL,bases.ihbasprs.nbase); % ++bug?
 %% auto color scaling
 Oenv.useFrameLen = length(Oenv.useFrame);
 if length(graph.prm.myColor) ~= Oenv.useFrameLen
-  Ograph.prm.myColor = setMyColor(Oenv.useFrameLen);
+  Ograph.prm.myColor = set_myColor(Oenv.useFrameLen);
 end
 
 if status.diary ~= 1
@@ -133,10 +134,36 @@ end
 
 if isfield(env,'inFiringUSE')
   Oenv.useNeuroLen = length(env.inFiringUSE);
-else
+else % use all neurons. (This is a default config.)
   Oenv.useNeuroLen = 1;
-  env.inFiringUSE = env.cnum;
+  Oenv.inFiringUSE = env.cnum;
 end
-for i1 = 1:env.useNeuroLen
-  Ostatus.time.regFac{i1} = zeros(Oenv.useFrameLen,ODAL.regFacLen);
+if ~isfield(status,'inFiring')
+  env.inFiringLabel = '';
+  env.inFiringDirect='';
+end
+
+if strcmp('save_calctime','save_calctime_')%++bug
+  Ostatus.time.regFac = cell(1,Oenv.useNeuroLen);
+  for i1 = 1:Oenv.useNeuroLen
+    Ostatus.time.regFac{i1} = zeros(Oenv.useFrameLen,ODAL.regFacLen);
+  end
+else %++bug: not useable when 'length(env.inFiringUSE) > 1' is.
+  Ostatus.time.regFac = zeros(Oenv.useFrameLen,ODAL.regFacLen);
+end
+
+if 1==0%++bug: debugging now
+  if ~strcmp(lower(status.inFiring),'aki')
+    try 
+      load(status.inFiring)
+    catch err
+
+    end
+  end
+end
+
+if status.crossVal_rough ~= 0
+        ODAL.tmpLdir = 'CV';
+else
+        ODAL.tmpLdir = '';
 end

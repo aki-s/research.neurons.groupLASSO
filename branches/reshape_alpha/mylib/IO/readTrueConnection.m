@@ -26,18 +26,23 @@ elseif isfield(status,'inStructFile')
 end
 if ~isempty(tmp.in)
 elseif status.use.GUI == 1
-  fprintf('Which file describing neuronal connections do you want to use?');
+  fprintf('Which file describing neuronal connections do you want to use?\');
+  fprintf('e.g. Enter ''./indir/KimFig1.con''');
   tmp.in = uigetfile('*.con');
 else
   tmp.in  = input(['Which file describing neuronal connections do you ' ...
                    'want to use?\n>> >> ']);
 end
-tmp.fid = fopen(tmp.in,'rt');
-
+%% %++improve : if tmp.in == '';
+if tmp.in == '';
+  %abort readTrueConnection..?
+else
+  tmp.fid = fopen(tmp.in,'rt');
+end
 %% Need exception hundler: if (#column ~= #row )  %%++improve
 %% fscanf repeat reading in dimention 2
 [ResFunc_hash, Oenv.cnum ] = fscanf(tmp.fid,'%s'); % don't read LF.
-                                                 %[ResFunc_hash, Oenv.cnum ] = fscanf(tmp.fid,'%s[+0-]'); % don't read LF.
+                                                   %[ResFunc_hash, Oenv.cnum ] = fscanf(tmp.fid,'%s[+0-]'); % don't read LF.
 ResFunc_hash = strrep(ResFunc_hash, '+','+1 ');
 ResFunc_hash = strrep(ResFunc_hash, '0','0 ');
 ResFunc_hash = strrep(ResFunc_hash, '-','-1 ');
@@ -65,13 +70,24 @@ ResFunc_fig = transpose(reshape(ResFunc_hash, Oenv.cnum , Oenv.cnum));
 
 fclose(tmp.fid);
 
-%% properly calculate Oenv.spar %++todo ++bug
-if 1 == 1
+if 1 == 0
   Oenv.spar.from = NaN;
   Oenv.spar.to   = NaN;
-else
-  Oenv.spar.from = sum(sum((ResFunc_fig ~= 0),1)>0)/Oenv.cnum;
-  Oenv.spar.to =  sum(sum((ResFunc_fig ~= 0),2)>0)/Oenv.cnum;
+else %++bug:test
+  %% If you want to watch exci
+  %% 'from' neuron have avgerage env.spar.from connection rate.
+  %% (connection reaching rate)
+  env.spar.from = sum(sum((ResFunc_fig ~= 0),1)>0)/cnum;
+  %% 'to' neuron have avgerage env.spar.to connection rate.
+  %% (connection receiving rate)
+  env.spar.to   = sum(sum((ResFunc_fig ~= 0),2)>0)/cnum;
 end
 
+%% e.g.) if env.spar.from  > env.spar.to, this cluster is a kind of
+%% centralized network of infomation?
+
 Ostatus.inStructFile = tmp.in;
+
+
+%% calc sparsity 
+Oenv.spar.level = sum(ResFunc_hash)/(Oenv.cnum*Oenv.cnum);

@@ -20,17 +20,19 @@ if exist('Ograph')
     Ograph.PLOT_T = 1; % Ograph.PLOT_T: if (Ograph.PLOT_T == 1)
                       % then plot artificial (True) data.
   end
-  %%+bug: duplicate function? PRINT_T SAVE_EPS
+  %%+bug: duplicate flag? PRINT_T SAVE_EPS
   %% When you mail Ograph data, print as eps is inconvenient.
   %% SAVE_EPS is almost obsolete.
   if ~isfield(Ograph,'PRINT_T') % precede user defined value.
-    Ograph.PRINT_T = 0; 
+    %% this may cause enoumous consumption of disk space.
+    %% this may cause slow down calculation if I/O is slow.
+    Ograph.PRINT_T = 1;
   end
   if ~isfield(Ograph,'SAVE_EPS') % precede user defined value.
     Ograph.SAVE_EPS = 0; % save plotted figures as eps pictures
   end
   if ~isfield(Ograph,'SAVE_ALL') % precede user defined value.
-    Ograph.SAVE_ALL = 0;
+    Ograph.SAVE_ALL = 0; %++ name is not nice
   end
   if ~isfield(Ograph,'TIGHT') % precede user defined value.
     Ograph.TIGHT = 0; % 0: each Ograph is plotted with absolute scale.

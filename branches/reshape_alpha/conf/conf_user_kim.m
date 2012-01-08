@@ -64,7 +64,6 @@ graph.GRAPHVIZ_OUT_FIG = 1; % default: 0
 graph.xrange = 1000;
 %% extra
 graph.PLOT_T = 1;
-graph.SAVE_ALL = 0;%++ name is not nice
 graph.prm.Yrange = [-.5 5];
 graph.prm.diag_Yrange = [-.5 5];
 

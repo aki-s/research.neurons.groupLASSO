@@ -1,4 +1,4 @@
-function bases = conf_makeSimStruct_glm()
+function bases = conf_BasisStruct_glm()
 %% ( Number of basis vectors for post-spike kernel )
 %% <Tweek here>
 %% == length [frame] ==
@@ -20,7 +20,10 @@ if strcmp('comp_stevenson','comp_stevenson_')
   ihbasprs.nbase = nbase;
 elseif strcmp('comp_kim','comp_kim')
   ihbasprs.basisType = 'glm';
-  ihbasprs.nbase = 7;
+  %% The smaller nbase is, the faster calculation is, thought
+  %% the ablility to represent log history decleases.
+  ihbasprs.nbase = 5; % not good, fast
+  %  ihbasprs.nbase = 7; % better, slow
 end
 %% ihbasprs.hpeaks: Peak location for first and last vectors.
 % To be [ihbasprs.hpeaks(1) > arg(makeSimStruct_glm)] is recommended.

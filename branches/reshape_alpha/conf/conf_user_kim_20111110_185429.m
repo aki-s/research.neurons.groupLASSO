@@ -61,21 +61,15 @@ graph.GRAPHVIZ_OUT_FIG = 1; % default: 0
 graph.xrange = 1000;
 %% extra
 graph.PLOT_T = 1;
-graph.SAVE_ALL = 0;%++ name is not nice
 graph.prm.Yrange = [-.5 5];
 graph.prm.diag_Yrange = [-.5 5];
 
-status.crossVal = 8; %%++test
-status.save_vars = 1;
+status.crossVal = 8; %% default: 4
 status.GEN_TrueValues = 0;
-status.READ_FIRING =1; % read kim FIRING. ++bug:critical
-status.profiler = 0;
-status.save_warning = 1; %++bug: not yet implemented.
-status.parfor_ = 1;
+status.READ_FIRING =1; % read kim FIRING.
 status.mail = 1;
 status.DEBUG.plot = 1; %++bug: not yet implemented.
-status.DEBUG.level = 1; %++bug: not yet implemented.
-status.use.GUI = 0; %++bug: not yet implemented.
+status.DEBUG.level = 1;
 if strcmp('simulation','simulation')
   status.realData = 0;
   status.inFiring = [ rootdir_ '/indir/Simulation/data_sim_9neuron.mat'];

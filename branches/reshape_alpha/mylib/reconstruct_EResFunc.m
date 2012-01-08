@@ -19,14 +19,15 @@ mt = 0;
 md = 0;
 IN = 5;
 if nargin >= IN +1
-  FROM =  varargin{ 1};
-  regFacLen  = FROM(end);
-else
-  FROM = 1;
-  regFacLen = length(DAL.regFac);
+  %% reconstruct used_frame reconstruct corresponding with varargin{1}
+  regFacIdx.from =  varargin{ 1};
+  regFacIdx.to  = regFacIdx.from;
+else% reconstruct using all given regFac
+  regFacIdx.from = 1;
+  regFacIdx.to = length(DAL.regFac);
 end
 if strcmp(bases.ihbasprs.basisType,'bar')
-  for i0 = FROM:regFacLen
+  for i0 = regFacIdx.from:regFacIdx.to
     for i1to = 1:cnum
       for i2from = 1:cnum
         EResFunc{i0}{i1to}{i2from} =  EbasisWeight{i0}{i1to}(:,i2from);
@@ -34,7 +35,7 @@ if strcmp(bases.ihbasprs.basisType,'bar')
     end
   end
 elseif  strcmp(bases.ihbasprs.basisType,'glm')
-  for i0 = FROM:regFacLen
+  for i0 = regFacIdx.from:regFacIdx.to
     for i1to = 1:cnum
       for i2from = 1:cnum
         EResFunc{i0}{i1to}{i2from} = (bases.ihbasis* EbasisWeight{i0}{i1to}(:,i2from));
@@ -65,7 +66,7 @@ Ograph.prm.diag_Yrange = graph.prm.diag_Yrange;
 Ograph.prm.Yrange = graph.prm.Yrange;
 
 if strcmp('showMaxMin','showMaxMin')
-  fprintf(1,'\tregFac:%9.4f~%9.4f| ',DAL.regFac(FROM),DAL.regFac(regFacLen));
+  fprintf(1,'\tregFac:%9.4f~%9.4f| ',DAL.regFac(regFacIdx.from),DAL.regFac(regFacIdx.to));
   %fprintf(1,'diag:[%f],~diag:[%f]\n',Ograph.prm.diag_Yrange_auto,Ograph.prm.Yrange_auto)
   fprintf(1, 'diag:[%5.2f,%5.2f] ',Ograph.prm.diag_Yrange_auto(1),Ograph.prm.diag_Yrange_auto(2))
   fprintf(1,'~diag:[%5.2f,%5.2f]\n',Ograph.prm.Yrange_auto(1),Ograph.prm.Yrange_auto(2))

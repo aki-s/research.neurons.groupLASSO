@@ -9,7 +9,6 @@ graph.PLOT_MAX_NUM_OF_NEURO = 10;% #neuron to be plotted on a figure.
 graph.xrange = 1000;
 graph.PLOT_T = 1; % plot all results as graphs
 graph.PRINT_T = 1; % write out plotted figure each time.
-graph.SAVE_ALL = 1; % bulk save all plotted graphs
 graph.prm.Yrange = [-.5 5];
 graph.prm.diag_Yrange = [-.5 5];
 
@@ -34,6 +33,6 @@ status.READ_FIRING =1; % read gaya FIRING.
 status.inFiring = ['/home/shige-o/rec072b.mat'];% spike train is saved.
 status.crossVal = 8; % do 'status.crossVal'-fold cross validation.
 
-%% the following is test
-DAL.regFac = [ 64 32];
-env.inFiringUSE = [10 15];
+%% DEBUG: the following is test
+% $$$ DAL.regFac = [ 64 32];
+% $$$ env.inFiringUSE = [10 15];

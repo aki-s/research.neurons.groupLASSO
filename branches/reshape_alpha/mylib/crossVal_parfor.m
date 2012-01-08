@@ -65,7 +65,7 @@ if (nargin >= argNum+1 )
     tmpEnv.useFrame = 10000;
     %}
     DAL.regFac =  [10 3 1]; %++bug?
-    bases = makeSimStruct_glm(0.2); % Create GLM structure with default params
+    bases = set_BasisStruct_glm(0.2); % Create GLM structure with default params
   end
 end
 
@@ -149,8 +149,11 @@ else
     USE = USE(USE >0);
     Icut = I(USE,:);
     [EbasisWeight{i1},Ebias{i1},Estatus{i1},status_tmp{i1}] =...
-        estimateWeightKernel(tmpEnv,status,bases,Icut,DAL,useFrameIdx);
+        estimateBasisWeight(tmpEnv,status,bases,Icut,DAL,useFrameIdx);
     cost = cost + status_tmp{i1}.time.regFac(useFrameIdx,:);
+    %%++improve
+    %% after satisfying you interest, reconstruct_EResFunc() is
+    %% only needed when i1 is 1. This decrease calculation very much.
     [EResFunc Ograph] = reconstruct_EResFunc(tmpEnv,graph,DAL,bases,EbasisWeight{i1});
     %    histSize = bases.ihbasprs.numFrame;
     %% warning: not exact response function is write out.

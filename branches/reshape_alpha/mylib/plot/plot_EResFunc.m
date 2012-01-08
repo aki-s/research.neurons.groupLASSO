@@ -1,5 +1,6 @@
 function plot_EResFunc(env,graph,status,DAL,bases,EbasisWeight,...
                        titleAddMemo,varargin)
+%%% It would be better to share code with plot_ResFunc()
 %%
 %% USAGE)
 %% Example:
@@ -7,35 +8,47 @@ function plot_EResFunc(env,graph,status,DAL,bases,EbasisWeight,...
 % plot_EResFunc(env,graph,status,DAL,bases,EbasisWeight,'titleAddMemo',regFacIndexIn)
 %% regFacIndexIn: e.g. if [1] [1:3] o.k. , if [1 3] error.
 %% return connection intensity 'RFIntensity' if ('DEBUG' >1 ).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 DEBUG = status.DEBUG.level;
 
 
 
+LIM = graph.PLOT_MAX_NUM_OF_NEURO;
 %%
-regFacLen = length(DAL.regFac);
-regFacIndexIn = (1:regFacLen);
-
-IN = 7;
-if nargin >= IN +1
-  FROM =  varargin{ 1};
-  regFacLen  = FROM(end);
-  regFacIndexIn = FROM;%%++bug?
-else
-  FROM = 1;
-end
-
-if 1 == 1
-  LIM = graph.PLOT_MAX_NUM_OF_NEURO;
-else
-  LIM = 10;
-end
-
 cnum = env.cnum;
 if isfield(env,'hnum') && ~isnan(env.hnum)
   hnum = env.hnum;
 else
-  env.hnum = 100;
-  hnum = 100;
+% $$$   env.hnum = 100; %++bug?
+% $$$   hnum = 100; %++bug?
+  env.hnum = bases.ihbasprs.numFrame;
+  hnum =  bases.ihbasprs.numFrame;
+end
+if isfield(env,'Hz') && isfield(env.Hz,'video')
+  Hz = env.Hz.video;
+else
+  Hz = 1000;
 end
 if isfield(env,'hwind') && ~isnan(env.hwind)
   hwind = env.hwind;
@@ -43,48 +56,43 @@ else
   %  env.hwind = 1; %++needless?
   hwind = 1;
 end
-if isfield(env,'Hz') && isfield(env.Hz,'video')
-  Hz = env.Hz.video;
-else
-  Hz = 1000;
-end
-%%% ==< reconstruct response func >==
 
-if (nargin == IN + 1) %++bug %get only EResFunc{regFacIndexIn}, EResFunc{others}=[]
+%% select regFac to be used.
+regFacLen = DAL.regFacLen;
+num_argin = 7;
+if nargin >= num_argin +1
+  FROM =  varargin{ 1};
+  regFacLen  = FROM;
+else
+  FROM = 1;
+  regFacIndexIn = (1:regFacLen);
+end
+%%% ==
+
+
+
+
+
+
+
+
+
+if (nargin == num_argin + 1) 
+  %++bug %get only EResFunc{regFacIndexIn}, EResFunc{others}=[]
   [EResFunc,graph] = reconstruct_EResFunc(env,graph,DAL,bases,EbasisWeight,regFacIndexIn(regFacLen));
 else
   [EResFunc,graph] = reconstruct_EResFunc(env,graph,DAL,bases,EbasisWeight);
 end
 %%% ==</reconstruct response func >==
-if strcmp('set_xticks','set_xticks')
-  Lnum = 2; % Lnum: the number of x label
-  dh = floor((hnum*hwind)/Lnum); %dh: width of each tick.
-  ddh = dh/Hz; % convert XTick unit from [frame] to [sec]
-  TIMEL = cell(1,Lnum+1);
-  for i1 = 1:(Lnum+1)
-    TIMEL{i1} = (i1-1)*ddh;
-  end
-end
+run set_ResFunc_xticks
+run set_graphYrange % newYrange, zeroFlag
+XSIZE = 1; % obsolete
 
-%  XSIZE = 2;
-XSIZE = 1; % stretch 'xlim' by XSIZE times.
-if strcmp('set_range','set_range') && (graph.prm.auto ~= 1)
-  diag_Yrange = graph.prm.diag_Yrange;
-  Yrange      = graph.prm.Yrange;
-  zeroFlag = 0;
-  newYrange = [ min(Yrange(1),diag_Yrange(1)) max(Yrange(2),diag_Yrange(2)) ];
-else % you'd better collect max and min range of response functions
-     % in advance.
-  diag_Yrange = graph.prm.diag_Yrange_auto;
-  Yrange      = graph.prm.Yrange_auto;     
-  newYrange = [ min(Yrange(1),diag_Yrange(1)) max(Yrange(2),diag_Yrange(2)) ];
-  if newYrange == 0
-    newYrange = [-0.1 0.1 ];
-    zeroFlag = 1;
-  else
-    zeroFlag = 0;
-  end
-end
+
+
+
+
+
 
 RFIntensity = nan(cnum,cnum,regFacLen);
 for i1 = FROM:regFacLen
@@ -116,10 +124,13 @@ for i0 = FROM:regFacLen
                  'yrange',newYrange,'zeroFlag',zeroFlag);
     prm.xlabel = TIMEL;
     prm.title = title;
+
+    prm.savedirname = savedirname;
+
     fignum = ceil(cnum/LIM);
     shift = 1/fignum;
-    for Fdim1 = 1:fignum
-      for Fdim2 = 1:fignum
+    for Fdim2 = 1:fignum
+      for Fdim1 = 1:fignum
         plot_EResFunc_subplot(env,graph,Fdim1,Fdim2,LIM,EResFunc,prm,...
                               EbasisWeight,bases);
         set(gcf, 'menubar','none','Color','White','units','normalized',...
@@ -127,11 +138,13 @@ for i0 = FROM:regFacLen
       end
     end
   else
+
     figure;
     i2to = 1; % cell to
     i3from = 1; % cell from
     pos = [ .5 (cnum) 0 0 ]/(cnum+2);
     for i1 = 1:cnum*cnum % subplot select
+
       %% <  subplot background color >
       if RFIntensity(i2to,i3from,i0) > 0
         if DEBUG == 1
@@ -155,10 +168,11 @@ for i0 = FROM:regFacLen
           fprintf(1,'\n');
         end
       end
-      %% </ subplot background color >
       subplot('position',pos + [i3from -i2to 1 1 ]/(cnum+3),'Color',heat );
+      %% </ subplot background color >
       tmp1 = EResFunc{regFacIndex}{i2to}{i3from};
       %% <  chage color ploted according to cell type >
+      set(gcf,'color','white')
       hold on;
       if tmp1 == 0
         zeroFlag = 1;
@@ -174,27 +188,49 @@ for i0 = FROM:regFacLen
         %% plot nothing
         set(gca,'yticklabel',[]);
         zeroFlag = 0;
+
+
+
+
+
+
       else
-        plot( 1:hnum, 0, 'b','LineWidth',4); % emphasize 0.
+        plot( 1:hnum, 0, 'k','LineWidth',1); % emphasize 0.
         grid on;
         if graph.prm.showWeightDistribution == 1
           for i2 = 1:cnum
             tmp2 = bases.ihbasis.*repmat(transpose(EbasisWeight{regFacIndex}{i2to}(:,i2)), ...
                                          [bases.ihbasprs.numFrame 1]);
+
             plot(tmp2,'--')
+
           end
         end
         xlim([0,hnum*hwind*XSIZE]);  
         ylim(newYrange)
       end
-      if  graph.TIGHT == 1;
-        axis tight;
-      end
+
+      set(gca,'XTick' , 1:dh:hnum*hwind); %++bug?
       set(gca,'XAxisLocation','top');
-      set(gca,'XTick' , 1:dh:hnum*hwind);
       set(gca,'xticklabel',[]);
       Y_LABEL = get(gca,'yTickLabel');
       set(gca,'yticklabel',[]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+      if  graph.TIGHT == 1;
+        axis tight;
+      end
       %% < from-to cell label >
       if (i2to == 1)     % When in the topmost margin.
         xlabel(i3from);
@@ -215,8 +251,6 @@ for i0 = FROM:regFacLen
       i3from = i3from +1;
       %% </ index config >
     end
-    set(gcf,'color','white')
-
 
     h = axes('Position',[0 0 1 1],'Visible','off'); 
     set(gcf,'CurrentAxes',h)
@@ -229,13 +263,19 @@ for i0 = FROM:regFacLen
       text(pos(1)+.1,pos(2) +.03,'Triggers')
       text(pos(1)+.02,pos(2) -.01,'Targets')
     end
-
+  end
+  %%% ===== PLOT ResFunc ===== END =====
+  if ( graph.PRINT_T == 1 ) || ( status.parfor_ == 1 )
+    title2 = sprintf('_regFac_%09.4f_frame_%07d_N_%04d',DAL.regFac(i0),DAL.Drow,cnum );
+    %% fprintf(1,'saved figure: \n')
+    fprintf(1,'%s\n', [status.savedirname '/Estimated_ResponseFunc' title2 '.png']);
+    print('-dpng', [status.savedirname '/Estimated_ResponseFunc' title2 '.png'])
   end
 end
-%%% ===== PLOT ResFunc ===== END =====
-if ( graph.PRINT_T == 1 )
-  title2 = sprintf('_regFac=%09.4f_frame=%07d_N=%04d',DAL.regFac(regFacIndex),DAL.Drow,cnum );
-  %% fprintf(1,'saved figure: \n')
-  fprintf(1,'%s\n', [status.savedirname '/Estimated_ResponseFunc' title2 '.png']);
-  print('-dpng', [status.savedirname '/Estimated_ResponseFunc' title2 '.png'])
-end
+% $$$ %%% ===== PLOT ResFunc ===== END =====
+% $$$ if ( graph.PRINT_T == 1 ) || ( status.parfor_ == 1 )
+% $$$   title2 = sprintf('_regFac_%09.4f_frame_%07d_N_%04d',DAL.regFac(regFacIndex),DAL.Drow,cnum );
+% $$$   %% fprintf(1,'saved figure: \n')
+% $$$   fprintf(1,'%s\n', [status.savedirname '/Estimated_ResponseFunc' title2 '.png']);
+% $$$   print('-dpng', [status.savedirname '/Estimated_ResponseFunc' title2 '.png'])
+% $$$ end

@@ -1,11 +1,11 @@
-function plot_ResFuncALL(varargin)
+function plot_EResFuncALL(varargin)
 %%
 %% example)
-%  plot_ResFuncALL('outdir/22-Oct-2011-start-22_34/',20)
-%  plot_ResFuncALL(status.savedirname,20)
-%  plot_ResFuncALL(status.savedirname,20,3000)
-%  plot_ResFuncALL(status.savedirname,9,env.useFrame(4),graph)
-%% plot_ResFuncALL()
+%  plot_EResFuncALL('outdir/22-Oct-2011-start-22_34/',20)
+%  plot_EResFuncALL(status.savedirname,20)
+%  plot_EResFuncALL(status.savedirname,20,3000)
+%  plot_EResFuncALL(status.savedirname,9,env.useFrame(4),graph)
+%% plot_EResFuncALL()
 %%  if (nargin == 1)
 %%   varargin{1}: mat file containing variable 'env'.
 %%  if (nargin >= 2)
@@ -38,7 +38,7 @@ elseif nargin >= 2
     LOOPn = length(cnum);
   end
 else
-  error('usage: plot_ResFuncALL(mat file) or plot_ResFuncALL(dirname,#neuron)');
+  error('usage: plot_EResFuncALL(mat file) or plot_EResFuncALL(dirname,#neuron)');
 end
 LOOPf = 1;
 if nargin >= 3
@@ -52,11 +52,7 @@ else
 end
 
 %% get mat file list to be plotted.
-%{
-listLS = textscan(ls([in,'*.mat']), ...
-                  '%s','delimiter','\t\n'); % default list
-listLS{1}{1:2}
-%}
+
 listLS = ls([in,'*.mat']); % default list
 
 for i1 = 1:LOOPn
@@ -83,11 +79,6 @@ for i1 = 1:LOOPn
       regFacIdx = str2double(regexprep(list{i3},...
                                        '(.*/)(\w*-)([0-9\.]*)(-.*.mat)','$3'));
       regFacIdx = find(S.DAL.regFac == repmat(regFacIdx,[1 regFacLen]));
-      %{
-      if ~mod(i3-1,regFacLen)
-        regFacIdx = regFacLen;
-      end
-      %}
       if strcmp('rm_after_AROB','rm_after_AROB')
         %10-Nov-2011-start-18_54
         S.status.DEBUG.level=0;
@@ -97,28 +88,14 @@ for i1 = 1:LOOPn
       if nargin >= 4 %% to hand over 'graph.prm'
         S.graph = varargin{4};
       end
-      if 1 == 0
-        plot_EResFunc(S.env,S.graph,S.status,S.DAL,S.bases,S.basisWeight ...
-                    ,'',regFacIdx)
-      else
-        try
-          plot_EResFunc(S.env,S.graph,S.status,S.DAL,S.bases,S.EbasisWeight ...
+      try
+        plot_EResFunc(S.env,S.graph,S.status,S.DAL,S.bases,S.EbasisWeight ...
                       ,'',regFacIdx)
 
-        catch errP
-          warning('DEBUG:NOTICE','error hundling');
-regFacIdx
-          plot_EResFunc(S.env,S.graph,S.status,S.DAL,S.bases,S.EbasisWeight ...
-                      ,'',regFacIdx)
-          try
-            plot_EResFunc(S.env,S.graph,S.status,S.DAL,S.bases,S.KerWeight ...
-                        ,'',regFacIdx)
-          catch err
-            error()
-          end
-        end
+      catch errP
+        warning('DEBUG:NOTICE','error hundling');
+          error()
       end
-      %      regFacIdx = regFacIdx - 1;
     end
   end
 end

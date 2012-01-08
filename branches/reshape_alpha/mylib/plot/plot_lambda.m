@@ -34,7 +34,7 @@ end
 
 figure; 
 set(gca,'XAxisLocation','top');
-ylim( [0,100*mean(median(lambda))]);
+%ylim( [0,100*mean(median(lambda))]);
 for i1 = 1:cnum
   subplot(cnum,1,i1)
   set(gca,'Xlim',[0,graph.xrange]); %++bug:'don't work well.
@@ -43,7 +43,8 @@ for i1 = 1:cnum
   bar( lambda((end+1-xrange):end,i1))
   grid on;
   %  ylim([0,10 * max(median(lambda))]);
-  ylim([0,min(Tout.FiringRate)*2 ]);
+  %  ylim([0,min(Tout.FiringRate)*6 ]);
+  ylim([0,min(Tout.FiringRate)+3*sqrt(var(Tout.FiringRate)) ]);
   ylabel(sprintf('%d',i1),'fontsize',12);
   set(gca,'XTickLabel',TIMEL);
 end
@@ -51,3 +52,4 @@ end
 h = axes('Position',[0 0 1 1],'Visible','off');
 set(gcf,'CurrentAxes',h)
 text(.4,.95,title,'FontSize',12)
+set(gcf,'color','white')

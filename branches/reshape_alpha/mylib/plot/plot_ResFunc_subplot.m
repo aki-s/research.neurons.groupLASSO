@@ -1,37 +1,13 @@
 function plot_ResFunc_subplot(env,graph,Fdim1,Fdim2,LIM,ResFunc,prm,...
-                             varargin)
-cnum = env.cnum;
-hnum = env.hnum;
-hwind = env.hwind;
+                              varargin)
+%% this is main ResFunc_subplot file.
+if 1 == 0
 
-regFacIndex = prm.regFacIndex;
-TIMEL = prm.xlabel;
-dh = prm.xtickwidth;
-newYrange = prm.yrange;
-zeroFlag = prm.zeroFlag;
-title = prm.title;
-savedirname = prm.savedirname;
 
-%% 
-ARGNUM = 7;
-if nargin >= (ARGNUM + 1 ) 
-  if nargin >= (ARGNUM + 2 ) 
-    EbasisWeight = varargin{ 1 };
-    bases = varargin{ 2 };
-  end
-end
-%% 
-  if size(ResFunc,3) > 1 
-    XRANGE = size(ResFunc,3);
-    ResFuncH = sprintf('%s','shiftdim(ResFunc(i2to,i3from,:),2)');
-  else
-    XRANGE = hnum*hwind;
-    ResFuncH = sprintf('%s','ResFunc((1:hnum)+(i3from-1)*hnum,to)'); ...
-    %++bug?
-  end
 
+else
+run set_subplot_variables
 %% 
-if 1 == 1
   figure;
   i2to = 1 + (Fdim1-1)*LIM; % cell to
   i3from = 1 + (Fdim2-1)*LIM; % cell from
@@ -41,7 +17,6 @@ if 1 == 1
   for i1 = 1:LIM*LIM % subplot select
     subplot('position',pos + [from -to 1 1 ]/(LIM+3) );
     if (i2to <= cnum) && (i3from <= cnum )
-      %      tmp1 = EResFunc{regFacIndex}{i2to}{i3from};
       tmp1 = eval(ResFuncH);
     else
       tmp1 = nan;
@@ -73,7 +48,7 @@ if 1 == 1
     %}
     xlim([0,XRANGE]);  
     set(gca,'XAxisLocation','top');
-    set(gca,'XTick' , 1:dh:hnum*hwind);
+    set(gca,'XTick' , 1:dh:XRANGE);
     set(gca,'xticklabel',[]);
     ylim(newYrange)
     Y_LABEL = get(gca,'yTickLabel');
@@ -122,11 +97,12 @@ if LIM < 8
   pos2 = [ .2 cnum-3 ]/(cnum+2);
   MUL = 2;
 end
-text(pos1(1)+.15,pos1(2) +.05,title,'FontSize',12)
+text(pos1(1)+.15,pos1(2) +.05,DESCRIPTION,'FontSize',12)
 text(pos2(1)+.05*MUL,pos2(2) +.02*MUL,'Triggers')
 text(pos2(1)+.02*MUL,pos2(2) -.01*MUL,'Targets')
 
 if  ( graph.PRINT_T == 1 )
   print('-dpng', [savedirname,'/Estimated_ResponseFunc',...
+                  prm.outname,...
                   sprintf('_%d-%d_%03d',Fdim1,Fdim2,cnum),'.png'])
 end

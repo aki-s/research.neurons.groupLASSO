@@ -2,18 +2,17 @@ function mailMe(env,status,DAL,bases,title)
 %% 
 %function mailMe(env,status,DAL,bases,'mail title')
 %% 
-if isfield(status,'inFiring')
-  ;
-else
+if ~isfield(status,'inFiring')
   status.inFiring ='';
 end
-if isfield(status,'outputfilename')
-else
-  status.outputfilename ='';
+if ~isfield(status,'outputfilename')
+  status.outputfilename ='User saved at their liking, or no output.';
 end
-if isfield(env,'Hz') && isfield(env.Hz,'video')
-else
+if ~( isfield(env,'Hz') && isfield(env.Hz,'video') )
   env.Hz.video ='';
+end
+if ~isfield(status.time,'estimate_TrueKernel')
+  status.time.estimate_TrueKernel ='Not estimated.';
 end
 useFrameLen = length(env.useFrame);
 FRAME = '[ ';
@@ -41,6 +40,7 @@ if status.mail == 1
                   repmat('-',[1 100]),...
                   ['in_nueroStructFile: ', status.inStructFile],...
                   ['in_Firing: ', status.inFiring],...
+                  ['method: ', status.method],...
                   [''],...
 ...%                  ['CorrectRate_checkDirname:     ', status.checkDirname],...
                   [''],...

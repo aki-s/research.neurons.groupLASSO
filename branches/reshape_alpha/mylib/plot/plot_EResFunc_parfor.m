@@ -11,30 +11,18 @@ DEBUG = status.DEBUG.level;
 if DEBUG == 1
   title = 'DEBUG:';
 end
-%%<copy>
-regFacLen = DAL.regFacLen;
-regFacIndexIn = (1:regFacLen);
-
-IN = 7;
-if nargin >= IN +1
-  FROM =  varargin{ 1};
-  regFacLen  = FROM(end);
-else
-  FROM = 1;
-end
-%%</copy>
-
-if 1 == 1
-  LIM = graph.PLOT_MAX_NUM_OF_NEURO;
-else
-  LIM = 10;
-end
-
+%%
 cnum = env.cnum;
 if isfield(env,'hnum') && ~isnan(env.hnum)
   hnum = env.hnum;
 else
+
   hnum = 100;
+end
+if isfield(env,'Hz') && isfield(env.Hz,'video')
+  Hz = env.Hz.video;
+else
+  Hz = 1000;
 end
 if isfield(env,'hwind') && ~isnan(env.hwind)
   hwind = env.hwind;
@@ -42,14 +30,24 @@ else
 
   hwind = 1;
 end
-if isfield(env,'Hz') && isfield(env.Hz,'video')
-  Hz = env.Hz.video;
-else
-  Hz = 1000;
-end
+LIM = graph.PLOT_MAX_NUM_OF_NEURO;
 
-%%% == useful func ==
-if (nargin == IN + 1)
+%%
+regFacLen = DAL.regFacLen;
+regFacIndexIn = (1:regFacLen);
+num_argin = 7;
+if nargin >= num_argin +1
+  FROM =  varargin{ 1};
+  regFacLen  = FROM(end);
+
+else
+  FROM = 1;
+
+end
+%%% == 
+
+if (nargin == num_argin + 1)
+
   [EResFunc,graph] = reconstruct_EResFunc(env,graph,DAL,bases,EbasisWeight,regFacIndexIn(regFacLen));
 else
   [EResFunc,graph] = reconstruct_EResFunc(env,graph,DAL,bases,EbasisWeight);
@@ -65,25 +63,7 @@ if strcmp('set_xticks','set_xticks')
   end
 end
 
-%  XSIZE = 2;
-XSIZE = 1;
-if strcmp('set_range','set_range_')
-  diag_Yrange = graph.prm.diag_Yrange;
-  Yrange      = graph.prm.Yrange;
-  zeroFlag = 0;
-
-else % you'd better collect max and min range of response functions
-     % in advance.
-  diag_Yrange = graph.prm.diag_Yrange_auto;
-  Yrange      = graph.prm.Yrange_auto; 
-  newYrange = [ min(Yrange(1),diag_Yrange(1)) max(Yrange(2),diag_Yrange(2)) ];
-  if newYrange == 0
-    newYrange = [-0.1 0.1 ];
-    zeroFlag = 1;
-  else
-    zeroFlag = 0;
-  end
-end
+run set_graphYrange % newYrange, zeroFlag
 
 RFIntensity = nan(cnum,cnum,regFacLen);
 for i1 = FROM:regFacLen
@@ -108,16 +88,33 @@ for i0 = FROM:regFacLen
 
 
 
+
   %%% ===== PLOT ResFunc ===== START =====
   if (cnum > LIM )
-    warning('DEBUG:notice','too much of neurons to be plotted.');
-    %%plot_EResFunc_subplot()
+    prm = struct('regFacIndex',regFacIndex,...
+                 'xtickwidth',dh,...
+                 'yrange',newYrange,'zeroFlag',zeroFlag);
+    prm.xlabel = TIMEL;
+    prm.title = title;
+    prm.savedirname = savedirname;
+
+    fignum = ceil(cnum/LIM);
+    shift = 1/fignum;
+    for Fdim2 = 1:fignum
+      for Fdim1 = 1:fignum
+        plot_EResFunc_subplot(env,graph,Fdim1,Fdim2,LIM,EResFunc,prm,...
+                              EbasisWeight,bases);
+        set(gcf, 'menubar','none','Color','White','units','normalized',...
+               'outerposition',[(Fdim2-1)*shift,(fignum-Fdim1)*shift,shift,shift])
+      end
+    end
   else
     figure;
     i2to = 1; % cell to
     i3from = 1; % cell from
     pos = [ .5 (cnum) 0 0 ]/(cnum+2);
     for i1 = 1:cnum*cnum % subplot select
+      %% <  subplot background color >
       if RFIntensity(i2to,i3from,i0) > 0
         if DEBUG == 1
           fprintf(1,'%5.2f: r ,',RFIntensity(i2to,i3from,i0))
@@ -140,6 +137,7 @@ for i0 = FROM:regFacLen
           fprintf(1,'\n');
         end
       end
+      %% </ subplot background color >
       subplot('position',pos + [i3from -i2to 1 1 ]/(cnum+3),'Color',heat );
       tmp1 = EResFunc{regFacIndex}{i2to}{i3from};
       %% <  chage color ploted according to cell type >
@@ -153,8 +151,9 @@ for i0 = FROM:regFacLen
       else           
         plot(tmp1,'k','LineWidth',3);
       end
-
+      %% </ chage color ploted according to cell type >
       if (zeroFlag == 1)
+        %% plot nothing
         set(gca,'yticklabel',[]);
         zeroFlag = 0;
       else
@@ -170,13 +169,8 @@ for i0 = FROM:regFacLen
           end
         end
       end
-      %% </ chage color ploted according to cell type >
       xlim([0,hnum*hwind*XSIZE]);  
-      %{
-      newYrange = round([ Yrange(1) diag_Yrange(2) ]*100)/100;
-      %}
       ylim(newYrange)
-
       if  graph.TIGHT == 1;
         axis tight;
       end
@@ -228,14 +222,11 @@ else
   text(pos(1)+.02,pos(2) +.03,'Triggers')
   text(pos(1)+.01,pos(2) -.00,'Targets')
 end
-%{
-xlabel(h,'Trigger')
-ylabel(h,'Target')
-%}
+
 
 %%% ===== PLOT ResponseFunc ===== END =====
 if ( graph.PRINT_T == 1 ) || ( status.parfor_ == 1 )
-  title2 = sprintf('_regFac=%09.4f_frame=%07d_N=%04d',DAL.regFac(regFacIndex),DAL.Drow,cnum );
+  title2 = sprintf('_regFac_%09.4f_frame=%07d_N=%04d',DAL.regFac(regFacIndex),DAL.Drow,cnum );
   %% fprintf(1,'saved figure: \n')
   fprintf(1,'%s\n', [status.savedirname '/Estimated_ResponseFunc' title2 '.png']);
   print('-dpng', [status.savedirname '/Estimated_ResponseFunc' title2 '.png'])

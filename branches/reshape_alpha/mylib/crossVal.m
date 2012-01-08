@@ -62,7 +62,7 @@ if (nargin >= baseN+1 )
     tmpEnv.useFrame = 10000;
     %}
     DAL.regFac =  [10 3 1]; %++bug?
-    bases = makeSimStruct_glm(0.2); % Create GLM structure with default params
+    bases = set_BasisStruct_glm(0.2); % Create GLM structure with default params
   end
 end
 
@@ -114,7 +114,7 @@ else
     USE = USE - omit;
     USE = USE(USE >0);
     [EbasisWeight,Ebias_,Estatus,status] =...
-        estimateWeightKernel(tmpEnv,status,bases,I(USE,:),DAL,regFacIdx);
+        estimateBasisWeight(tmpEnv,status,bases,I(USE,:),DAL,regFacIdx);
     %    tic;fprintf(1,'Eapha2Mat:\t');
     EResFunc = reconstruct_EResFunc(tmpEnv,DAL,bases,EbasisWeight);
     histSize = bases.ihbasprs.numFrame;

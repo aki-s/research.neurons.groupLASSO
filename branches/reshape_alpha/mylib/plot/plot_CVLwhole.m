@@ -16,14 +16,9 @@ myColor = graph.prm.myColor;
 DEBUG = 0;
 %%
 figure;
+ylim([1 15])
+CVLt = sum(CVL,2); %CVLt : CVL total
 
-if strcmp('omitDiag','omitDiag_') %%DEBUG
-  zeroIdx = repmat(logical(eye(cnum)),[1 1 useFrameLen]);
-  CVL(zeroIdx) = 0;
-  CVLt = sum(CVL,2);
-else
-  CVLt = sum(CVL,2); %CVLt : CVL total
-end
 
 nargin_NUM = 5;
 if nargin > nargin_NUM
@@ -40,7 +35,6 @@ end
 LGD = num2cell(reshape(env.useFrame,1,[]));
 LGDT = cell(1,fnum);
 for id = FROM : fnum
-  %  LGDT = horzcat(LGDT,num2str(LGD{id}));
   LGDT{id} = num2str(LGD{id});
 end
 %%col=hsv(fnum);
@@ -89,7 +83,8 @@ else
   title2 = sprintf('%s-CVL-used%07-n%04d',status.method,DAL.Drow,cnum );
 end
 if ( graph.PRINT_T == 1 )
-  fprintf(1,'%s', [status.savedirname '/' title2 '.png']);
+  fprintf(1,['\nsaving -log(likelihood) as graph for each regFac and ' ...
+             'used frame to estimate network.\n%s\n'], [status.savedirname '/' title2 '.png']);
   print('-dpng', [status.savedirname '/' title2 '.png'])
-  close;
+  close;%++bug
 end

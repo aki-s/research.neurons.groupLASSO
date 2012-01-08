@@ -1,6 +1,6 @@
 function plot_ResFunc_ternary(graph,env,ResFunc_hash,description)
 %% 
-% plot_ResFunc_binary(graph,env,ResFunc_hash)
+%
 %% 
 
 cnum = env.cnum;

@@ -1,4 +1,5 @@
 %% < default values >
+%% this file may should be renamed as conf_minimalSettings.
 
 cnum = 6;% cnum: number of cell (neuron)
 
@@ -9,10 +10,11 @@ spar.level.to = .5;
 spar.self = 1; % 1:self-connect all neuron.
 
 %% genLoop: the number of frames of 'lambda'(neuronal firing rate per flame) to be generated. [frame]
-genLoop = 4000;
+genLoop = 150000;
 
 %< hnum = HistSec * Hz.v / hwind
 hnum = 50; % hnum: the number of history window [frame]
+%% large hwind cause continuous firing of each neuron.
 hwind = 1; % hwind: the number of frames in a history window
 
 Hz = struct('video',100, ... % video Hz: [frame/sec]
