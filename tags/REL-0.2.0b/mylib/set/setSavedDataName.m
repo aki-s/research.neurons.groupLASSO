@@ -1,0 +1,6 @@
+function [dname] = setSavedDataName(root_dir,time)
+
+dname = sprintf('%s/%s_start_%s_%s.mat',...
+                root_dir,date,...
+                num2str(time.start(4)),num2str(time.start(5)));
+

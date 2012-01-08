@@ -1,0 +1,73 @@
+% 2012/01/05 this file is not maintained...
+
+== PREAMBLE == 
+I've intensively debuged and tested this software,
+though there's no warranty about using this software.
+Also I have no responsibility about disadvantage you may suffer
+by using this software.
+
+== LICENSE ==
+GPL
+
+== ABOUT DIRECTORY ==
+/-.
+ /conf		: configuration files.
+ /dal_mod	: Third party numerical calculus library.
+ /man		: manual.
+ /misc		: If you run files located this directory, it's easy to understand main program.
+ /myest.m	: main program.
+ /mylib		: library to run 'myest.m'.
+ /outdir	: output directory where data is saved.
+ /tools		: some nifty tools to analyze output data.
+
+== HOW TO RUN ==
+*RUN
+1.  Just change your working directory to where 'myest.m' is.
+2.  'clear all' variables and, if you want, set INIT PARAMETERS.
+3.  Just run 'myest.m'.
+3.1 You are supposed to be asked a file describing neuronal connections.
+    Enter its name with the relative/absolute UNIX PATH format.
+
+
+*OUTPUT
+Data generated are to be saved in 'outdir'.
+
+**variables
+Tout:   Artificially generated data.
+env:    environment to generate variable 'Tout'.
+status: Describe how 'myest.m' has proceeded.
+
+== ABOUT PARAMETERS ==
+*DEFAULT PARAMETERS
+You can freely edit files describing parameters in directorhy 'conf'.
+
+**more professional configuration
+If you want to toggle process like 'Ture neuronal connection', directory
+a toggle flag in source code. 
+
+*INIT PARAMETERS
+If envirinmental struct variable 'env' for myest.m is exist, the value is used.
+If some of field of it don't exist, you would be asked the value to fill in.
+If you don't want to be annoyed about what you have to set, just do like the following.
+'clear all; global env; env = struct(); myest.m'
+
+
+== FAQ ==
+*Q1: What's "Warning#1". 
+The numver after message 'Warning' is error code.
+Plese consult the section "WARNING CODE".
+
+*Q2: I cannot rmdirectory from MATLAB terminal after running 'myest.m'
+Do the follwing at MATLAB terminal
+>> diary off;rmdir(status.savedirname,'s'); 
+
+== WARNING CODE ==
+*#1
+If you want to generate artificial time seriese of firing, 
+set 'status.GEN = 1' otherwise set 'status.GEN = 0'.
+
+*#2
+Warning: Number of basis used to estimate, and number of frames applied to
+penalty function may be relatively too large for generated frames. 
+
+*#3
