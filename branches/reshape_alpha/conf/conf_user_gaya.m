@@ -14,7 +14,11 @@ graph.prm.diag_Yrange = [-.5 5];
 
 env.inFiringLabel = 's';
 env.inFiringDirect = 2; % time series direction
-env.inFiringUSE = [10 30 60]; % the number of firing used out of 'env.inFiringLabel'.
+if strcmp('take_time','take_time')
+env.inFiringUSE = [60]; % the number of firing used out of 'env.inFiringLabel'.
+else
+env.inFiringUSE = [10 30]; % the number of firing used out of 'env.inFiringLabel'.
+end
 env.Hz.video=1000; %++bug: lookes like to be set 'nan'
 env.mail.to='aki-s@sys.i.kyoto-u.ac.jp';
 env.mail.smtp='hawaii.sys.i.kyoto-u.ac.jp';
@@ -30,9 +34,13 @@ status.DEBUG.level = 0; % stdout verbosely
 status.use.GUI = 0;
 status.realData = 1; %
 status.READ_FIRING =1; % read gaya FIRING.
-status.inFiring = ['/home/shige-o/rec072b.mat'];% spike train is saved.
-status.crossVal = 8; % do 'status.crossVal'-fold cross validation.
+                       %status.inFiring =
+                       %['/home/shige-o/rec072b.mat'];% spike train
+                       %is saved.
+status.inFiring = ['./indir/gaya/rec072b.mat'];% spike train is saved.
+status.crossVal = 4; % do 'status.crossVal'-fold cross validation.
+status.crossVal_rough = 1; % skip calculation for speed up.
 
-%% DEBUG: the following is test
+%% DEBUG: the following is a test
 % $$$ DAL.regFac = [ 64 32];
-% $$$ env.inFiringUSE = [10 15];
+% $$$ env.inFiringUSE = [10 12];

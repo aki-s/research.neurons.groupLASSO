@@ -3,7 +3,7 @@
 %% close all; clear all; myest
 global env;
 global status;
-global Tout;
+global envSummary;
 global graph;
 global rootdir_;   rootdir_ = pwd;
 
@@ -17,7 +17,7 @@ run set_myestConf
 %% ==</ configure >==
 
 if  (status.READ_FIRING == 1)
-  [env I Tout] = readI(env,status,Tout);
+  [env I envSummary] = readI(env,status,envSummary);
 end
 
 %% set default params (compliment missing configure params)
@@ -25,9 +25,9 @@ gen_defaultEnv_ask();
 run get_neuronStruct;
 run set_bases;
 
-[env status Tout graph DAL] = check_conf(env,status,Tout,graph,bases,DAL);
+[env status envSummary graph DAL] = check_conf(env,status,envSummary,graph,bases,DAL);
 [status ] = check_gendConfState(status);
-echo_initStatus(env,status,Tout)
+echo_initStatus(env,status,envSummary)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -45,6 +45,7 @@ end
 run postproc1
 
 %% ==< bulk save all plotted graph  >==
+graph.SAVE_ALL
 if (graph.SAVE_ALL == 1)
     save_windows_all(status.savedirname)
 end 

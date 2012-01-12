@@ -14,7 +14,7 @@ function plot_I(status,graph,env,I,title)
 DEBUG = 0;
 PRESEN = 0;
 %%
-global Tout
+global envSummary
 
 Hz = env.Hz.video;
 xrange = graph.xrange;
@@ -32,13 +32,13 @@ dh = floor(xrange/Lnum);  %dh: width of each tick. [frame]
 ddh = dh/Hz; % convert XTick unit from [frame] to [sec]
 TIMEL = cell(1,Lnum);
 
-if ~isempty(Tout)
+if ~isempty(envSummary)
   for i1 = 1:Lnum+1
     if 1 == 1
-      TIMEL{i1} = Tout.simtime - (Lnum+1 -i1)*ddh;
+      TIMEL{i1} = envSummary.simtime - (Lnum+1 -i1)*ddh;
     else
       TIMEL{i1} = sprintf('%s [sec]',...
-                          Tout.simtime - (Lnum+1 -i1)*ddh);
+                          envSummary.simtime - (Lnum+1 -i1)*ddh);
     end
   end
 end

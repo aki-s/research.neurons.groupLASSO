@@ -1,6 +1,6 @@
 function      [ResFunc0] = gen_TrueWeightSelf(env,status)
 
-global Tout;
+global envSummary;
 
 SELF_DEPRESS_BASE = env.SELF_DEPRESS_BASE;
 cnum = env.cnum;
@@ -15,7 +15,7 @@ if (status.GEN_Neuron_individuality == 1 )
   else % test
     seeds = SELF_DEPRESS_BASE * (1 + 0.05* [.1 .2 .3 .4 .1 .6 .7 .8 .9 .0] );
   end
-  Tout.hypoAutoFiringRate = (1-exp(-exp( seeds )/env.Hz.video))*env.Hz.video; 
+  envSummary.hypoAutoFiringRate = (1-exp(-exp( seeds )/env.Hz.video))*env.Hz.video; 
   env.Hz.fn = env.Hz.neuro/Hz.video; % Hz of firing per frame: [rate/frame]
   ResFunc0 = env.Hz.fn * seeds ; % ResFunc0: self firing-depress weight.
 else

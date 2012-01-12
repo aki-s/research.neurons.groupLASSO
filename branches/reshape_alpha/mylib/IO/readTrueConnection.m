@@ -34,7 +34,7 @@ else
                    'want to use?\n>> >> ']);
 end
 %% %++improve : if tmp.in == '';
-if tmp.in == '';
+if isempty(tmp.in)
   %abort readTrueConnection..?
 else
   tmp.fid = fopen(tmp.in,'rt');
@@ -73,7 +73,7 @@ fclose(tmp.fid);
 if 1 == 0
   Oenv.spar.from = NaN;
   Oenv.spar.to   = NaN;
-else %++bug:test
+elseif 0 %++bug:test
   %% If you want to watch exci
   %% 'from' neuron have avgerage env.spar.from connection rate.
   %% (connection reaching rate)

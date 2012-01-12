@@ -1,4 +1,4 @@
-function [ Oenv I OTout] = readI(env,status,Tout,varargin)
+function [ Oenv I OenvSummary] = readI(env,status,envSummary,varargin)
 %% option)
 %% X = varargin{1}: name of spike train to be loaded.
 %% direction = varargin{2};: direction of sequence of X
@@ -19,7 +19,7 @@ else
 end
 
 Oenv = env;
-OTout = Tout; %?
+OenvSummary = envSummary; %?
 infile = status.inFiring;
 
 %% ==< conf >==
@@ -71,10 +71,10 @@ Oenv.useFrame = env.useFrame.*direction;
 %}
 
 if isfield(Oenv,'Hz') && isfield(Oenv.Hz,'video') 
-  OTout.simtime = Oenv.genLoop/Oenv.Hz.video;
-  OTout.FiringRate = sum(I,1)/Oenv.Hz.video;
+  OenvSummary.simtime = Oenv.genLoop/Oenv.Hz.video;
+  OenvSummary.FiringRate = sum(I,1)/Oenv.Hz.video;
 else
-  OTout = NaN;
+  OenvSummary = NaN;
 end
 
 if isfield(env,'inFiringUSE')

@@ -2,7 +2,7 @@ function [I,lambda,loglambda] = gen_TrueI(env,ResFunc0,ResFunc)
 %function [I,lambda,loglambda] = gen_TrueI(env,ResFunc0,ResFunc)
 
 
-global Tout;
+global envSummary;
 
 %% ==< set local variables >==
 if strcmp('setlocal_var','setlocal_var')
@@ -70,8 +70,8 @@ end
 
 lambda = exp(loglambda);
 
-%Tout.I = sprintf('%8d',sum(I,1));
-%Tout.I = int64(sum(I,1)); %++bug: forced to be int.
-Tout.I = (sum(I,1));
+%envSummary.I = sprintf('%8d',sum(I,1));
+%envSummary.I = int64(sum(I,1)); %++bug: forced to be int.
+envSummary.I = (sum(I,1));
 
 %I = logical(sparse(I)); %<->full(), logical()

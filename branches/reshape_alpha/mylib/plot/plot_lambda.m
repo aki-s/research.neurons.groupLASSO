@@ -10,7 +10,7 @@ function plot_lambda(graph,env,lambda,title)
 %plot_lambda(graph,env,lambda,'\lambda: Firing Rates [per frame]');
 %%
 
-global Tout;
+global envSummary;
 global status;
 
 Hz = env.Hz.video;
@@ -28,7 +28,7 @@ ddh = dh/Hz; % convert XTick unit from [frame] to [sec]
 TIMEL = cell(1,Lnum);
 
 for i1 = 1:Lnum+1
-    TIMEL{i1} = Tout.simtime - (Lnum+1 -i1)*ddh;
+    TIMEL{i1} = envSummary.simtime - (Lnum+1 -i1)*ddh;
 end
 %% ==</convert XTick unit from [frame] to [sec] >==
 
@@ -43,8 +43,8 @@ for i1 = 1:cnum
   bar( lambda((end+1-xrange):end,i1))
   grid on;
   %  ylim([0,10 * max(median(lambda))]);
-  %  ylim([0,min(Tout.FiringRate)*6 ]);
-  ylim([0,min(Tout.FiringRate)+3*sqrt(var(Tout.FiringRate)) ]);
+  %  ylim([0,min(envSummary.FiringRate)*6 ]);
+  ylim([0,min(envSummary.FiringRate)+3*sqrt(var(envSummary.FiringRate)) ]);
   ylabel(sprintf('%d',i1),'fontsize',12);
   set(gca,'XTickLabel',TIMEL);
 end

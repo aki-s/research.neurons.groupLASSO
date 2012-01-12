@@ -1,8 +1,8 @@
-function [Oenv Ostatus OTout Ograph ODAL] = check_conf(env,status,Tout,graph,bases,DAL)
+function [Oenv Ostatus OenvSummary Ograph ODAL] = check_conf(env,status,envSummary,graph,bases,DAL)
 
 Oenv    = env    ;
 Ostatus = status ;
-OTout   = Tout   ;
+OenvSummary   = envSummary   ;
 Ograph  = graph  ;
 ODAL    = DAL    ;
 
@@ -33,20 +33,20 @@ if (status.READ_FIRING == 1)
     Ostatus.READ_NEURO_CONNECTION = '';
   end
 elseif (status.GEN_TrueValues == 1)
-  OTout.effectiveHistorySec = (env.hnum*env.hwind)/env.Hz.video;
+  OenvSummary.effectiveHistorySec = (env.hnum*env.hwind)/env.Hz.video;
   SEC = 0.1; % SEC [<sec>] == SEC/env.Hz.video [ 1/env.Hz.video*<sec> ]
   %%  SEC = 0.05; % SEC [<sec>] == SEC/env.Hz.video [ 1/env.Hz.video*<sec> ]
-  if OTout.effectiveHistorySec < SEC % history kernel size [sec]
-    fprintf(1,'History size which have efflect on the next firing seems to be small: %e [sec]\n',OTout.effectiveHistorySec);
+  if OenvSummary.effectiveHistorySec < SEC % history kernel size [sec]
+    fprintf(1,'History size which have efflect on the next firing seems to be small: %e [sec]\n',OenvSummary.effectiveHistorySec);
     fprintf(1,'%s > %d seems to be appropriate.\n','(env.hnum*env.hwind)/env.Hz.video',SEC)
   end
   if env.genLoop < 40000 % threshold from huristic knowledge
     warning('DEBUG:estimation','Time of simulation may be small')
   end
-  OTout.simtime = env.genLoop/env.Hz.video;
-  OTout.effectiveHistorySec = (env.hnum*env.hwind)/env.Hz.video;
+  OenvSummary.simtime = env.genLoop/env.Hz.video;
+  OenvSummary.effectiveHistorySec = (env.hnum*env.hwind)/env.Hz.video;
   %% AUTO firing rate in [sec]
-  OTout.hypoAutoFiringRate =  (1-exp(-exp(env.SELF_DEPRESS_BASE)/env.Hz.video))*env.Hz.video; 
+  OenvSummary.hypoAutoFiringRate =  (1-exp(-exp(env.SELF_DEPRESS_BASE)/env.Hz.video))*env.Hz.video; 
   if (status.realData == 1)%++bug?
     error(['confliction: Do you want to estimate with realData or ' ...
            'with simulation data?'])

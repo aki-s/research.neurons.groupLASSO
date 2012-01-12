@@ -2,7 +2,7 @@ function [ResFunc] = gen_TrueResFunc(env,status,ResFunc_hash)
 %%
 %% Usage:)
 %% [ResFunc] = gen_TrueResFunc(env,status,ResFunc_hash);
-global Tout;
+global envSummary;
 
 %% ==< set local variables >==
 cnum    = env.cnum   ;    

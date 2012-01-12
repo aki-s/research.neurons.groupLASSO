@@ -114,19 +114,27 @@ if (status.crossVal > 1 )
       if tgraph.PLOT_T == 1
         %        S = load_ResFunc(tstatus,tDAL{i2}.regFac,tDAL{i2}.Drow,tenv.cnum,tmpLdir,'graph','env','status','EResFunc');
         S = load_ResFunc(tstatus,tDAL{i2}.regFac,tDAL{i2}.Drow,tenv.cnum,tDAL{i2}.tmpLdir,'graph','env','status','EResFunc');
+fprintf('debug: S\n')
         plot_ResFunc(S.graph,S.env,S.EResFunc,sprintf('#%5d',tenv.cnum),S.status.savedirname,sprintf('-opt_regFac%09.4f-frame%07d-n%05d',tDAL{i2}.regFac,tDAL{i2}.Drow,tenv.cnum));
+fprintf('debug: P\n')
       end
+fprintf('debug: PP\n')
     end
+fprintf('debug: PPP\n')
     %% ==</extract and plot the best response func for each usedFrameNum from the results of crossValidation>==
   end
+fprintf('debug: PPPP\n')
 end
 %%------------------------------------------------------------------------------------
 status.time.regFac = tstatus.time.regFac; %% status.time.regFac{i0} is modified.
 
-if 1 == 0%++debug
+fprintf('debug: estimateEND\n')
+
+if 1 == 0 %++debug
   if  ( matlabpool('size') > 0 ) % && <no thred running>
     matlabpool close
   end
+fprintf('debug: M\n')
 end
 %% =====< SELECT appropriate threshold for evalation function >===
 %% SELECT appropriate threshold for evalation function

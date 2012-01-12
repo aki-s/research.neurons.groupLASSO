@@ -33,8 +33,8 @@ GPL
 Data generated are to be saved in 'outdir'.
 
 **variables
-Tout:   Artificially generated data.
-env:    environment to generate variable 'Tout'.
+envSummary:   Artificially generated data.
+env:    environment to generate variable 'envSummary'.
 status: Describe how 'myest.m' has proceeded.
 
 == ABOUT PARAMETERS ==

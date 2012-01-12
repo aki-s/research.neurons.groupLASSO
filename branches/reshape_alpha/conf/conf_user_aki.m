@@ -54,11 +54,14 @@ switch DEBUG_s
   case 'dev-test'
     status.crossVal = 4;
     DAL.regFac = [8 2];
-    env.genLoop = 20001;
+    env.genLoop = 40001;
     graph.PLOT_T = 1;
     status.inStructFile = [ rootdir_ '/indir/my_n9.con'];
     %    env.useFrame = [5000 10000 50000 90000];% indispensable
-    env.useFrame = [1000 9392 10000];% indispensable
+    env.useFrame = [1000 10000];% indispensable
+    env.spar.level.from= .5;
+    env.spar.level.to =  .4;
+    env.cnum = 9;
   case 'comp_steven_glm'
     %    status.crossVal = 8;
     DAL.regFac = [ 16 10 8 4];
