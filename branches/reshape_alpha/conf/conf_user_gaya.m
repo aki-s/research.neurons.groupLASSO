@@ -1,8 +1,6 @@
 warning('DEBUG:conf','conf_user_gaya.m.');
 
 DAL.regFac_UserDef = 1;
-% ( DAL.regFac < 1) is too high calculation cost
-DAL.regFac = [ 2048 1024 512 256 128 64 32 16 8 4 2 1];
 
 graph.TIGHT = 0;
 graph.PLOT_MAX_NUM_OF_NEURO = 10;% #neuron to be plotted on a figure.
@@ -15,9 +13,15 @@ graph.prm.diag_Yrange = [-.5 5];
 env.inFiringLabel = 's';
 env.inFiringDirect = 2; % time series direction
 if strcmp('take_time','take_time')
-env.inFiringUSE = [60]; % the number of firing used out of 'env.inFiringLabel'.
+  env.inFiringUSE = [60]; % the number of firing used out of 'env.inFiringLabel'.
+                          % ( DAL.regFac < 1) is too high calculation cost
+                          %++improve: implement abort() if it take too much of time.
+                          % When env.inFiringUSE=60, DAL.regFac larger than 8 takes too much
+                          % of time.
+  DAL.regFac = [ 2048 1024 512 256 128 64 32 16 8];
 else
-env.inFiringUSE = [10 30]; % the number of firing used out of 'env.inFiringLabel'.
+  env.inFiringUSE = [10 30]; % the number of firing used out of 'env.inFiringLabel'.
+  DAL.regFac = [ 2048 1024 512 256 128 64 32 16 8 4 2 1];
 end
 env.Hz.video=1000; %++bug: lookes like to be set 'nan'
 env.mail.to='aki-s@sys.i.kyoto-u.ac.jp';

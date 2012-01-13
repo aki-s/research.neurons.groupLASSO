@@ -11,6 +11,7 @@ end
 %% Reading user custom configuration file
 %%  overrides all configurations previously set.
 switch 'gaya'
+%switch 'aki'
   case 'demo'
     status.userDef = [rootdir_ '/conf/conf_user.m'];
   case 'aki'

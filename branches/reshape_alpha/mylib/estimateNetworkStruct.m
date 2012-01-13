@@ -76,6 +76,8 @@ if (status.crossVal > 1 )
     fprintf(1,'#neuron:%5d<-%5d, estimate with best regFac\n', ...
             tenv.inFiringUSE(i0),env.cnum);
     tmpI = I(:,1:env.inFiringUSE(i0));
+    %%++bug: if size(env.inFiringUSE) > 1 ?
+% $$$     tmpI = I(:,status.usedNeuronIdx>0);
     tenv.cnum = env.inFiringUSE(i0);
 
     [CVLs{i0}] = get_CVLsummary(CVL{i0},env.useFrameLen,tenv.inFiringUSE(i0));
@@ -89,46 +91,41 @@ if (status.crossVal > 1 )
       %% choose the best regularization factor
       tDAL{i2}.regFac = DAL.regFac(CVLs{i0}.idxTotal(i2)); 
 
-      %      if strcmp('careful','careful')
       if status.crossVal_rough ~= 0
-        %% re-estimate using sequent frames, but the 1st-cluster
-        %% in cross fold validation is omitted.
-        %++improve:speedUp:: loading saved vriables such as EbasisWeight.
-        % from the results of cross validation(warning:incomplete ResFunc).
-        %        tmpLdir = 'CV';
+        %% Skip re-calclation to save time by using the prevous result from leave
+        %% one-cluster out cross validation.
       elseif strcmp('delicate','delicate')
+        %% re-estimate using all sequential frames.
 % $$$         fprintf(1,['Estimate EResfunc with the best regFac using all ' ...
 % $$$                    'usable frames.\n']);
         fprintf(1,'Model selection\n')
-        %% re-estimate using all sequent frames.
         [EbasisWeight,Ebias,Estatus] = ...
             estimateBasisWeight(tenv,...
                                  tstatus,bases,tmpI,tDAL{i2},i2);
         [EResFunc,tmpGraph] = reconstruct_EResFunc(tenv,tgraph,tDAL{i2},bases,EbasisWeight);
+fprintf('debug: check segfault 1.\n')
         saveResponseFunc(tenv,tgraph,tstatus,bases,...
                          EbasisWeight,EResFunc,Ebias,tDAL{i2},...
                          regexprep(tstatus.inFiring,'(.*/)(.*)(.mat)','$2')...
                          );
-        %        tmpLdir = '';%++improve. make flag if you use 'careful' or 'rough'.
+fprintf('debug: check segfault 2.\n')
       end
       if tgraph.PLOT_T == 1
         %        S = load_ResFunc(tstatus,tDAL{i2}.regFac,tDAL{i2}.Drow,tenv.cnum,tmpLdir,'graph','env','status','EResFunc');
         S = load_ResFunc(tstatus,tDAL{i2}.regFac,tDAL{i2}.Drow,tenv.cnum,tDAL{i2}.tmpLdir,'graph','env','status','EResFunc');
-fprintf('debug: S\n')
         plot_ResFunc(S.graph,S.env,S.EResFunc,sprintf('#%5d',tenv.cnum),S.status.savedirname,sprintf('-opt_regFac%09.4f-frame%07d-n%05d',tDAL{i2}.regFac,tDAL{i2}.Drow,tenv.cnum));
-fprintf('debug: P\n')
       end
-fprintf('debug: PP\n')
+fprintf('debug: Past crossval reconstruct_EResFunc 3.\n')
     end
-fprintf('debug: PPP\n')
+fprintf('debug: Past estimateNetworkSruct.m 4\n')
     %% ==</extract and plot the best response func for each usedFrameNum from the results of crossValidation>==
   end
-fprintf('debug: PPPP\n')
 end
 %%------------------------------------------------------------------------------------
 status.time.regFac = tstatus.time.regFac; %% status.time.regFac{i0} is modified.
 
-fprintf('debug: estimateEND\n')
+fprintf(['debug: Past estimateNetworkSruct.m for all env.useNeuroLen. ' ...
+         '5\n'])
 
 if 1 == 0 %++debug
   if  ( matlabpool('size') > 0 ) % && <no thred running>

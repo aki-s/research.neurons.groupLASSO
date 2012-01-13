@@ -45,7 +45,7 @@ end
 run postproc1
 
 %% ==< bulk save all plotted graph  >==
-graph.SAVE_ALL
+
 if (graph.SAVE_ALL == 1)
     save_windows_all(status.savedirname)
 end 

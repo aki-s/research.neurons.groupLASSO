@@ -19,7 +19,7 @@ global envSummary
 Hz = env.Hz.video;
 xrange = graph.xrange;
 cnum = env.cnum;
-useNidx = status.usedNeruronIdx;
+useNidx = status.usedNeuronIdx;
 [FlameMax] = size(I,1);
 if status.DEBUG.level > 2
   warning('DEBUG:xrange','Full plot of I');
@@ -45,7 +45,6 @@ end
 %% ==</convert XTick unit from [frame] to [sec] >==
 
 figure;
-whos I
 for i1 = 1: cnum
   subplot( cnum, 1,i1)
   if i1 ~= useNidx
