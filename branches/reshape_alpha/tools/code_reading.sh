@@ -4,8 +4,9 @@ PDFPREFIX=formatted_forHandout
 LATEX=latex
 DVI=dvipdfm
 WHAT=(. mylib tools misc) # relative directory from ${ROOT}
-SEPALATOR="$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+SEPALATOR='$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$'
 ROOT="" ## EDIT THIS LINE TO POINT TO ABSOLUTE PATH IF YOU MOVED THIS FILE TO ELSEWHERE.
+CLEAN=1 ## REMOVE outputfile except pdf files.
 ##==</edit for your own.>==
 
 #######################################################################
@@ -32,8 +33,8 @@ do
     echo   "initialized ${_TARGET_}.txt";
     for i2 in ${IN0}
     do
-#	echo -e "\n${SEPALATOR}   ${i2}   ${SEPALATOR}\n" >> ${_TARGET_}.txt;
-	echo -e '\n${SEPALATOR}'   '${i2}'   '${SEPALATOR}\n' >> ${_TARGET_}.txt;
+	echo -e "\n${SEPALATOR}   ${i2}   ${SEPALATOR}\n" >> ${_TARGET_}.txt;
+#	echo -e '\n${SEPALATOR}'   '${i2}'   '${SEPALATOR}\n' >> ${_TARGET_}.txt;
 	cat -b ${i2} >> ${_TARGET_}.txt;
     done
     sed s/__INSERT__/`echo ${_TARGET_TXT_}`/ < ${TEMPLATE} >${_TARGET_}.tex
@@ -45,4 +46,6 @@ do
     echo -e "\n"
 done
 
-
+if [ "${CLEAN}" = "1" ]; then
+    rm *.txt *.tex *.aux *.dvi *.log
+fi
