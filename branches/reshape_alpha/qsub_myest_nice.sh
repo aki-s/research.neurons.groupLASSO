@@ -4,14 +4,14 @@
 # export PBS_O_WORKDIR=/home/aki-s/mypbs
 # Also, you have to edit '#PBS' directive at ./bin/throwPBS.sh
 ############################################################################
-PBSLOG=1
-# It seems high useability than qsub_myest_nice.sh though this script don't run
-# myest.m via nice command.
+# This file wouldn't run on computer other than ISHII labo, becase qsh command
+# would be ISHII labo specific. Please use qsub_myest.sh instead.
+# This script run myest.m via nice command.
 ############################################################################
-BASED=`dirname $0`
-if [ "${PBSLOG}" = 1 ]; then
-    qsub  -o ${PBS_O_WORKDIR} -e ${PBS_O_WORKDIR} ${BASED}/bin/throwPBS.sh 
-else
-    qsub ${BASED}/throwPBS.sh 
-fi
+_BASED_=`dirname $0`
+cd ${_BASED_}
+export BASED=`pwd`
+qsh ${BASED}/bin/throwPBS.sh 
+
+
 echo "Throwed ${BASED}/myest.m to PBS..."

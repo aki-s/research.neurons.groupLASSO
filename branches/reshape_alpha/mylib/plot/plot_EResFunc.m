@@ -40,8 +40,6 @@ cnum = env.cnum;
 if isfield(env,'hnum') && ~isnan(env.hnum)
   hnum = env.hnum;
 else
-% $$$   env.hnum = 100; %++bug?
-% $$$   hnum = 100; %++bug?
   env.hnum = bases.ihbasprs.numFrame;
   hnum =  bases.ihbasprs.numFrame;
 end

@@ -7,7 +7,10 @@
 #PBS -M aki-s@sys.i.kyoto-u.ac.jp
 ####################################################################################
 ## set such as 'ROOT = `dirname myest.m`'
-ROOT='/home/aki-s/svn.d/art_repo2/branches/reshape_alpha'
+#ROOT='/home/aki-s/svn.d/art_repo2/branches/reshape_alpha'
+_ROOT_=`dirname $0`
+cd ${_ROOT_}
+ROOT=`pwd`
 ####################################################################################
 BAR='===================================================================='
 LOG=${PBS_O_WORKDIR}/`date +"%y%m%d_%H%M%S"`.log;
