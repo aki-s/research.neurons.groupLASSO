@@ -1,5 +1,4 @@
 function [cv,cost,EbasisWeight,Ebias] = crossVal(env,graph,status_cvDiv,DAL,bases,varargin)
-%function [cv,status] = crossVal(env,graph,status_cvDiv,DAL,bases,varargin)
 
 %% k: upper 'k' results file from 'infile' is used to do crossValidation.
 %% k-hold crossValidation.
@@ -9,19 +8,23 @@ function [cv,cost,EbasisWeight,Ebias] = crossVal(env,graph,status_cvDiv,DAL,base
 %% vargin)
 %% vargin{1} infile: text file containing filename lists, or directory name
 %% under which all data is to be examined.
-%% 
-
+%% vargin{2}: index, designate number of frames used to estimate
+%% vargin{3}: number of frames used to estimate
 status = status_cvDiv;
 k = status_cvDiv.crossVal;
-%parfor_flag = status.parfor_;
+parfor_flag = status.parfor_;
 
 tmpEnv = env;
-baseN = 5;
-if (nargin >= baseN+1 )
+argNum = 5;
+histSize = bases.ihbasprs.numFrame;
+
+if (nargin >= argNum+1 )
   if ismatrix(varargin{1})
     %% varargin{1} is 'I'. 
     I = varargin{1};
-  elseif ischar(varargin{1})
+  elseif ischar(varargin{1}) %++bug:notyet
+    %% read a fire or directory, then use the contents of it for
+    %% cross validation.
     infile = varargin{1};
 
     %inRoot_ = '/home/aki-s/svn.d/art_repo2/branches/reshape_ResFunc/indir'
@@ -67,13 +70,30 @@ if (nargin >= baseN+1 )
 end
 
 if ( status.READ_FIRING == 1 )
-  len = env.genLoop;
+  len = env.genLoop; % env.genLoop == size(I,1)
 else % artificially generated firing is not reliable at small frame index.
-  prm = 0.666;
+  %% env.genLoop == size(I,1) + 'init_condition_of_I'
+  prm = 0.666;%++bug: user wouldn't know why 'len < env.genLoop' is.
   len = floor(env.genLoop * prm);
+  %% len ~ env.genLoop - 4000 ?
+  %%++bug: may cause 'len > DAL.Drow'.
 end
 
-if( nargin >= (baseN + 2) ) %++needless?
+if( nargin >= (argNum + 2) ) %++needless?
+  useFrameIdx = varargin{2};
+else
+  useFrameIdx = 1; % noncommittal
+end
+
+if( nargin > (argNum + 3) ) %++needless?
+  Tlen = varargin{3};
+  if Tlen > len
+    error(['number of frame demanded for cross validation is too ' ...
+           'large. Tlen > len'])
+  end
+end
+
+%% ==< crossVal check >==
   tmp = len;
   while mod(tmp,k)
     tmp = tmp -1;
@@ -81,64 +101,90 @@ if( nargin >= (baseN + 2) ) %++needless?
   Tlen = tmp;
   if ( len ~= Tlen )
     fprintf(1,'To make equally dividable, not all firng was used.\n');
-    fprintf(1,'(use %10d out of %10d) <- %10d\n',DAL.Drow,Tlen,env.genLoop); 
+    fprintf(1,'(use %10d out of %10d) <- Original%10d\n',DAL.Drow,Tlen,env.genLoop); 
   end
-  useFrameIdx = varargin{2};
-else
-  useFrameIdx = 1; % noncommittal
-end
-
-if( nargin > (baseN + 2) ) %++needless?
-  Tlen = varargin{3};
-  if Tlen > len
-    error('Tlen > len')
-  end
-end
+%% ==</crossVal check >==
+%% set valid I
+I = I((end+1-Tlen):end,:);
 
 Width = Tlen/k;
-tmpEnv.genLoop = env.genLoop - Width;
+%% taints tmpEnv.genLoop. crossValidation specific problem.
+tmpEnv.genLoop = Tlen - Width;
 regFacLen = length(DAL.regFac);
-cnum = env.cnum;
-loglambda = zeros(tmpEnv.genLoop,cnum);
-%  err = zeros(k,regFacLen);
+if isfield(env,'inFiringUSE')
+  cnum = size(I,2);
+  tmpEnv.cnum = cnum;
+else
+  cnum = env.cnum;
+end
+EbasisWeight = cell(1,k);
+Ebias  = cell(1,k);
+Estatus = cell(1,k);
+%{
+[useFrameLen dum1] = size(env.useFrame);
+cost = zeros(useFrameLen,regFacLen);
+%}
+cost = zeros(1,regFacLen);
+status_tmp = cell(1,k);
 err = zeros(regFacLen,cnum,k);
 if (tmpEnv.genLoop < DAL.Drow)
+% $$$   warning('DEBUG:NOTICE',...
+% $$$           ['env.useFrame=%d is too large for crossValidation, skipping...\n',...
+% $$$            'make env.genLoop larger than %d, or make env.useFrame smaller than '],...
+% $$$   DAL.Drow, env.genLoop*ceil(1/prm), tmpEnv.genLoop - bases.ihbasprs.numFrame )
   warning('DEBUG:NOTICE',...
-          'env.useFrame is too large for crossValidation, skipping...')
+          ['env.useFrame=%d is too large for crossValidation, skipping...\n',...
+           'set env.useFrame smaller than %d at your configulation file.'],...
+  DAL.Drow, tmpEnv.genLoop - bases.ihbasprs.numFrame )
+  cv = nan(regFacLen,cnum);
+  cost = nan(1,regFacLen);
 else
-  for i1 = 1:k % crossValidation ( %++parallel)
+  parfor i1 = 1:k % crossValidation ( %++parallel)
+    %%for i1 = 1:k % crossValidation ( %++parallel)
     fprintf(1,'crossValidation index:%2d',i1);
     omit = zeros(1,Tlen);
     omit( (1 + (i1-1)*Width ) : (i1*Width) ) = ( (1 + (i1-1)*Width ) : (i1*Width) ) ;
     USE = (1:Tlen);
     USE = USE - omit;
     USE = USE(USE >0);
-    [EbasisWeight,Ebias_,Estatus,status] =...
-        estimateBasisWeight(tmpEnv,status,bases,I(USE,:),DAL,regFacIdx);
-    %    tic;fprintf(1,'Eapha2Mat:\t');
-    EResFunc = reconstruct_EResFunc(tmpEnv,DAL,bases,EbasisWeight);
-    histSize = bases.ihbasprs.numFrame;
-    [EResFunc_] = EResFuncCell2Mat(tmpEnv,EResFunc,regFacLen);
-    %    toc
-    %{
-    fprintf(1,'Ebias2Mat:\t')
-    Ebias_ = Ebias2Mat(tmpEnv,Ebias,regFacLen);
-    %}
-    for i2 = 1:regFacLen
-      tic
-      for i3 = 1: tmpEnv.genLoop %++parallel
-        nIs = I(i3 + histSize - (1:histSize), 1:cnum);
-        loglambda(i3,1:cnum) = Ebias_(i2,1:cnum) + sum( EResFunc_(:,1:cnum,i2) .*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
-      end
-      toc
-        err(i2,:,i1) = err(i2,:,i1) + calcLogLikelihood(loglambda,I(USE,:));
+    Icut = I(USE,:);
+    [EbasisWeight{i1},Ebias{i1},Estatus{i1},status_tmp{i1}] =...
+        estimateBasisWeight(tmpEnv,status,bases,Icut,DAL,useFrameIdx);
+    cost = cost + status_tmp{i1}.time.regFac(useFrameIdx,:);
+    %%++improve
+    %% after satisfying you interest, reconstruct_EResFunc() is
+    %% only needed when i1 is 1. This decrease calculation very much.
+    [EResFunc Ograph] = reconstruct_EResFunc(tmpEnv,graph,DAL,bases,EbasisWeight{i1});
+    %    histSize = bases.ihbasprs.numFrame;
+    %% warning: not exact response function is write out.
+    if strcmp('incomplete_RF','incomplete_RF') % RF: response function
+      saveResponseFunc(env,Ograph,status,bases,...
+                       EbasisWeight{i1},EResFunc,Ebias{i1},DAL,...
+                       regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2'),...
+                       'CV',i1);% for later use 
     end
-    %% save(EbasisWeight,Ebias_,status,loglambda) 
+    [EResFunc_] = EResFuncCell2Mat(tmpEnv.cnum,EResFunc,regFacLen);
+    for i2 = 1:regFacLen
+      loglambda = cell(tmpEnv.genLoop-histSize,1);
+      %%++parallel strongly recommended. Especially if 'k' is small
+      %% leave 'for-i3' out as 'parfor-i3' may be good.
+      for i3 = (1+histSize): ( tmpEnv.genLoop)
+        nIs = Icut(i3 - (1:histSize), 1:cnum);
+        %        loglambda(i3,1:cnum) = Ebias(i2,1:cnum) + sum( EResFunc_(:,1:cnum,i2) .*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
+        loglambda{i3}(1:cnum) = Ebias{i1}(i2,1:cnum) + sum( EResFunc_(:,1:cnum,i2) .*repmat(reshape(nIs,[],1), [1 cnum]) ,1);
+      end
+      loglambda = cell2mat(loglambda);
+      if parfor_flag == 1
+        err(i2,:,i1) = err(i2,:,i1) + calcLogLikelihood(loglambda,Icut((histSize+1:end),:));
+      end
+    end
+    %% save(EbasisWeight,Ebias,status,loglambda) 
   end
+  %%cv = sum(err,3)/k;
+  cv = sum(err,3)/k/env.useFrame(useFrameIdx);
+  %%  ---> cnum
+  %%  | cv
+  %% \/
+  %% regFac
+  cost = cost/k;
 end
-%  cv = sum(err,1)/k;
-cv = sum(err,3)/k;
-%%  ---> cnum
-%%  | cv
-%% \/
-%% regFac

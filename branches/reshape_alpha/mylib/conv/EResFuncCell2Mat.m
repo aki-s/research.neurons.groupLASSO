@@ -1,10 +1,8 @@
-function [ EResFunc_ ] = EResFuncCell2Mat(env,EResFunc,regFacLen,varargin)
+function [ EResFunc_ ] = EResFuncCell2Mat(cnum,EResFunc,regFacLen,varargin)
 %% transform response function
 %% from EResFunc{cellIdx}{ito}{ifrom} cell
 %% to   (cnum*hnum,cnum,regFacLen) 3D matrix
 %%
-cnum = env.cnum;
-
 IN = 3;
 if nargin >= IN +1
   FROM =  varargin{ 1};

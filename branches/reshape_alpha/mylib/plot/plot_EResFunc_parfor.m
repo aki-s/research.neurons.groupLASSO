@@ -67,7 +67,7 @@ run set_graphYrange % newYrange, zeroFlag
 
 RFIntensity = nan(cnum,cnum,regFacLen);
 for i1 = FROM:regFacLen
-  tmp = EResFuncCell2Mat(env,EResFunc,regFacIndexIn(regFacLen),i1);
+  tmp = EResFuncCell2Mat(env.cnum,EResFunc,regFacIndexIn(regFacLen),i1);
   RFIntensity(:,:,i1) = evalResponseFunc( ResponseFuncMat2DtoMat3D(tmp(:,:,i1)) );
 end
 

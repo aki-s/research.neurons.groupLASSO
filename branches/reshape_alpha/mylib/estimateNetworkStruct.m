@@ -28,16 +28,8 @@ for i0 = 1:env.useNeuroLen
     if ( bases.ihbasprs.numFrame <= tenv.useFrame(i1) ) && ( tenv.useFrame(i1) <= tenv.genLoop )
       tDAL.Drow = tenv.useFrame(i1);
       if (status.crossVal > 1 )
-        if tstatus.parfor_ == 1
-          %            [ CVL{i0}(1:tDAL.regFacLen,1:tenv.cnum,i1),tstatus.time.regFac{i0}(i1,:), EbasisWeight, Ebias ] =...
-          [ CVL{i0}(1:tDAL.regFacLen,1:tenv.cnum,i1),tstatus.time.regFac(i1,:), EbasisWeight, Ebias ] =...
-              crossVal_parfor(tenv,tgraph,tstatus,tDAL,bases,tmpI,i1);
-        else %++imcomplete
-          error('not yet') %++bug:obsolete?
-          %            [ CVL{i0}(1:tDAL.regFacLen,1:tenv.cnum,i1),tstatus.time.regFac{i0}(i1,:), EbasisWeight, Ebias ] =...
-          [ CVL{i0}(1:tDAL.regFacLen,1:tenv.cnum,i1),tstatus.time.regFac(i1,:), EbasisWeight, Ebias ] =...
-              crossVal(tenv,tgraph,tstatus,tDAL,bases,tmpI,i1);%++bug
-        end
+        [ CVL{i0}(1:tDAL.regFacLen,1:tenv.cnum,i1),tstatus.time.regFac(i1,:), EbasisWeight, Ebias ] =...
+            crossVal(tenv,tgraph,tstatus,tDAL,bases,tmpI,i1);
         if ( tgraph.PLOT_T == 1 ) && ( i1 == env.useFrameLen )
           plot_CVLwhole(tenv,tstatus,tgraph,tDAL,CVL{i0});
         end
@@ -71,8 +63,12 @@ end
 %%------------------------------------------------------------------------------------
 if (status.crossVal > 1 )
   %%    parfor i0 = 1:env.useNeuroLen %++future
-  for i0 = 1:env.useNeuroLen 
+  for i0 = 1:(env.useNeuroLen)
     echo_stdoutDivider(1)
+    fprintf('MODEL_SELECTION:#%5d',env.inFiringUSE(i0))
+    echo_stdoutDivider(1)
+    fprintf('\n')
+
     fprintf(1,'#neuron:%5d<-%5d, estimate with best regFac\n', ...
             tenv.inFiringUSE(i0),env.cnum);
     tmpI = I(:,1:env.inFiringUSE(i0));
@@ -85,39 +81,41 @@ if (status.crossVal > 1 )
     tstatus.validUseFrameIdx = sum(~isnan(CVLs{i0}.minTotal));
     tDAL = cell(1,tstatus.validUseFrameIdx );
     %%++parallel+bug(global variable: tgraph, tstatus)
-    parfor i2 = 1:tstatus.validUseFrameIdx  
-      tDAL{i2} = DAL;
-      tDAL{i2}.Drow = tenv.useFrame(i2);
-      %% choose the best regularization factor
-      tDAL{i2}.regFac = DAL.regFac(CVLs{i0}.idxTotal(i2)); 
+    try
+      parfor i2 = 1:(tstatus.validUseFrameIdx)
+        tDAL{i2} = DAL;
+        tDAL{i2}.Drow = tenv.useFrame(i2);
+        %% choose the best regularization factor
+        tDAL{i2}.regFac = DAL.regFac(CVLs{i0}.idxTotal(i2)); 
 
-      if status.crossVal_rough ~= 0
-        %% Skip re-calclation to save time by using the prevous result from leave
-        %% one-cluster out cross validation.
-      elseif strcmp('delicate','delicate')
-        %% re-estimate using all sequential frames.
-% $$$         fprintf(1,['Estimate EResfunc with the best regFac using all ' ...
-% $$$                    'usable frames.\n']);
-        fprintf(1,'Model selection\n')
-        [EbasisWeight,Ebias,Estatus] = ...
-            estimateBasisWeight(tenv,...
-                                 tstatus,bases,tmpI,tDAL{i2},i2);
-        [EResFunc,tmpGraph] = reconstruct_EResFunc(tenv,tgraph,tDAL{i2},bases,EbasisWeight);
-fprintf('debug: check segfault 1.\n')
-        saveResponseFunc(tenv,tgraph,tstatus,bases,...
-                         EbasisWeight,EResFunc,Ebias,tDAL{i2},...
-                         regexprep(tstatus.inFiring,'(.*/)(.*)(.mat)','$2')...
-                         );
-fprintf('debug: check segfault 2.\n')
+        if status.crossVal_rough ~= 0
+          %% Skip re-calclation to save time by using the prevous result from leave
+          %% one-cluster out cross validation.
+        elseif strcmp('delicate','delicate')
+          %% re-estimate using all sequential frames.
+          fprintf(1,'Model selection\n')
+          [EbasisWeight,Ebias,Estatus] = ...
+              estimateBasisWeight(tenv,...
+                                  tstatus,bases,tmpI,tDAL{i2},i2);
+          [EResFunc,tmpGraph] = reconstruct_EResFunc(tenv,tgraph,tDAL{i2},bases,EbasisWeight);
+          fprintf('debug: check segfault 1.\n')
+          saveResponseFunc(tenv,tgraph,tstatus,bases,...
+                           EbasisWeight,EResFunc,Ebias,tDAL{i2},...
+                           regexprep(tstatus.inFiring,'(.*/)(.*)(.mat)','$2')...
+                           );
+          fprintf('debug: check segfault 2.\n')
+        end
+        if tgraph.PLOT_T == 1
+          %        S = load_ResFunc(tstatus,tDAL{i2}.regFac,tDAL{i2}.Drow,tenv.cnum,tmpLdir,'graph','env','status','EResFunc');
+          S = load_ResFunc(tstatus,tDAL{i2}.regFac,tDAL{i2}.Drow,tenv.cnum,tDAL{i2}.tmpLdir,'graph','env','status','EResFunc');
+          plot_ResFunc(S.graph,S.env,S.EResFunc,sprintf('#%5d',tenv.cnum),S.status.savedirname,sprintf('-opt_regFac%09.4f-frame%07d-n%05d',tDAL{i2}.regFac,tDAL{i2}.Drow,tenv.cnum));
+        end
+        fprintf('debug: Past crossval reconstruct_EResFunc 3.\n')
       end
-      if tgraph.PLOT_T == 1
-        %        S = load_ResFunc(tstatus,tDAL{i2}.regFac,tDAL{i2}.Drow,tenv.cnum,tmpLdir,'graph','env','status','EResFunc');
-        S = load_ResFunc(tstatus,tDAL{i2}.regFac,tDAL{i2}.Drow,tenv.cnum,tDAL{i2}.tmpLdir,'graph','env','status','EResFunc');
-        plot_ResFunc(S.graph,S.env,S.EResFunc,sprintf('#%5d',tenv.cnum),S.status.savedirname,sprintf('-opt_regFac%09.4f-frame%07d-n%05d',tDAL{i2}.regFac,tDAL{i2}.Drow,tenv.cnum));
-      end
-fprintf('debug: Past crossval reconstruct_EResFunc 3.\n')
+      fprintf('debug: Past estimateNetworkSruct.m:parfor 4\n')
+    catch run_parfor_has_bug
+      fprintf('debug: Past estimateNetworkSruct.m:parfor.error 5\n')
     end
-fprintf('debug: Past estimateNetworkSruct.m 4\n')
     %% ==</extract and plot the best response func for each usedFrameNum from the results of crossValidation>==
   end
 end
@@ -125,13 +123,13 @@ end
 status.time.regFac = tstatus.time.regFac; %% status.time.regFac{i0} is modified.
 
 fprintf(['debug: Past estimateNetworkSruct.m for all env.useNeuroLen. ' ...
-         '5\n'])
+         '6\n'])
 
 if 1 == 0 %++debug
   if  ( matlabpool('size') > 0 ) % && <no thred running>
     matlabpool close
   end
-fprintf('debug: M\n')
+  fprintf('debug: M\n')
 end
 %% =====< SELECT appropriate threshold for evalation function >===
 %% SELECT appropriate threshold for evalation function

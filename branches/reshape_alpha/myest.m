@@ -47,7 +47,12 @@ run postproc1
 %% ==< bulk save all plotted graph  >==
 
 if (graph.SAVE_ALL == 1)
+  try
     save_windows_all(status.savedirname)
+  catch segfault 
+    %% cluster configuration or MATLAB-parfor error?
+    warning('DEBGU:SEGFAULT','SEGFAULT')
+  end
 end 
 
 %% ==< clean >==
@@ -61,7 +66,6 @@ if status.save_vars == 1
   run save_vars_all
 end
 
-%if status.estimateConnection == 1
 if status.mail == 1
   mailMe(env,status,DAL,bases,'Finished myest.m')
 end

@@ -36,13 +36,9 @@ DEBUG = status.DEBUG.level;
 
 LIM = graph.PLOT_MAX_NUM_OF_NEURO;
 %%
-cnum = env.cnum;
-if isfield(env,'hnum') && ~isnan(env.hnum)
-  hnum = env.hnum;
-else
-  env.hnum = bases.ihbasprs.numFrame;
-  hnum =  bases.ihbasprs.numFrame;
-end
+env.hnum = bases.ihbasprs.numFrame;
+hnum =  bases.ihbasprs.numFrame;
+
 if isfield(env,'Hz') && isfield(env.Hz,'video')
   Hz = env.Hz.video;
 else
@@ -94,7 +90,7 @@ XSIZE = 1; % obsolete
 
 RFIntensity = nan(cnum,cnum,regFacLen);
 for i1 = FROM:regFacLen
-  tmp = EResFuncCell2Mat(env,EResFunc,regFacIndexIn(regFacLen),i1);
+  tmp = EResFuncCell2Mat(env.cnum,EResFunc,regFacIndexIn(regFacLen),i1);
   RFIntensity(:,:,i1) = evalResponseFunc( ResponseFuncMat2DtoMat3D(tmp(:,:,i1)) );
 end
 

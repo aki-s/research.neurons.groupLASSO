@@ -38,14 +38,14 @@ LIM = graph.PLOT_MAX_NUM_OF_NEURO;
 
 cnum = env.cnum;
 hnum = env.hnum;
-hwind = env.hwind;
+
 Hz = env.Hz.video;
 
 
 
 
 
-
+hwind = env.hwind;
 if isnan(hwind)
   hwind = 1;
 end

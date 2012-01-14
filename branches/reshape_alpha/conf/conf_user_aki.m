@@ -53,6 +53,7 @@ switch DEBUG_s
     status.inStructFile = [ rootdir_ '/indir/my_n9.con'];
   case 'dev-test'
     status.crossVal = 4;
+    status.parfor_ = 0;%check rename crossval_parfor
     DAL.regFac = [8 2];
     env.genLoop = 40001;
     graph.PLOT_T = 1;
