@@ -1,7 +1,10 @@
 #!/bin/sh
+## ref.
 ## http://www.vub.ac.be/BFUCC/misc/NQS/examples.html#matlab
+## http://www.clusterresources.com/torquedocs/2.1jobsubmission.shtml
 #PBS -m abe
 #PBS -l nodes=1:ppn=4
+#PBS -M aki-s@sys.i.kyoto-u.ac.jp
 ####################################################################################
 ## set such as 'ROOT = `dirname myest.m`'
 ROOT='/home/aki-s/svn.d/art_repo2/branches/reshape_alpha'

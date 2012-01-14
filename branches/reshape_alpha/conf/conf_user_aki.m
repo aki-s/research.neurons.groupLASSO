@@ -92,5 +92,5 @@ env.inFiringLabel ='I';
                'randomly generated network\n']);
 end
 
-%% DEBUG
+%% DEBUG: the following is a test
 status.clean = 0;

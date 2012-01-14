@@ -48,3 +48,4 @@ status.crossVal_rough = 1; % skip calculation for speed up.
 %% DEBUG: the following is a test
 % $$$ DAL.regFac = [ 64 32];
 % $$$ env.inFiringUSE = [10 12];
+DAL.regFac = [ 2048 1024 512 256 128 64 32 16 8 4 2 1];

@@ -34,7 +34,7 @@ graph.PLOT_T = 1; % plot graph
 graph.prm.Yrange = [-.5 5]; % yrange of plotted graph
 graph.prm.diag_Yrange = [-.5 5];% yrange of plotted graph's diagonal element
 
-%%%%% DEBUG:TEST
+%%%%% DEBUG: the following is a test
 if 1 == 1
   env.cnum = 14;
   env.SELF_DEPRESS_BASE = 7; 
