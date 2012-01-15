@@ -86,5 +86,5 @@ if ( graph.PRINT_T == 1 )
   fprintf(1,['\nsaving -log(likelihood) as graph for each regFac and ' ...
              'used frame to estimate network.\n%s\n'], [status.savedirname '/' title2 '.png']);
   print('-dpng', [status.savedirname '/' title2 '.png'])
-  close;%++bug
+  close;
 end

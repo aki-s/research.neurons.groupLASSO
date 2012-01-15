@@ -35,10 +35,10 @@ else
 end
 %% %++improve : if tmp.in == '';
 if isempty(tmp.in)
+printf('input is empty')%++bug:notyet
   %abort readTrueConnection..?
 else
   tmp.fid = fopen(tmp.in,'rt');
-end
 %% Need exception hundler: if (#column ~= #row )  %%++improve
 %% fscanf repeat reading in dimention 2
 [ResFunc_hash, Oenv.cnum ] = fscanf(tmp.fid,'%s'); % don't read LF.
@@ -66,9 +66,8 @@ Oenv.cnum = double(Oenv.cnum);
 % [from #neuron]
 
 ResFunc_fig = transpose(reshape(ResFunc_hash, Oenv.cnum , Oenv.cnum));
-
-
 fclose(tmp.fid);
+end
 
 if 1 == 0
   Oenv.spar.from = NaN;

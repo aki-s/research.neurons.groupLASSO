@@ -31,4 +31,4 @@ addpath([rundir '/tools']);
 %% under developement
 %addpath([rundir '/mylib/eval']);
 %% obsolete files are stored as backup
-addpath([rundir '/mylib/obsolete']);
+%addpath([rundir '/mylib/obsolete']);

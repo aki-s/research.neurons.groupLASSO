@@ -1,11 +1,14 @@
-function [EResFunc, Ograph] = reconstruct_EResFunc(env,graph,DAL,bases,EbasisWeight,varargin)
+%function [EResFunc, Ograph] = reconstruct_EResFunc(env,graph,DAL,bases,EbasisWeight,varargin)
+function [EResFunc, Ograph] = reconstruct_EResFunc(cnum,graph,DAL,bases,EbasisWeight,varargin)
 
 %% EResFunc:
 %%
 Ograph = graph;
 
-cnum = env.cnum;
-
+%cnum = env.cnum;
+% $$$ if cnum == env.inFiringUSE
+% $$$ 
+% $$$ end
 EResFunc = cell(zeros(1,length(DAL.regFac)));
 %%  -----> regFac
 %% |

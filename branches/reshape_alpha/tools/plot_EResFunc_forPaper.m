@@ -2,7 +2,7 @@
 %%
 %% USAGE)
 %% Example:
-% plot_EResFunc(env,graph,ResFunc,EResFunc,'title')
+
 %%
 global rootdir_
 

@@ -15,6 +15,9 @@ function plot_AUC_CVL(env,status,graph,DAL,ansMat,CVL,varargin)
 %% usage2)
 %% ansMat = ResFunc_fig %ResFunc_fig: matrix whose entry is 1 or 0.
 % plot_AUC_CVL(env,status,graph,DAL,ansMat,CVL)
+
+%%++todo: share code with plot_AUC.m
+nargin_NUM = 6;
 %% ==<conf>==
 
 myColor = graph.prm.myColor;
@@ -32,14 +35,10 @@ switch 4
     legendLoc = 'SouthWest';
 end
 %% ==</set figure propertiy >==
-
-nargin_NUM = 6;
 %% set frame range to be used.
 if 1 == 1
   F = set_frameRange(nargin,nargin_NUM,varargin,status.validUseFrameIdx);
-
 else
-
   if nargin > nargin_NUM % only one frame
     F.from = varargin{1};
     F.to = F.from;
@@ -47,9 +46,7 @@ else
     F.from = 1;
     F.to = status.validUseFrameIdx;
   end
-
 end
-%%
 
 if isnumeric(ansMat)
   M_ans = ansMat;  
@@ -78,11 +75,11 @@ end
 fFNAME = regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2');
 inRoot = status.savedirname;
 %% ==</conf>==
+%% ==< calcAUC >==
 if 1 == 1
   print_AUCdescription(status.method,regFac,fFNAME,uFnum,inFiringUSE)
   [auc recr thresh0 ] = print_AUC(status.method,regFac,fFNAME,uFnum,inFiringUSE,F,M_ans,status.savedirname);
 elseif strcmp('leaveOut_calcAUC','leaveOut_calcAUC_')
-  %% ==< calcAUC >==
   auc = zeros(F.to,uR);
   recr = zeros(F.to,uR,4);
   thresh0 = zeros(F.to,uR);

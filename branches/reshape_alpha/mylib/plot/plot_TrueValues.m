@@ -4,7 +4,7 @@ fprintf(1,'\nplotting generated "True Values"\n\n')
 
 %%% ===== PLOT ResFunc ===== START =====
 if ( graph.PLOT_T == 1 )
-  plot_ResFunc(graph,env,ResFunc,'response functions',status.savedirname,'_generated');
+  plot_ResFunc(graph,env,ResFunc,'response functions',status.savedirname,'ResponseFunc_generated');
 end
 
 %%% ===== PLOT LAMBDA ===== START =====

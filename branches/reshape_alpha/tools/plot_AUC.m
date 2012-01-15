@@ -9,6 +9,15 @@ function plot_AUC(env,status,graph,DAL,ansMat,varargin)
 %% varargin{1}: index to select and plot only one sample.
 %%            index correspond with index of DAL.regFac.
 
+
+
+
+
+
+
+
+%%++todo: share code with plot_AUC_CVL.m
+nargin_NUM = 5;
 %% ==<conf>==
 
 myColor = graph.prm.myColor;
@@ -27,7 +36,6 @@ switch 4
 end
 %% ==</set figure propertiy >==
 
-nargin_NUM = 5;
 if 1 == 1
   F = set_frameRange(nargin,nargin_NUM,varargin,status.validUseFrameIdx);
 else
@@ -50,7 +58,6 @@ cSET = length(env.inFiringUSE);
 
 uFnum = cell(1,F.to);
 XLABEL = cell(1,F.to);
-%XLABELrf = cell(1,uR);
 regFac = cell(1,uR);
 inFiringUSE = cell(1,cSET);
 
@@ -60,7 +67,6 @@ for i1 =1:F.to
 end
 for i1 =1:uR
   regFac{i1} = num2str(sprintf('%09.4f',DAL.regFac(i1)));
-  %  XLABELrf{i1} = num2str(sprintf('%d',DAL.regFac(i1)));
 end
 XLABELrf = num2cell(DAL.regFac);
 for i1 = 1:cSET
@@ -69,7 +75,6 @@ end
 fFNAME = regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2');
 inRoot = status.savedirname;
 %% ==</conf>==
-
 %% ==< calc AUC and correct rate >==
 if 1 == 1
   print_AUCdescription(status.method,regFac,fFNAME,uFnum,inFiringUSE)

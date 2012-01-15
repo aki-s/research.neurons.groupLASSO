@@ -152,9 +152,9 @@ else
         estimateBasisWeight(tmpEnv,status,bases,Icut,DAL,useFrameIdx);
     cost = cost + status_tmp{i1}.time.regFac(useFrameIdx,:);
     %%++improve
-    %% after satisfying you interest, reconstruct_EResFunc() is
-    %% only needed when i1 is 1. This decrease calculation very much.
-    [EResFunc Ograph] = reconstruct_EResFunc(tmpEnv,graph,DAL,bases,EbasisWeight{i1});
+    %% after satisfying your interest, reconstruct_EResFunc() is
+    %% only needed when i1 is 1. This decrease calculation too much.
+    [EResFunc Ograph] = reconstruct_EResFunc(tmpEnv.cnum,graph,DAL,bases,EbasisWeight{i1});
     %    histSize = bases.ihbasprs.numFrame;
     %% warning: not exact response function is write out.
     if strcmp('incomplete_RF','incomplete_RF') % RF: response function

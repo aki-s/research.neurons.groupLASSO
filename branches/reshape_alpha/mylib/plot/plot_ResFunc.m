@@ -1,6 +1,6 @@
 function plot_ResFunc(graph,env,ResFunc,...
                       title,varargin)
-%%% It would be better to share code with plot_EResFunc()
+%%% It would be better to share code with plot_EResFunc(),plot_ResFunc_subplot()
 %%
 %% Usage:
 %% Example:
@@ -29,44 +29,9 @@ function plot_ResFunc(graph,env,ResFunc,...
 %% recommend? using 'plot_EResFunc.m' or plot_ResFuncALL(varargin)
 % e.g.
 % s=load('outdir/24-Dec-2011-start-20_9/Aki-0001.0000-Aki-0080000-009.mat');
-
-DEBUG = 0;
-if DEBUG == 1
-  title = 'DEBUG';
-end
-LIM = graph.PLOT_MAX_NUM_OF_NEURO;
-
-cnum = env.cnum;
-hnum = env.hnum;
-
-Hz = env.Hz.video;
-
-
-
-
-
-hwind = env.hwind;
-if isnan(hwind)
-  hwind = 1;
-end
-if isnan(hnum)
-  hnum = size(ResFunc,3);
-elseif size(ResFunc,3) > 1 
-  hnum = size(ResFunc,3);
-end
-
-
-
-
-
 num_argin = 4;
-
-
-
-
-
-
-
+DEBUG = 0;%DEBUG = status.DEBUG.level;
+run set_plot_ResFunc_variables
 
 if nargin >= num_argin + 1
   savedirname = varargin{1};
@@ -78,46 +43,20 @@ if nargin >= num_argin + 2
 else
   outname = '';
 end
-%%%
-
-
-
-
 
 %%% ===== PLOT ResFunc ===== START =====
 run set_ResFunc_xticks
 run set_graphYrange % newYrange, zeroFlag
-XSIZE = 1; % obsolete
 
+%%==< manipulate 2D/3D ResFunc seemlessly >==
 if size(ResFunc,3) > 1 
   ResFuncH = sprintf('%s','shiftdim(ResFunc(i1to,i2from,:),2)');
 else
   ResFuncH = sprintf('%s','ResFunc((1:hnum)+(i2from-1)*hnum,i1to)');
 end
-
-
-
-
-
-
+%%==</manipulate 2D/3D ResFunc seemlessly >==
 
 %for i0 = FROM:regFacLen
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -141,7 +80,6 @@ if (cnum > LIM)
     end
   end
 else
-  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   figure;
 
 
@@ -151,8 +89,6 @@ else
       %% subplot() delete existing Axes property.
       subplot('position',pos + [i2from -i1to 1 1 ]/(cnum+3) );
       %% <  subplot background color >
-
-
 
 
 
@@ -264,7 +200,7 @@ else
 
   %%% ===== PLOT ResFunc ===== END =====
   if  ( graph.PRINT_T == 1 ) ||  ( matlabpool('size') > 0 )
-    print('-dpng', [savedirname '/ResponseFunc' outname '.png'])
+    print('-dpng', [savedirname '/' outname '.png'])
   end
 
 end

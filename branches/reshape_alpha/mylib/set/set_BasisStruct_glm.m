@@ -1,4 +1,4 @@
-function S = makeSimStruct_glm(Sin,dt)
+function S = set_BasisStruct_glm(Sin,dt)
 %% if dt==0.2 ,then 118 == length(bases)
 
 ihbasprs = Sin.ihbasprs;

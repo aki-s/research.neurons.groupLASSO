@@ -50,27 +50,54 @@ else
 end
 
 in = strcat(in,'/');
-
 listLS = ls([in,'*.mat']); % default list
+if isempty(listLS)
+  error('default list is empty')
+end
 
+%% remove unnecessary list
 [dum1 dum2 dum3 list dum5 dum6 dum7] = regexp(listLS,[in, ...
                     '\w*-[0-9\.]*-\w*-',...
                     '0*',sprintf('%d',useFrame),'-',...
                     '0*',sprintf('%d',cnum),'.mat']);
+if isempty(list)
+  %  error('screened list is empty')
+  fprintf('supposed status.crossVal_rough==1\n')
+  in = strcat(in,'/CV/');
+  listLS = ls([in,'*.mat']); % default list
+end
+
 N = length(DAL_regFac);
 
 RFIntensity = nan(cnum,cnum,N);
 thresh = 0;
 for i1 = 1:N
-
-  [dum1 dum2 dum3 list dum5 dum6 dum7] = regexp(listLS,[in, ...
-                      '\w*-',sprintf('%09.4f',DAL_regFac(i1)),'-\w*-',...
-                      '0*',sprintf('%d',useFrame),'-',...
-                      '0*',sprintf('%d',cnum),'.mat']);
+  try
+    [dum1 dum2 dum3 list dum5 dum6 dum7] = regexp(listLS,[in, ...
+                        '\w*-',sprintf('%09.4f',DAL_regFac(i1)),'-\w*-',...
+                        '0*',sprintf('%d',useFrame),'-',...
+                        '0*',sprintf('%d',cnum),'.mat']);
+    if isempty(list)
+      error('list is empty')
+    end
+  catch err % status.crossVal_rough == 1
+    [dum1 dum2 dum3 list dum5 dum6 dum7] = regexp([listLS '/CV/'],[in, ...
+                        '\w*-',sprintf('%09.4f',DAL_regFac(i1)),'-\w*-',...
+                        '0*',sprintf('%d',useFrame),'-',...
+                        '0*',sprintf('%d',cnum),'-CV1.mat']);
+  end
+  if isempty(list)
+    error('list is empty')
+  end
   fprintf('loaded: %s\n',list{1});
   S = load(list{1});
 
-  RFIntensity(:,:,i1) = evalResponseFunc( S.ResFunc );
+  try
+    RFIntensity(:,:,i1) = evalResponseFunc( S.ResFunc );
+  catch e
+    S.ResFunc = S.EResFunc;%++bug: all mat file has not ResFunc but EResFunc?
+    RFIntensity(:,:,i1) = evalResponseFunc( S.ResFunc );
+  end
   if CHECK_NOISE == 1
     [dum1 dum2 thresh] = evalRFIntensity( RFIntensity(:,:,i1), M_ans);
   end
@@ -147,10 +174,10 @@ for i1 = 1:N
   bar(SHIFT+cnum*(1:(cnum-1)),-HEIGHT*ones(1,(cnum-1)),WIDTH)
 
   %% threshold
-  plot(repmat(+thresh,[1 cnum2cnum]),'-')
-  plot(repmat(-thresh,[1 cnum2cnum]),'-')
+  plot(repmat(+thresh,[1 cnum2cnum]),'-r')
+  plot(repmat(-thresh,[1 cnum2cnum]),'-b')
   
-  plot(TYPE,'o')
+  plot(TYPE,'ok')
   xlim([0 1+cnum2cnum])
 
 end

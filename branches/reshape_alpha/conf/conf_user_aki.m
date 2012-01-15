@@ -53,16 +53,28 @@ switch DEBUG_s
     status.inStructFile = [ rootdir_ '/indir/my_n9.con'];
   case 'dev-test'
     status.crossVal = 4;
-    status.parfor_ = 0;%check rename crossval_parfor
     DAL.regFac = [8 2];
-    env.genLoop = 40001;
+    env.genLoop = 80001;
     graph.PLOT_T = 1;
-    status.inStructFile = [ rootdir_ '/indir/my_n9.con'];
+    if 1
+      status.READ_NEURO_CONNECTION =0;
+    else
+      status.inStructFile = [ rootdir_ '/indir/my_n9.con'];
+    end
     %    env.useFrame = [5000 10000 50000 90000];% indispensable
-    env.useFrame = [1000 10000];% indispensable
+    %    env.useFrame = [1000 10000];% indispensable
+    env.useFrame = [5000 10000];% indispensable
     env.spar.level.from= .5;
     env.spar.level.to =  .4;
-    env.cnum = 9;
+if 0 %test %++bug:critical. cause segfault?MATLAB'S_BUG
+    env.inFiringUSE=[ 16 18];
+elseif 1
+    env.inFiringUSE=[ 10 18];
+elseif 0
+    env.inFiringUSE=[ 8 9];
+end
+    env.cnum = 15;
+    status.crossVal_rough=1;
   case 'comp_steven_glm'
     %    status.crossVal = 8;
     DAL.regFac = [ 16 10 8 4];
@@ -70,18 +82,18 @@ switch DEBUG_s
     env.useFrame = [10000]; % indispensible
     graph.PLOT_T = 1;
     status.inStructFile = [ rootdir_ '/indir/my_n9.con'];
-case 'comp_steven_bar'
-  %% you must edit conf_set_BasisStruct_glm.m
-  bases.ihbasprs.basisType='bar';
-  bases.ihbasprs.nbase=50;
-  bases.ihbasprs.numFrame=  bases.ihbasprs.nbase;
-  %%%%
-status.READ_FIRING =1; % read kim FIRING. ++bug:critical
-  status.inFiring = '/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/outdir/30-Nov-2011-start-20_6/30_11_2011__20_6.mat';
-env.inFiringLabel ='I';
-  env.inFiringDirect = 1;
+  case 'comp_steven_bar'
+    %% you must edit conf_set_BasisStruct_glm.m
+    bases.ihbasprs.basisType='bar';
+    bases.ihbasprs.nbase=50;
+    bases.ihbasprs.numFrame=  bases.ihbasprs.nbase;
+    %%%%
+    status.READ_FIRING =1; % read kim FIRING. ++bug:critical
+    status.inFiring = '/home/aki-s/svn.d/art_repo2/branches/reshape_alpha/outdir/30-Nov-2011-start-20_6/30_11_2011__20_6.mat';
+    env.inFiringLabel ='I';
+    env.inFiringDirect = 1;
 
-  %%%%
+    %%%%
     DAL.regFac = [ 10];
     env.genLoop = 110000; % indispensible
     env.useFrame = [10000]; % indispensible
