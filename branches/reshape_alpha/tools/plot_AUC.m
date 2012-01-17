@@ -36,8 +36,13 @@ switch 4
 end
 %% ==</set figure propertiy >==
 
-if 1 == 1
-  F = set_frameRange(nargin,nargin_NUM,varargin,status.validUseFrameIdx);
+if 1 == 1 %% must be length(varargin) == 1
+if nargin >= nargin_NUM +1
+  FROM = varargin{1};
+else
+  FROM = 1;
+end
+  F = set_frameRange(nargin,nargin_NUM,FROM,status.validUseFrameIdx);
 else
   if nargin > nargin_NUM % only one frame
     F.from = varargin{1};
@@ -78,7 +83,7 @@ inRoot = status.savedirname;
 %% ==< calc AUC and correct rate >==
 if 1 == 1
   echo_AUCdescription(status.method,regFac,fFNAME,uFnum,inFiringUSE)
-  [auc recr thresh0 ] = echo_AUC(status.method,regFac,fFNAME,uFnum,inFiringUSE,F,M_ans,status.savedirname);
+  [auc recr thresh0 ] = echol_AUC(status.method,regFac,fFNAME,uFnum,inFiringUSE,F,M_ans,status.savedirname);
 elseif strcmp('leaveOut_calcAUC','leaveOut_calcAUC_')
   rate = zeros(uR,4,F.to);
   auc = zeros(F.to,uR);

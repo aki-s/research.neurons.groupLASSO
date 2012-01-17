@@ -23,10 +23,10 @@ else
 if strcmp('old','old_')
   ihbasprsOrg = ihbasprs;
   [ihbas,ihbasis,ihbasprs] = make_basis(ihbasprs,0.2);
-elseif strcmp('variable_nbase','variable_nbase_')
+elseif strcmp('variable_nbase','variable_nbase')
   ihbasprsOrg = ihbasprs;
   [ihbas,ihbasis,ihbasprs] = make_basis1(ihbasprs,dt,0.065);
-elseif strcmp('static_nbase','static_nbase')
+elseif strcmp('static_nbase','static_nbase')%++bug:critical
   ihbasprsOrg = ihbasprs;
   [ihbas,ihbasis,ihbasprs] = make_basis2(ihbasprs,dt,0.01);
 end

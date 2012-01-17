@@ -18,10 +18,15 @@ function plot_AUC_CVL(env,status,graph,DAL,ansMat,CVL,varargin)
 
 %%++todo: share code with plot_AUC.m
 nargin_NUM = 6;
+uR = length(DAL.regFac);
+cSET.to = length(env.inFiringUSE);
+
 %% ==<conf>==
-
-myColor = graph.prm.myColor;
-
+if nargin >= nargin_NUM +1
+  FROM = varargin{1};
+else
+FROM =1;
+end
 %% ==< set figure propertiy >==
 WIDTH = 550;
 switch 4
@@ -36,8 +41,8 @@ switch 4
 end
 %% ==</set figure propertiy >==
 %% set frame range to be used.
-if 1 == 1
-  F = set_frameRange(nargin,nargin_NUM,varargin,status.validUseFrameIdx);
+if 1
+  F = set_frameRange(nargin,nargin_NUM,FROM,status.validUseFrameIdx);
 else
   if nargin > nargin_NUM % only one frame
     F.from = varargin{1};
@@ -48,13 +53,18 @@ else
   end
 end
 
+myColor = graph.prm.myColor;
+if strcmp('plot_monochrome','plot_monochrome')
+  myColor = cell(1,uR);
+  for i1 = 1:uR
+    myColor{i1} = [0 0 0];
+  end
+end
 if isnumeric(ansMat)
   M_ans = ansMat;  
 else
   load(ansMat,'M_ans');
 end
-uR = length(DAL.regFac);
-cSET.to = length(env.inFiringUSE);
 
 uFnum = cell(1,F.to);
 XLABEL = cell(1,F.to);
@@ -166,24 +176,25 @@ for j0 = F.from:F.to
     plot(1:uR, thresh0(j0,:),'o-','Color',myColor{j0},'LineWidth',2)
     set(gcf, 'Color', 'White', 'Position',[WIDTH,800,WIDTH+150,600])
     set(gca, 'XTick', 1:uR, 'XTickLabel', XLABELrf)
-    axis([1 uR 0 5]) % move figures to the left.
+    %    axis([1 uR 0 5]) % move figures to the left.
+    axis([1 uR 0 20]) %for program started   : 2011-12-24-20:09:38
     xlabel('regularization factor')
     ylabel('threshold')
-    title(['avg@maxCorrectRate: ',sprintf('%6.3f',sum(thresh0(j0,numMaxIdx))/length(numMaxIdx))]);
+    title(['threshold avg@maxCorrectRate: ',sprintf('%6.3f',sum(thresh0(j0,numMaxIdx))/length(numMaxIdx))]);
   end
 
   if CHECK_EACH_RATE == 1
     subplot(N,1,4)
-    axis([1 uR 0 1.05]) % move figures to the left.
     hold on;
     %%TP0
-    plot(1:uR,recr(j0,1:uR,1),'o-k','LineWidth',2)
+    %    plot(1:uR,recr(j0,1:uR,1),'o-k','LineWidth',2)
+    plot(1:uR,recr(j0,1:uR,1),'o-.k','LineWidth',2)
     %%TPp
-    plot(1:uR,recr(j0,1:uR,2),'o-r','LineWidth',2)
+    plot(1:uR,recr(j0,1:uR,2),'o--r','LineWidth',2)
     %%TPn
-    plot(1:uR,recr(j0,1:uR,3),'o-b','LineWidth',2)
+    plot(1:uR,recr(j0,1:uR,3),'o:b','LineWidth',2)
     %%TPtotal
-    plot(1:uR,recr(j0,1:uR,4),'o-g','LineWidth',2)
+    plot(1:uR,recr(j0,1:uR,4),'^-g','LineWidth',2)
     hLine3 = plot(numMaxIdx, recr(j0,numMaxIdx,4),'gd',...
                   'MarkerFaceColor','auto','MarkerSize',10,'LineWidth',2);
     set(get(get(hLine3,'Annotation'),'LegendInformation'),...
@@ -196,6 +207,8 @@ for j0 = F.from:F.to
     xlabel('regularization factor')
     ylabel('correct rate')
     %  legend({'TP0','TPp','TPn'})
+    axis([1 uR 0 1.05]) % move figures to the left.
+    set(gca, 'XTick', 1:uR, 'XTickLabel', XLABELrf,'ylim',[0 1.1])
   end
 
 end

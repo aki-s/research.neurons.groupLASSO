@@ -6,13 +6,16 @@ function RFIntensity = evalResponseFunc( A )
 %%
 
 %%
+%METHOD = 'sqrRoot';
 METHOD = 'sqr';
 
 switch METHOD
-  case 'sqr' % best discriminant ability
+  case 'sqrRoot' % best discriminant ability
     RFIntensity = evalResponseFunc0(A);
   case 'avg'
     RFIntensity = evalResponseFunc1(A);
   case 'sqr*avg'
     RFIntensity = evalResponseFunc2(A);
+  case 'sqr' % best discriminant ability?
+    RFIntensity = evalResponseFunc3(A);
 end

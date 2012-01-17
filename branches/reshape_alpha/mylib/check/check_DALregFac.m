@@ -7,7 +7,8 @@ DALout = DALin;
 
 if DALin.regFac_UserDef == 1
   DALout.div = NaN;
-  Dlim = 1;
+  Dlim = .1;
+  %  Dlim = 1; %@ real data analysis?
   %% ( regFac > Dlim ) is strongly recommended
   %% from a point of calculation speed.
   a = DALin.regFac >= Dlim;

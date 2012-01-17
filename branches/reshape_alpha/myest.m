@@ -24,7 +24,7 @@ end
 gen_defaultEnv_ask(); 
 run get_neuronStruct;
 run set_bases;
-error()
+
 [env status envSummary graph DAL] = check_conf(env,status,envSummary,graph,bases,DAL);
 [status ] = check_gendConfState(status);
 

@@ -12,7 +12,7 @@ function plot_ResFuncSuperpose(in,DAL_regFac,useFrame,cnum,varargin)
 % plot_ResFuncSuperpose(status.savedirname,DAL.regFac,75000,9,[0 bases.ihbasprs.numFrame],[-.5 .5],ansMat,Fpeaks)
 %% Fpeaks: Fpeaks = get_basisPeaks(bases.ihbasis);
 %%
-DEBUG = 1;
+DEBUG = 0;
 
 cnum2cnum = cnum*cnum;
 
@@ -95,8 +95,13 @@ for i1 = 1:N
   try
     RFIntensity(:,:,i1) = evalResponseFunc( S.ResFunc );
   catch e
-    S.ResFunc = S.EResFunc;%++bug: all mat file has not ResFunc but EResFunc?
-    RFIntensity(:,:,i1) = evalResponseFunc( S.ResFunc );
+    try
+      S.ResFunc = S.EResFunc;%++bug: all mat file has not ResFunc but EResFunc?
+      RFIntensity(:,:,i1) = evalResponseFunc( S.ResFunc );
+    catch e
+      S.ResFunc = S.Alpha;%++obsolete:@revision110
+      RFIntensity(:,:,i1) = evalResponseFunc( S.ResFunc );
+    end
   end
   if CHECK_NOISE == 1
     [dum1 dum2 thresh] = evalRFIntensity( RFIntensity(:,:,i1), M_ans);
@@ -121,7 +126,7 @@ for i1 = 1:N
 
   %% positive
   subplot(2,2,1)
-  title(['positive: ',sprintf('#%4d, regFac:%9.4f, useFrame:%10d, thresh:%5.3f',RFIpN,DAL_regFac(i1),useFrame,thresh)])
+  title(['positive: ',sprintf('#%4d',RFIpN)])
   hold on;
   for i2 = 1:cnum2cnum
     if TYPE(i2) -thresh > 0
@@ -136,7 +141,7 @@ for i1 = 1:N
 
   %% negative
   subplot(2,2,2)
-  title(['negative: ',sprintf('#%4d, regFac:%9.4f, useFrame:%10d, thresh:%5.3f',RFInN,DAL_regFac(i1),useFrame,thresh)])
+  title(['negative: ',sprintf('#%4d',RFInN)])
   hold on;
   for i2 = 1:cnum2cnum
     if TYPE(i2) +thresh < 0
@@ -151,7 +156,7 @@ for i1 = 1:N
 
   %% noise
   subplot(2,2,3)
-  title(['noise: ',sprintf('#%4d, regFac:%9.4f, useFrame:%10d, thresh:%5.3f',RFIzN,DAL_regFac(i1),useFrame,thresh)])
+  title(['noise: ',sprintf('#%4d',RFIzN)])
   hold on;
   for i2 = 1:cnum2cnum
     if ~( (TYPE(i2) -thresh > 0) || (TYPE(i2) +thresh < 0) )
@@ -180,6 +185,22 @@ for i1 = 1:N
   plot(TYPE,'ok')
   xlim([0 1+cnum2cnum])
 
+  %{
+  set(gcf,'NextPlot','add');
+           sprintf('0 %s 0',num2str(repmat(1:cnum,[1 cnum]))))
+  %}
+  axes('position',[.13 0 1.2 .08]);
+  set(gca,'Visible','off');
+  set(title(sprintf('%s',num2str(sprintf('%7d',1:cnum)))),'Visible','on')
+
+  %%% add summary text
+  %http://www.mathworks.com/matlabcentral/newsreader/view_thread/244434
+  set(gcf,'NextPlot','add');
+  axes('position',[.1 .84 .9 .1]);
+  set(gca,'Visible','off');
+  h =  title(sprintf('regFac:%9.4f, useFrame:%10d, thresh:%5.3f', ...
+                     DAL_regFac(i1),useFrame,thresh));
+  set(h,'Visible','on');
 end
 
 %%% ===== PLOT ResFunc ===== END =====

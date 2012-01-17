@@ -1,6 +1,11 @@
-function range = set_frameRange(N_default,N_in,FROM,TO)
+function range = set_frameRange(N_in,N_default,FROM,varargin)
 
-if N_default > N_in % only one frame
+nargin_NUM = 3;
+if nargin >= nargin_NUM +1
+  TO = varargin{1};
+end
+
+if N_in > N_default % only one frame
   range.from = FROM;
   range.to = range.from;
 else % mix ALL

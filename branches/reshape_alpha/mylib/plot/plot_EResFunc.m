@@ -8,7 +8,11 @@ function plot_EResFunc(env,graph,status,DAL,bases,EbasisWeight,...
 %%
 num_argin = 7;
 %%
+try
 regFacLen = DAL.regFacLen;
+catch err %@revision110
+regFacLen = length(DAL.regFac);
+end
 regFacIndexIn = (1:regFacLen);
 if nargin >= num_argin +1
   FROM =  varargin{ 1};
@@ -23,6 +27,13 @@ if nargin >= num_argin + 2
 else
   outname = '';
 end
+if nargin >= num_argin + 3
+  COLOR = varargin{3};
+else
+  COLOR = '';
+end
+COLOR ='DEBUG'
+
 %%% == 
 
 if (nargin == num_argin + 1)
@@ -109,9 +120,13 @@ for i0 = FROM:regFacLen
         end
       end
       %% </ subplot background color >
+if isempty(COLOR)
       subplot('position',pos + [i3from -i2to 1 1 ]/(cnum+3),'Color',heat );
+else
+      subplot('position',pos + [i3from -i2to 1 1 ]/(cnum+3));
+end
       tmp1 = ResFunc{regFacIndex}{i2to}{i3from};
-      %% <  chage color ploted according to cell type >
+      %% <  chage line color according to cell type >
       hold on;
       if tmp1 == 0
         zeroFlag = 1;
