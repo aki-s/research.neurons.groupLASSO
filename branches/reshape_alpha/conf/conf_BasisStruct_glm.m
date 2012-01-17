@@ -2,9 +2,9 @@ function bases = conf_BasisStruct_glm()
 %% ( Number of basis vectors for post-spike kernel )
 %% <Tweek here>
 %% == length [frame] ==
-ihbasprs.numFrame = 700;
+ihbasprs.numFrame = 1300; % maximum limit for the number of frame to be generated
 %% ==  ==
-ihbasprs.xscale = 2; % aim
+ihbasprs.xscale = 1.4; % aim. width of 2st basis is sensible to this parameter.
 %% ihbasprs.hpeaks have precedence.
 %% ihbasprs.hpeaks: first and last peak location of bases.
 %% ==  ==
@@ -22,13 +22,14 @@ elseif strcmp('comp_kim','comp_kim')
   ihbasprs.basisType = 'glm';
   %% The smaller nbase is, the faster calculation is, thought
   %% the ablility to represent log history decleases.
-  ihbasprs.nbase = 5; % not good, fast
-  %  ihbasprs.nbase = 7; % better, slow
+  %  ihbasprs.nbase = 12;
+  ihbasprs.nbase = 12;
+                      %  ihbasprs.nbase = 7; ihbasprs.hpeaks
 end
 %% ihbasprs.hpeaks: Peak location for first and last vectors.
 % To be [ihbasprs.hpeaks(1) > arg(makeSimStruct_glm)] is recommended.
 if strcmp('makeAbsRef','makeAbsRef_')
-% Must be [ihbasprs.hpeaks(1) == ihbasprs.absref].
+  % Must be [ihbasprs.hpeaks(1) == ihbasprs.absref].
   ihbasprs.absref = .2; % absolute refractory period [sec].
   ihbasprs.hpeaks = [ihbasprs.absref 3]; % Unit of this is second.
   if ~mod(ihbasprs.nbase,2)
@@ -41,12 +42,12 @@ else
   %  ihbasprs.hpeaks = [0 0.5]/ihbasprs.xscale; % Unit of this is second.
 end
 %% How nonlinear to make spacings
-if strcmp('old','old_')
-ihbasprs.hpeaks = [.2 ihbasprs.nbase+2];
-ihbasprs.b = .5;
-else
-ihbasprs.hpeaks = [0 0.3]; % Unit is [sec]
-ihbasprs.b = 10; % \in [0,1)
+if strcmp('make_basis.m','make_basis.m_')
+  ihbasprs.hpeaks = [.2 ihbasprs.nbase+2];
+  ihbasprs.b = .5;
+elseif strcmp('make_basis1.m','make_basis1.m')
+  ihbasprs.hpeaks = [0 0.6]; % Unit is [sec]
+  ihbasprs.b = .5; % \in [0,1)
 end
 %% <Tweek here/>
 

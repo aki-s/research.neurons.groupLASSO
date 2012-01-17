@@ -9,6 +9,15 @@ by using this software.
 == LICENSE ==
 GPL
 
+== COPYRIGHT (2012)==
+% SyunsukeAKi (aki-s@sys.i.kyoto-u.ac.jp): main program
+   http://hawaii.sys.i.kyoto-u.ac.jp/~aki-s/software/NSest/
+	              
+% ShigeyukiOba        : DAL_mod        
+% RyotaTomioka        : DAL            http://www.ibis.t.u-tokyo.ac.jp/ryotat/dal/
+% Sanggyun Kim        : GCPP           http://www.neurostat.mit.edu/gcpp
+%
+
 == ABOUT DIRECTORY ==
 /-.
  /conf		: configuration files.

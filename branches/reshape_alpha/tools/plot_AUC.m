@@ -77,8 +77,8 @@ inRoot = status.savedirname;
 %% ==</conf>==
 %% ==< calc AUC and correct rate >==
 if 1 == 1
-  print_AUCdescription(status.method,regFac,fFNAME,uFnum,inFiringUSE)
-  [auc recr thresh0 ] = print_AUC(status.method,regFac,fFNAME,uFnum,inFiringUSE,F,M_ans,status.savedirname);
+  echo_AUCdescription(status.method,regFac,fFNAME,uFnum,inFiringUSE)
+  [auc recr thresh0 ] = echo_AUC(status.method,regFac,fFNAME,uFnum,inFiringUSE,F,M_ans,status.savedirname);
 elseif strcmp('leaveOut_calcAUC','leaveOut_calcAUC_')
   rate = zeros(uR,4,F.to);
   auc = zeros(F.to,uR);

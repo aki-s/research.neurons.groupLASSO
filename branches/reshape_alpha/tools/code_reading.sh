@@ -25,7 +25,7 @@ do
     echo "[[${i1}]]"
     case ${i1} in
 	['.'])   IN0=`find ${ROOT}/ -maxdepth 1 -name '*.m' -print|egrep -v \(conf\|confidential\|imports\|indir\|man\|outdir\)`;;
-	*)       IN0=`find ${ROOT}/${i1} -name '*.m' -print|egrep -v \(conf\|confidential\|imports\|indir\|man\|outdir\)`;;
+	*)       IN0=`find ${ROOT}/${i1} -name '*.m' -print|egrep -v \(conf\|confidential\|imports\|indir\|man\|obsolete\|outdir\)`;;
     esac
     _TARGET_=${ROOT}/outdir/mcode/${PDFPREFIX}_${i1}
     _TARGET_TXT_=${PDFPREFIX}_${i1}.txt;

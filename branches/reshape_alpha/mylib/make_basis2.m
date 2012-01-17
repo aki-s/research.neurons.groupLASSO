@@ -1,16 +1,20 @@
-function [ihbas, ihbasis, Oihbasprs] = make_basis1(ihbasprs,dt,D2)
+function [ihbas, ihbasis, Oihbasprs] = make_basis2(ihbasprs,dt,D2)
 %% ihbasprs: parameter to tweek 'bases'
 %% dt: [sec] per frame
 %% D2: parameter for scaling
+%% 
+%% Don't cause change of 'nbase'
+%% setting 'ihbasprs.b' has no meaning.
 %%
-%% setting 'nbase' has no meaning.
-%% ihbasprs.xscale has precedence.
+%% selecting good nonlinear function is essential to describe
+%% reaction function at small index.
 
 %%tail(log(max(1:x))/(pi/2) ) == nbase
 Hz = 1/dt;
 numFrame = ihbasprs.numFrame;
 hpeaks   = ihbasprs.hpeaks;
-
+nbase    = ihbasprs.nbase;
+nStrength = ihbasprs.b;
 if isfield(ihbasprs, 'absref');
   absref = ihbasprs.absref;
 else
@@ -23,16 +27,27 @@ if dt> absref > 0
 end
 
 % nonlinearity for stretching x axis (and its inverse)
-
+if 0
 nlin = @(x)log(x);
-invnl = @(x)exp(x); % inverse nonlinearity
-
+invnl = @(x)exp(x); % inverse function of 'nlin'
+elseif 0
+M=10;
+nlin = @(x)log(x/M);
+invnl = @(x)exp(x*M); % inverse function of 'nlin'
+elseif 1 %simoid
+M=1;%scale to be '0<=arg(nlin)<=0.5'
+nlin = @(x)-log(1-x/x)/M;
+invnl = @(x)1/(1+exp(-M*x)); % inverse function of 'nlin'
+elseif 1%too bad
+nlin = @(x)log(x+nStrength);
+invnl = @(x)exp(x)-nStrength; % inverse function of 'nlin'
+end
 % Generate basis of raised cosines
 lagF = ceil(hpeaks*Hz);% scale unit from [sec] to [frame].
 %%lagF = (lagF-1)*D2 +1;
-D1=ihbasprs.xscale;%this cause change nbase
+%D1=ihbasprs.xscale;
 %% correspond hpeaks(2) to nbase
-nbase = floor(2+2*D1*nlin(1+(lagF(end)-1)*D2));
+%nbase = floor(2+2*D1*nlin(1+(lagF(end)-1)*D2));
 %nbase = round(2+2*D1*nlin(1+(lagF(end)-1)*D2))
 D1 = (nbase-2)/(2*nlin(1+D2*(lagF(end))));
 nbase_1 = nbase - 1;

@@ -1,10 +1,10 @@
 function S = set_BasisStruct_glm(Sin,dt)
+%% arg1) Sin.ihbasprs have configured parameters.
+%% arg2) time[sec] per frame?
+%% e.g.
 %% if dt==0.2 ,then 118 == length(bases)
 
 ihbasprs = Sin.ihbasprs;
-
-%global rootdir_
-%run( [rootdir_ '/conf/conf_makeSimStruct_glm.m']); % load parameters.
 
 if isfield(Sin,'ihbasprs') && strcmp(ihbasprs.basisType,'bar')
   nlinF = NaN;
@@ -14,18 +14,21 @@ if isfield(Sin,'ihbasprs') && strcmp(ihbasprs.basisType,'bar')
   ihbas = NaN;
   ihbasis = ones(ihbasprs.nbase,1);
   ihbasis.nbase = 100;
-  ihbasprsOld = ihbasprs;
+  ihbasprsOrg = ihbasprs;
 else
   % -- Nonlinearity -------
   nlinF = @exp;
   % Other natural choice:  nlinF = @(x)log(1+exp(x));
 
 if strcmp('old','old_')
+  ihbasprsOrg = ihbasprs;
   [ihbas,ihbasis,ihbasprs] = make_basis(ihbasprs,0.2);
-ihbasprsOld = ihbasprs;
-else
-  ihbasprsOld = ihbasprs;
-  [ihbas,ihbasis,ihbasprs] = make_basis1(ihbasprs,dt,0.01);
+elseif strcmp('variable_nbase','variable_nbase_')
+  ihbasprsOrg = ihbasprs;
+  [ihbas,ihbasis,ihbasprs] = make_basis1(ihbasprs,dt,0.065);
+elseif strcmp('static_nbase','static_nbase')
+  ihbasprsOrg = ihbasprs;
+  [ihbas,ihbasis,ihbasprs] = make_basis2(ihbasprs,dt,0.01);
 end
   %% append basis for absolute refractory period.
   if (ihbasprs.absref < dt) 
@@ -40,6 +43,6 @@ S = struct(...
     'ih', ih, ...
     'dt', dt, ...
     'ihbasprs', ihbasprs, ... % params for ih basis
-    'ihbasprsOld', ihbasprsOld, ... % params for ih basis
+    'ihbasprsOrg', ihbasprsOrg, ... % params for ih basis
     'ihbas', ihbas, ... % orthogonalized ihbasis
     'ihbasis', ihbasis); ... % basis

@@ -24,9 +24,10 @@ end
 gen_defaultEnv_ask(); 
 run get_neuronStruct;
 run set_bases;
-
+error()
 [env status envSummary graph DAL] = check_conf(env,status,envSummary,graph,bases,DAL);
 [status ] = check_gendConfState(status);
+
 echo_initStatus(env,status,envSummary)
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -36,9 +37,13 @@ if ( status.GEN_TrueValues == 1 )
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+try
 if status.estimateConnection == 1
   run estimateNetworkStruct
+end
+catch segfault 
+  %% cluster configuration or MATLAB-parfor error?
+  warning('DEBGU:SEGFAULT','catchSEGFAULTisPossible?')
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -47,12 +52,12 @@ run postproc1
 %% ==< bulk save all plotted graph  >==
 
 if (graph.SAVE_ALL == 1)
-  try
+% $$$   try
     save_windows_all(status.savedirname)
-  catch segfault 
-    %% cluster configuration or MATLAB-parfor error?
-    warning('DEBGU:SEGFAULT','SEGFAULT')
-  end
+% $$$   catch segfault 
+% $$$     %% cluster configuration or MATLAB-parfor error?
+% $$$     warning('DEBGU:SEGFAULT','SEGFAULT')
+% $$$   end
 end 
 
 %% ==< clean >==
