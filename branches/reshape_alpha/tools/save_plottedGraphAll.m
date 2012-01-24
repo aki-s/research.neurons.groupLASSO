@@ -79,7 +79,7 @@ switch ARGNUM
     for i1 = 1:hdl
       print(figHandles(i1),'-dpng',sprintf(['%s/' ...
                           'regFac=%05d_cnum=%05d'],savedirname,DAL.regFac(i1),cnum));
-      fprintf(1,'saved:%s/regFac=%05dcnum=%05d\n',savedirname,DAL.regFac(i1),cnum);
+      fprintf(1,'saved:%s/regFac=%05dcnum=%05d.png\n',savedirname,DAL.regFac(i1),cnum);
     end
   case 4
     regCount = 1;
@@ -88,7 +88,7 @@ switch ARGNUM
       print(figHandles(i1),'-dpng',...
             sprintf('%s/regFac=%05d_cnum=%05d_%0plate',...
                     savedirname,DAL.regFac(regCount),cnum,count));
-      fprintf(1,'saved:%s/regFac=%05dcnum=%05d_%0plate\n',...
+      fprintf(1,'saved:%s/regFac=%05dcnum=%05d_%0plate.png\n',...
               savedirname,DAL.regFac(regCount),cnum,count);
       if ~mod(count,GROUP)
         count = plate;

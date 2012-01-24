@@ -1,5 +1,5 @@
 function plot_AUC_CVL(env,status,graph,DAL,ansMat,CVL,varargin)
-%%
+%% plot_AUC_CVL(env,status,graph,DAL,ansMat,CVL,varargin)
 %%
 %% usage)
 % load('./outdir/some_out_data/allVarMat.m')
@@ -107,10 +107,18 @@ elseif strcmp('leaveOut_calcAUC','leaveOut_calcAUC_')
   for j0 = F.from:F.to
     for i0 = 1:cSET.to
       for regFacIdx = 1:uR
+        try
         filename =sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{regFacIdx}, ...
                           fFNAME, uFnum{j0}, inFiringUSE{i0});
-        load( [inRoot '/' filename], 'ResFunc');
-        RFIntensity = evalResponseFunc( ResFunc );
+        load( [inRoot '/' filename], 'EResFunc');
+
+        catch err
+          [inRoot]= strcat(inRoot,'/CV');
+          filename =sprintf('%s-%s-%s-%s-%s-CV1.mat',status.method, regFac{regFacIdx}, ...
+                          fFNAME, uFnum{j0}, inFiringUSE{i0});
+          load( [inRoot '/' filename], 'EResFunc');
+        end
+        RFIntensity = evalResponseFunc( EResFunc );
         [recn, recr(j0,regFacIdx,1:4), thresh0(j0,regFacIdx) ,auc(j0,regFacIdx)] = evalRFIntensity(RFIntensity, M_ans);
         disp( sprintf( ['%20s:'...
                         ' %3d, %3d, %3d, %6d:'...

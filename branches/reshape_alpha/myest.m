@@ -38,12 +38,14 @@ end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 try
-if status.estimateConnection == 1
-  run estimateNetworkStruct
-end
+  if status.estimateConnection == 1
+    run estimateNetworkStruct
+  end
 catch segfault 
   %% cluster configuration or MATLAB-parfor error?
-  warning('DEBGU:SEGFAULT','catchSEGFAULTisPossible?')
+  warning('DEBGU:SEGFAULT','catchSEGFAULT, set status.clean =0  status.crossVal_rough=1')
+  status.clean = 0;
+  status.crossVal_rough = 1;% segfault would have failed at crossVal_rough=0.
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -52,12 +54,7 @@ run postproc1
 %% ==< bulk save all plotted graph  >==
 
 if (graph.SAVE_ALL == 1)
-% $$$   try
-    save_windows_all(status.savedirname)
-% $$$   catch segfault 
-% $$$     %% cluster configuration or MATLAB-parfor error?
-% $$$     warning('DEBGU:SEGFAULT','SEGFAULT')
-% $$$   end
+  save_windows_all(status.savedirname)
 end 
 
 %% ==< clean >==

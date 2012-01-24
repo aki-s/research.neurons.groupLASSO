@@ -84,7 +84,7 @@ if (status.crossVal > 1 )
       tDAL{i2}.Drow = tenv.useFrame(i2);
       %% choose the best regularization factor
       tDAL{i2}.regFac = DAL.regFac(CVLs{i0}.idxTotal(i2)); 
-
+      tDAL{i2}.regFac = 1;
       if status.crossVal_rough ~= 0
         %% Skip re-calclation to save time by using the prevous result from leave
         %% one-cluster out cross validation.

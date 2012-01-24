@@ -41,7 +41,7 @@ if nargin >= BASEIN +4
   Fpeaks = varargin{4};
   FF = length(Fpeaks);
   WIDTH = 0.005;
-  HEIGHT = 5;
+  HEIGHT = 20;
 else
   Fpeaks = 0;
   FF = 1;
@@ -66,7 +66,6 @@ if isempty(list)
   in = strcat(in,'/CV/');
   listLS = ls([in,'*.mat']); % default list
 end
-
 N = length(DAL_regFac);
 
 RFIntensity = nan(cnum,cnum,N);
@@ -77,8 +76,8 @@ for i1 = 1:N
                         '\w*-',sprintf('%09.4f',DAL_regFac(i1)),'-\w*-',...
                         '0*',sprintf('%d',useFrame),'-',...
                         '0*',sprintf('%d',cnum),'.mat']);
-    if isempty(list)
-      error('list is empty')
+    if isempty(list) && (status.crossVal_rough == 0)
+      warning('list is empty, trying values from CV1.')
     end
   catch err % status.crossVal_rough == 1
     [dum1 dum2 dum3 list dum5 dum6 dum7] = regexp([listLS '/CV/'],[in, ...
@@ -86,6 +85,7 @@ for i1 = 1:N
                         '0*',sprintf('%d',useFrame),'-',...
                         '0*',sprintf('%d',cnum),'-CV1.mat']);
   end
+
   if isempty(list)
     error('list is empty')
   end
@@ -187,7 +187,7 @@ for i1 = 1:N
 
   %{
   set(gcf,'NextPlot','add');
-           sprintf('0 %s 0',num2str(repmat(1:cnum,[1 cnum]))))
+  sprintf('0 %s 0',num2str(repmat(1:cnum,[1 cnum]))))
   %}
   axes('position',[.13 0 1.2 .08]);
   set(gca,'Visible','off');

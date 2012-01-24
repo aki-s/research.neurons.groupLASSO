@@ -48,14 +48,6 @@ end
 run set_ResFunc_xticks
 run set_graphYrange % newYrange, zeroFlag
 
-%%==< manipulate 2D/3D ResFunc seemlessly >==
-if size(ResFunc,3) > 1 
-  ResFuncH = sprintf('%s','shiftdim(ResFunc(i1to,i2from,:),2)');
-else
-  ResFuncH = sprintf('%s','ResFunc((1:hnum)+(i2from-1)*hnum,i1to)');
-end
-%%==</manipulate 2D/3D ResFunc seemlessly >==
-
 %for i0 = FROM:regFacLen
 
 
@@ -71,17 +63,27 @@ if (cnum > LIM)
 
   fignum = ceil(cnum/LIM);
   shift = 1/fignum;
+  %++bug: conf_user_kim.m 
+  % 1-1 2-2
+  % 2-1 1-2
+  %
   for Fdim2 = 1:fignum
     for Fdim1 = 1:fignum
       plot_ResFunc_subplot(env,graph,Fdim1,Fdim2,LIM,ResFunc,prm)
-      %% Position at natural location
+      %% Position fig. at natural location
       set(gcf, 'menubar','none','Color','White','units','normalized',...
                'outerposition',[(Fdim2-1)*shift,(fignum-Fdim1)*shift,shift,shift])
     end
   end
 else
   figure;
-
+  %%==< manipulate 2D/3D ResFunc seemlessly >==
+  if size(ResFunc,3) > 1 
+    ResFuncH = sprintf('%s','shiftdim(ResFunc(i1to,i2from,:),2)');
+  else
+    ResFuncH = sprintf('%s','ResFunc((1:hnum)+(i2from-1)*hnum,i1to)');
+  end
+  %%==</manipulate 2D/3D ResFunc seemlessly >==
 
   pos = [ .5 (cnum) 0 0 ]/(cnum+2);
   for i1to = 1:cnum %++parallel

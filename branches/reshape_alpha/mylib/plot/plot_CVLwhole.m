@@ -11,22 +11,22 @@ nargin_NUM = 5;
 
 cnum = env.cnum;
 LABEL = num2cell(DAL.regFac);
-regFacLen = length(DAL.regFac);
-%regFacLen = DAL.regFacLen;
+%regFacLen = length(DAL.regFac);
+regFacLen = DAL.regFacLen;%++bug
 %useFrameLen = length(env.useFrame);
 %%
 DEBUG = 0;
 %%
 %figure;
-ylim([1 15])
+ylim([1 2])
 CVLt = sum(CVL,2); %CVLt : CVL total
 
 if 1
-if nargin >= nargin_NUM +1
-  FROM = varargin{1};
-else
-FROM =1;
-end
+  if nargin >= nargin_NUM +1
+    FROM = varargin{1};
+  else
+    FROM =1;
+  end
   F = set_frameRange(nargin,nargin_NUM,FROM,status.validUseFrameIdx);
 else
   if nargin > nargin_NUM
@@ -98,11 +98,10 @@ if F.from ~= F.to
   inFname= regexprep(status.inFiring,'(.*/)(.*)(.mat)','$2');
   title2 = sprintf('%s-CVL-%s-%04d',status.method,inFname,cnum );
 else
-  title2 = sprintf('%s-CVL-used%07-n%04d',status.method,DAL.Drow,cnum );
+  title2 = sprintf('%s-CVL-used%07d-n%04d',status.method,DAL.Drow(F.from),cnum );
 end
 if ( graph.PRINT_T == 1 )
   fprintf(1,['\nsaving -log(likelihood) as graph for each regFac and ' ...
              'used frame to estimate network.\n%s\n'], [status.savedirname '/' title2 '.png']);
   print('-dpng', [status.savedirname '/' title2 '.png'])
-  close;
 end

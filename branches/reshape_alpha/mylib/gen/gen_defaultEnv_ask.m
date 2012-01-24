@@ -6,31 +6,33 @@ global status
 
 run([rootdir_ '/mylib/gen/gen_defaultEnv_preset.m']);
 
-if exist('status') && ( status.GEN_TrueValues == 1 )
-  if isfield(env,'spar') && isfield(env.spar,'level') && isfield(env.spar.level,'from')
-    spar.level.from = env.spar.level.from; % don't overwrite user defined env.spar.level.from
-  else
-    spar.level.from = str2num(input('env.spar.level.from (0< <1):= ','s'));
-  end
+if exist('status') && ( status.GEN_TrueValues == 1 ) 
+  %% For conf_user_aki_kimExt.m
+  if isempty(status.inStructFile)
+    if isfield(env,'spar') && isfield(env.spar,'level') && isfield(env.spar.level,'from')
+      spar.level.from = env.spar.level.from; % don't overwrite user defined env.spar.level.from
+    else
+      spar.level.from = str2num(input('env.spar.level.from (0< <1):= ','s'));
+    end
 
-  if isfield(env,'spar') && isfield(env.spar,'level') && isfield(env.spar.level,'to')
-    spar.level.to = env.spar.level.to; % don't overwrite user defined env.spar.level.to
-  else
-    spar.level.to = str2num(input('env.spar.level.to (0< <1):= ','s'));
-  end
-  if isfield(env,'cnum')
-    cnum = env.cnum;
-  end
-  spar.from = randperm(cnum);
-  spar.from = spar.from(1:floor(spar.level.from*cnum));
-  spar.to = randperm(cnum); % spar.to: connection receive rate
-  spar.to = spar.to(1:floor(spar.level.from*cnum));
-  % Don't make sparse about self-depression.
-  % Actual sparsity level is reduced by spar.level.diag
-  spar.level.diag = sum(spar.from == spar.to)/cnum; %++bug: incorrect value.
+    if isfield(env,'spar') && isfield(env.spar,'level') && isfield(env.spar.level,'to')
+      spar.level.to = env.spar.level.to; % don't overwrite user defined env.spar.level.to
+    else
+      spar.level.to = str2num(input('env.spar.level.to (0< <1):= ','s'));
+    end
+    if isfield(env,'cnum')
+      cnum = env.cnum;
+    end
+    spar.from = randperm(cnum);
+    spar.from = spar.from(1:floor(spar.level.from*cnum));
+    spar.to = randperm(cnum); % spar.to: connection receive rate
+    spar.to = spar.to(1:floor(spar.level.from*cnum));
+    % Don't make sparse about self-depression.
+    % Actual sparsity level is reduced by spar.level.diag
+    spar.level.diag = sum(spar.from == spar.to)/cnum; %++bug: incorrect value.
 
-  env.spar = spar;
-
+    env.spar = spar;
+  end
 end
 
 if isfield(env,'cnum')

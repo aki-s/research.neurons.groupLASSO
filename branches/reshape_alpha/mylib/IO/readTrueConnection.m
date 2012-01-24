@@ -41,17 +41,17 @@ else
   tmp.fid = fopen(tmp.in,'rt');
 %% Need exception hundler: if (#column ~= #row )  %%++improve
 %% fscanf repeat reading in dimention 2
-[ResFunc_hash, Oenv.cnum ] = fscanf(tmp.fid,'%s'); % don't read LF.
-                                                   %[ResFunc_hash, Oenv.cnum ] = fscanf(tmp.fid,'%s[+0-]'); % don't read LF.
+%% remove comment line.
+[ResFunc_hash, Oenv.cnum ] = fscanf(tmp.fid,'%c');
+ResFunc_hash = regexprep(ResFunc_hash,'#[ ]*.*\n','','dotexceptnewline');
+ResFunc_hash = regexprep(ResFunc_hash,'[^[0\+\-]]','');
 ResFunc_hash = strrep(ResFunc_hash, '+','+1 ');
 ResFunc_hash = strrep(ResFunc_hash, '0','0 ');
 ResFunc_hash = strrep(ResFunc_hash, '-','-1 ');
-%% remove comment line.
-ResFunc_hash = regexprep(ResFunc_hash,'[a-z,A-Z,'','',''.'']','#');
-ResFunc_hash = regexprep(ResFunc_hash,'(\#[0-9\ ]*)','');
 
+%% get num. of neuron.
 ResFunc_hash = str2num(ResFunc_hash);
-[garbage,N] = size(ResFunc_hash);
+[N] = size(ResFunc_hash,2);
 Oenv.cnum = uint64(sqrt(N));
 if Oenv.cnum*Oenv.cnum ~= N
   error('Check your inputfile')

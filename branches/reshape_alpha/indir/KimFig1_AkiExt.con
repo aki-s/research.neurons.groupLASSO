@@ -1,0 +1,22 @@
+# The line starting with '#' is a comment.
+# This file was extended to accord with actual neurons.
+# I complemented 'hidden neuron' in file 'KimFig1.con' on a whim.
+# Inhibitory neuron cannot be Excitatory neuron, just supress other 
+# inhibitory neuron.
+# [original]
+# +???????+
+# [fixed to][hidden]
+# ++--+--++ -+
+# 123456789            
+  -000+0000 -+
+  +--000000 00
+  0+-000-00 00
+  0+0-00000 -+
+  0000--00+ 0+
+  000-+-000 00
+  000000-0+ -0
+  00000-0-0 0+ 
+  +00000-+- 00
+
+  0+00+00+0 -0
+  000000000 0-

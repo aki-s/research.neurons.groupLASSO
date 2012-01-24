@@ -1,5 +1,5 @@
 function plot_EResFunc(env,graph,status,DAL,bases,EbasisWeight,...
-                              fig_memoIn,varargin)
+                       fig_memoIn,varargin)
 %%
 %% USAGE)
 %% Example:
@@ -9,14 +9,14 @@ function plot_EResFunc(env,graph,status,DAL,bases,EbasisWeight,...
 num_argin = 7;
 %%
 try
-regFacLen = DAL.regFacLen;
+  regFacLen = DAL.regFacLen;
 catch err %@revision110
-regFacLen = length(DAL.regFac);
+  regFacLen = length(DAL.regFac);
 end
 regFacIndexIn = (1:regFacLen);
 if nargin >= num_argin +1
   FROM =  varargin{ 1};
-  regFacLen  = FROM(end);
+  regFacLen  = FROM;
 
 else
   FROM = 1;
@@ -32,18 +32,14 @@ if nargin >= num_argin + 3
 else
   COLOR = '';
 end
-COLOR ='DEBUG'
+%COLOR ='head_map-off'
 
 %%% == 
-
 if (nargin == num_argin + 1)
-
   [ResFunc,graph] = reconstruct_EResFunc(env.cnum,graph,DAL,bases,EbasisWeight,regFacIndexIn(regFacLen));
 else
   [ResFunc,graph] = reconstruct_EResFunc(env.cnum,graph,DAL,bases,EbasisWeight);
 end
-
-
 
 DEBUG = status.DEBUG.level;
 run set_plot_ResFunc_variables
@@ -76,18 +72,24 @@ for i0 = FROM:regFacLen
                  'xtickwidth',dh,...
                  'yrange',newYrange,'zeroFlag',zeroFlag);
     prm.xlabel = TIMEL;
-    prm.title = fig_memo;
+    prm.title = fig_memoIn;
     prm.outname = outname;
-    prm.savedirname = savedirname;
+    prm.savedirname = status.savedirname;
 
     fignum = ceil(cnum/LIM);
     shift = 1/fignum;
+    %++bug: conf_user_kim.m 
+    % 1-1 1-2
+    % 2-1 2-2(title)
+    %
+    % xtick label TIMEL is not plotted
     for Fdim2 = 1:fignum
       for Fdim1 = 1:fignum
         plot_EResFunc_subplot(env,graph,Fdim1,Fdim2,LIM,ResFunc,prm,...
                               EbasisWeight,bases);
+        %% Position fig. at natural location
         set(gcf, 'menubar','none','Color','White','units','normalized',...
-               'outerposition',[(Fdim2-1)*shift,(fignum-Fdim1)*shift,shift,shift])
+                 'outerposition',[(Fdim2-1)*shift,(fignum-Fdim1)*shift,shift,shift])
       end
     end
   else
@@ -120,13 +122,14 @@ for i0 = FROM:regFacLen
         end
       end
       %% </ subplot background color >
-if isempty(COLOR)
-      subplot('position',pos + [i3from -i2to 1 1 ]/(cnum+3),'Color',heat );
-else
-      subplot('position',pos + [i3from -i2to 1 1 ]/(cnum+3));
-end
+      if isempty(COLOR)
+        subplot('position',pos + [i3from -i2to 1 1 ]/(cnum+3),'Color',heat );
+      else
+        subplot('position',pos + [i3from -i2to 1 1 ]/(cnum+3));
+      end
       tmp1 = ResFunc{regFacIndex}{i2to}{i3from};
       %% <  chage line color according to cell type >
+      set(gcf,'color','white')
       hold on;
       if tmp1 == 0
         zeroFlag = 1;
@@ -145,7 +148,7 @@ end
       else
         plot( 1:hnum, 0, 'k','LineWidth',1); % emphasize 0.
         grid on;
-        if  graph.prm.showWeightDistribution == 1
+        if  (graph.prm.showWeightDistribution == 1 ) %++slow,obsolete?
           for i2 = 1:cnum
             tmp2 = bases.ihbasis.*repmat(transpose(EbasisWeight{regFacIndex}{i2to}(:,i2)), ...
                                          [bases.ihbasprs.numFrame 1]);
@@ -155,7 +158,8 @@ end
           end
         end
       end
-      xlim([0,hnum*hwind*XSIZE]);  
+      %      xlim([0,hnum*hwind*XSIZE]);  
+      xlim([0,500]);  
       ylim(newYrange)
       if  graph.TIGHT == 1;
         axis tight;
@@ -185,16 +189,10 @@ end
       i3from = i3from +1;
       %% </ index config >
     end
-    set(gcf,'color','white')
   end
 end
 %% h: description about outer x-y axis
 fig_memo = sprintf('regFac=%09.4f frame=%6d  #%4d',DAL.regFac(regFacIndex),DAL.Drow,cnum );
-%{
-if cnum > LIM
-  strcat(fig_memo,TIMEL);
-end
-%}
 strcat(fig_memo,fig_memoIn);
 h = axes('Position',[0 0 1 1],'Visible','off'); 
 set(gcf,'CurrentAxes',h)

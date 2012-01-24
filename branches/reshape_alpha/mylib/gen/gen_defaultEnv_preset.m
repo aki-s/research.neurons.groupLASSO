@@ -13,7 +13,7 @@ spar.self = 1; % 1:self-connect all neuron.
 genLoop = 150000;
 
 %< hnum = HistSec * Hz.v / hwind
-hnum = 50; % hnum: the number of history window [frame]
+hnum = 100; % hnum: the number of history window [frame]
 %% large hwind cause continuous firing of each neuron.
 hwind = 1; % hwind: the number of frames in a history window
 
@@ -21,6 +21,6 @@ Hz = struct('video',100, ... % video Hz: [frame/sec]
             'neuro',30, ...  % Hz of neuronal firing: [rate/sec] %++bug: impossible to set.
             'fn',[]);    % Hz of firing per frame: [rate/frame]
 
-SELF_DEPRESS_BASE = -2; %exp(SELF_DEPRESS_BASE): auto-firing
+SELF_DEPRESS_BASE = 6.5; %exp(SELF_DEPRESS_BASE): auto-firing
                        %intensity of a neuron.
 

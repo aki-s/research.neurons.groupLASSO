@@ -3,7 +3,7 @@ function plot_EResFunc_subplot(env,graph,Fdim1,Fdim2,LIM,ResFunc,prm,...
 %%% WARNING: DON'T EDIT THIS FILE. THIS FUNC IS obsolete.
 if 1 == 1
 plot_ResFunc_subplot(env,graph,Fdim1,Fdim2,LIM,ResFunc,prm,...
-                              varargin)
+                              varargin{:})
 else
 % $$$ run set_subplot_variables
 % $$$ %% 

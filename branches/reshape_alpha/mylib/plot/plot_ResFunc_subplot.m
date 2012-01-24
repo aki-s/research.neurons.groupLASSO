@@ -33,7 +33,7 @@ run set_subplot_variables
     %% 0 is discriminant line, emphasize 0.
     plot( 1:hnum, 0, 'k','LineWidth',1);
     grid on;
-    if graph.prm.showWeightDistribution == 1
+    if graph.prm.showWeightDistribution == 1 % nargin == 9
       for i2 = 1:cnum
         tmp2 = bases.ihbasis.*repmat(transpose(EbasisWeight{regFacIndex}{i2to}(:,i2)), ...
                                      [bases.ihbasprs.numFrame 1]);
