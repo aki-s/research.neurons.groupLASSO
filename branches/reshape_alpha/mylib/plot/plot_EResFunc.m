@@ -133,9 +133,9 @@ for i0 = FROM:regFacLen
       hold on;
       if tmp1 == 0
         zeroFlag = 1;
-      elseif tmp1 > 0
+      elseif tmp1 >= 0
         plot(tmp1,'r','LineWidth',3);
-      elseif tmp1 < 0
+      elseif tmp1 <= 0
         plot(tmp1,'b','LineWidth',3);
       else           
         plot(tmp1,'k','LineWidth',3);

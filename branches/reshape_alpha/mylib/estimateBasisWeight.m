@@ -163,10 +163,13 @@ if strcmp('calcDAL','calcDAL')
       %      DAL.regFac(ii1+1) = DAL.regFac(ii1)/5;
       DAL.regFac(ii1+1) = DAL.regFac(ii1)/DAL.div; % ODAL
     end
-    cost2 =  toc(cost2);
-    fprintf(1,'%5.1f\n',cost2);
-    Ostatus.time.regFac(useFrameIdx,ii1) = cost2;
-    %    Ostatus.time.regFac{}(useFrameIdx,ii1) = cost2;
+    cost3 =  toc(cost2);
+    fprintf(1,'%5.1f\n',cost3);
+    Ostatus.time.regFac(useFrameIdx,ii1) = cost3;
+    %% Resume for-loop if true. Constraint that 
+    %% DAL.regFac(j1) > DAL.regFac(j2), (j1<j2) arosed here.
+    assert( cost3 <= 60,'too small DAL.regFac?')
+    %    Ostatus.time.regFac{}(useFrameIdx,ii1) = cost3;
   end 
   Ostatus.time.estimate_TrueKernel = toc(cost1);
 end

@@ -23,7 +23,8 @@ switch 'aki_kimExt'
     %    status.userDef = [rootdir_ '/conf/conf_user_kim_20120118.m'];
     status.userDef = [rootdir_ '/conf/conf_user_kim_20120118_best.m'];
   case  'aki_kimExt'
-    status.userDef = [rootdir_ '/conf/conf_user_aki_kimExt.m'];
+    %    status.userDef = [rootdir_ '/conf/conf_user_aki_kimExt.m'];
+    status.userDef = [rootdir_ '/conf/conf_user_aki_kimExt1.m'];
 end
 
 run(status.userDef);

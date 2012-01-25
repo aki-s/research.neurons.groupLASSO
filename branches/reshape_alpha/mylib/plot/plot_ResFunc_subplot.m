@@ -23,9 +23,11 @@ run set_subplot_variables
     end
     %% <  chage color ploted according to cell type >
     hold on;
-    if tmp1 > 0
+    if tmp1 == 0
+      %      zeroFlag =1;
+    elseif tmp1 >= 0
       plot(tmp1,'r','LineWidth',3);
-    elseif tmp1 < 0
+    elseif tmp1 <= 0
       plot(tmp1,'b','LineWidth',3);
     else           
       plot(tmp1,'k','LineWidth',3);
