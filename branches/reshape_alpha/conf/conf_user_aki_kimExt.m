@@ -3,15 +3,21 @@
 warning('DEBUG:conf','%s overrides all configuration variables set after this file.',mfilename);
 
 DAL.regFac_UserDef = 1;
-DAL.regFac = [ 2048 1024 512 256 128 64 32 16 8 4 2 1 0.5 0.25 0.125];
+if 0
+DAL.regFac = [ 2.^(17:-1:-3) ];
+env.useFrame = 1000*[ 2.^(0:1:8)];
+end
+DAL.regFac = [ 2.^(17:-1:-3) ];
 env.useFrame = [
-    1000
-    4000
-    10000
-    20000
-    40000
     75000
                ];
+%% [frame] [regFac] [2.^x]
+%%
+%%    4000        2     1
+%%   10000       32     5
+%%   20000      128     7
+%%   40000      512     9 
+%%                        
 %env.inFiringLabel ='X';
 env.Hz.video=1000;
 env.mail.to='aki-s@sys.i.kyoto-u.ac.jp';
@@ -37,7 +43,7 @@ status.DEBUG.plot = 1; %++bug: not yet implemented.
 status.DEBUG.level = 1;
 if strcmp('simulation','simulation')
   env.cnum = 11; % indispensible
-  env.genLoop = 210000; % indispensible
+  env.genLoop = 300000; % indispensible
   env.hnum = 100; % indispensible
   env.hwind = 1; %  indispensible
   env.Hz.video = 1000; % indispensible
