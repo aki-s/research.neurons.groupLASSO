@@ -7,27 +7,27 @@ nbase = ihbasprs.nbase;
 nStrength = ihbasprs.b;
 hpeaks = ihbasprs.hpeaks;
 if isfield(ihbasprs, 'absref');
-    absref = ihbasprs.absref;
+  absref = ihbasprs.absref;
 else
-    absref = 0;
+  absref = 0;
 end
 
 % Check input values
 if (hpeaks(1)+nStrength) < 0, % Because [hpeaks + nStrength] is args of nlin().
-    error('nStrength + first peak location: must be greater than 0'); 
+  error('nStrength + first peak location: must be greater than 0'); 
 end
 if dt> absref > 0
-    warning('DEBUG:NOTICE',['Refractory period too small for time-bin sizes.\n Basis you set ' ...
-             'is reduced by 1'])
+  warning('DEBUG:NOTICE',['Refractory period too small for time-bin sizes.\n Basis you set ' ...
+                      'is reduced by 1'])
 end
 
 % nonlinearity for stretching x axis (and its inverse)
 if 1 == 1
-nlin = @(x)log(x+1e-20);
-invnl = @(x)exp(x)-1e-20; % inverse nonlinearity
+  nlin = @(x)log(x+1e-20);
+  invnl = @(x)exp(x)-1e-20; % inverse nonlinearity
 else
-nlin = @(x)(x+1e-20);
-invnl = @(x)(x)-1e-20; % inverse nonlinearity
+  nlin = @(x)(x+1e-20);
+  invnl = @(x)(x)-1e-20; % inverse nonlinearity
 end
 % Generate basis of raised cosines
 yrnge = nlin(hpeaks+nStrength);  
@@ -45,11 +45,11 @@ ihbasis = ff(repmat(nlin(numFrame+nStrength), 1, nbase), repmat(ctrs, nt, 1), db
 %% create first basis vector as step-function for absolute refractory period.
 if absref >= dt
   ii = find(numFrame <= absref);
-    ih0 = zeros(size(ihbasis,1),1);
-    ih0(ii) = 1;
-    ihbasis(ii,:) = 0;
-    ihbasis(ii,1) = 1;
-    ihbasis = [ih0,ihbasis(:,1:nbase-1)]; 
+  ih0 = zeros(size(ihbasis,1),1);
+  ih0(ii) = 1;
+  ihbasis(ii,:) = 0;
+  ihbasis(ii,1) = 1;
+  ihbasis = [ih0,ihbasis(:,1:nbase-1)]; 
 end
 
 ihbas = orth(ihbasis);  % use orthogonalized basis

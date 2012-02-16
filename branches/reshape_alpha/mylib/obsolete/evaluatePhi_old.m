@@ -1,4 +1,4 @@
-function [recn, recr, thresh0] = evaluatePhi( Phi, Answer )
+function [recn, recr, thresh0] = evaluatePhi_old( Phi, Answer )
 
 [N,dum] = size(Phi);
 

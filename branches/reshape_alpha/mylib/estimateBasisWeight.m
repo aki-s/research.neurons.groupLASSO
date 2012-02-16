@@ -69,6 +69,7 @@ if strcmp('debug','debug_')
   fprintf(1,'\n');
 end
 if strcmp('calcDAL','calcDAL')
+  PstopFlag =0;
   PRMS = length(DAL.regFac);
   % == init ==
   switch method
@@ -95,9 +96,12 @@ if strcmp('calcDAL','calcDAL')
 
       EbasisWeight{i1to}{1} = zeros(nbase,cnum);
   end
-  %  fprintf(1,'\n');
-  DAL.speedup = 0;
-  for ii1 = 1:PRMS
+
+  %  for ii1 = 1:PRMS
+  ii1 = 1;
+  while ii1 <= PRMS
+% $$$     fprintf(1,'DAL-loop:%f\n',ii1);
+    DAL.speedup = 0;
     %% search appropriate parameter.
     %% you'd better not to make for-'ii1' parallelize. 
     cost2 = tic;
@@ -168,8 +172,20 @@ if strcmp('calcDAL','calcDAL')
     Ostatus.time.regFac(useFrameIdx,ii1) = cost3;
     %% Resume for-loop if true. Constraint that 
     %% DAL.regFac(j1) > DAL.regFac(j2), (j1<j2) arosed here.
-    assert( cost3 <= 60,'too small DAL.regFac?')
+    %    assert( cost3 <= 60,'too small DAL.regFac?')
+% $$$     labindex
+% $$$     PstopFlag = PstopFlag + 1
+% $$$ numlabs
+%    if ( cost3 >= 60) %( PstopFlag == numlabs ) && 
+    if ( cost3 >= 3600*24 ) %( PstopFlag == numlabs ) && 
+      labBarrier
+      warning('DEBUG:info','too small DAL.regFac?')
+% $$$       matlabpoos close
+% $$$       fprintf('PstopFlag:%d',PstopFlag)
+      ii1 = PRMS+1;      %      break
+    end
     %    Ostatus.time.regFac{}(useFrameIdx,ii1) = cost3;
+    ii1 = ii1+1;
   end 
   Ostatus.time.estimate_TrueKernel = toc(cost1);
 end

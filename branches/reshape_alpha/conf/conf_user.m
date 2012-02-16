@@ -29,22 +29,23 @@ env.Hz.video = 1000; % [1/env.Hz.video sec per frame]
 DAL.regFac_UserDef = 1;% notify that regularization factor is manually set
 DAL.regFac = [1000 300 100 30 10 3];% regularization factor for group LASSO
 
-graph.PLOT_MAX_NUM_OF_NEURO = 10; % neurons to be plotted per window
+graph.PLOT_MAX_NUM_OF_NEURO = 20; % neurons to be plotted per window
 graph.PLOT_T = 1; % plot graph
 graph.prm.Yrange = [-.5 5]; % yrange of plotted graph
 graph.prm.diag_Yrange = [-.5 5];% yrange of plotted graph's diagonal element
 
 %%%%% DEBUG: the following is a test
 if 1 == 1
-  env.cnum = 14;
+  env.cnum = 11;
   env.SELF_DEPRESS_BASE = 7; 
   env.spar.level.from= .5;
   env.spar.level.to  = .4;
   status.realData = 0;
   status.GEN_TrueValues = 1;
-  status.crossVal_rough = 1;
-  env.useFrame = [40000 50000];
-  DAL.regFac = [1000 500 100];
+  status.crossVal_rough = 0;
+  env.genLoop = 20000;
+  env.useFrame = [4000 5000];
+  DAL.regFac = [ 100 5 3 2.9 2.5 2.3 2 1.5 1 .1001];
   %%
   status.inFiring = ''; %++bug:obsolete. depulicated func as status.READ_NEURO_CONNECTION
   status.READ_NEURO_CONNECTION = 0; % gen random connection.

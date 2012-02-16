@@ -1,14 +1,15 @@
 function plot_ResFunc_subplot(env,graph,Fdim1,Fdim2,LIM,ResFunc,prm,...
                               varargin)
 %% this is main ResFunc_subplot file.
+PAPER = 1;
 if 1 == 0
 
 
 
 else
-run set_subplot_variables
-%% 
-  figure;
+  run set_subplot_variables
+  %% 
+  H1 = figure;
   i2to = 1 + (Fdim1-1)*LIM; % cell to
   i3from = 1 + (Fdim2-1)*LIM; % cell from
   to = 1;
@@ -33,8 +34,8 @@ run set_subplot_variables
       plot(tmp1,'k','LineWidth',3);
     end
     %% 0 is discriminant line, emphasize 0.
-    plot( 1:hnum, 0, 'k','LineWidth',1);
-    grid on;
+    plot( 1:hnum, 0, '-k','LineWidth',1);
+    %%    grid on;
     if graph.prm.showWeightDistribution == 1 % nargin == 9
       for i2 = 1:cnum
         tmp2 = bases.ihbasis.*repmat(transpose(EbasisWeight{regFacIndex}{i2to}(:,i2)), ...
@@ -43,15 +44,16 @@ run set_subplot_variables
       end
     end
     %% </ chage color ploted according to cell type >
-    %{
-    if  graph.TIGHT == 1;
-      axis tight;
-    end
-    %}
-    xlim([0,XRANGE]);  
     set(gca,'XAxisLocation','top');
-    set(gca,'XTick' , 1:dh:XRANGE);
+    if exist('newXrange')
+      xlim(newXrange);
+      set(gca,'XTick' , 1:dh:ceil(newXrange(2)));
+      else
+      xlim([0,XRANGE]);  
+      set(gca,'XTick' , 1:dh:XRANGE);
+    end
     set(gca,'xticklabel',[]);
+newYrange
     ylim(newYrange)
     Y_LABEL = get(gca,'yTickLabel');
     set(gca,'yticklabel',[]);
@@ -85,11 +87,11 @@ run set_subplot_variables
     from = from + 1;
     %% </ index config >
   end
-  set(gcf,'color','white')
+  set(H1,'color','white')
 end
 
 h = axes('Position',[0 0 1 1],'Visible','off'); 
-set(gcf,'CurrentAxes',h)
+set(H1,'CurrentAxes',h)
 
 pos1 = [ .1 cnum ]/(cnum+2);
 pos2 = pos1;
@@ -99,12 +101,18 @@ if LIM < 8
   pos2 = [ .2 cnum-3 ]/(cnum+2);
   MUL = 2;
 end
-text(pos1(1)+.15,pos1(2) +.05,DESCRIPTION,'FontSize',12)
-text(pos2(1)+.05*MUL,pos2(2) +.02*MUL,'Triggers')
-text(pos2(1)+.02*MUL,pos2(2) -.01*MUL,'Targets')
-
+if ~PAPER
+  text(pos1(1)+.15,pos1(2) +.05,DESCRIPTION,'FontSize',12)
+  text(pos2(1)+.05*MUL,pos2(2) +.02*MUL,'Triggers')
+  text(pos2(1)+.02*MUL,pos2(2) -.01*MUL,'Targets')
+end
 if  ( graph.PRINT_T == 1 )
   print('-dpng', [savedirname,'/Estimated_ResponseFunc',...
                   prm.outname,...
                   sprintf('_%d-%d_%03d',Fdim1,Fdim2,cnum),'.png'])
+  %% save as eps
+  saveas(H1,sprintf('%s',[savedirname,'/Estimated_ResponseFunc',...
+             prm.outname,...
+             sprintf('_%d-%d_%03d.eps',Fdim1,Fdim2,cnum)]),'epsc2')
 end
+

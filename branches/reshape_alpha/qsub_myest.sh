@@ -9,9 +9,10 @@ PBSLOG=1
 # myest.m via nice command.
 ############################################################################
 BASED=`dirname $0`
+#export BASED=`dirname $0`
 if [ "${PBSLOG}" = 1 ]; then
     qsub  -o ${PBS_O_WORKDIR} -e ${PBS_O_WORKDIR} ${BASED}/bin/throwPBS.sh 
 else
-    qsub ${BASED}/throwPBS.sh 
+    qsub ${BASED}/bin/throwPBS.sh 
 fi
 echo "Throwed ${BASED}/myest.m to PBS..."

@@ -11,14 +11,16 @@ nargin_NUM = 5;
 
 cnum = env.cnum;
 LABEL = num2cell(DAL.regFac);
-%regFacLen = length(DAL.regFac);
+try
 regFacLen = DAL.regFacLen;%++bug
+catch err % pre @refision 111?
+regFacLen = length(DAL.regFac);
+end
 %useFrameLen = length(env.useFrame);
 %%
 DEBUG = 0;
 %%
-%figure;
-ylim([1 2])
+
 CVLt = sum(CVL,2); %CVLt : CVL total
 
 if 1
@@ -39,13 +41,14 @@ else
     F.to = sum( ~isnan(sum(CVLt)) );
   end
 end
-myColor = graph.prm.myColor;
 
 if strcmp('plot_monochrome','plot_monochrome')
   myColor = cell(1,regFacLen);
   for i1 = 1:regFacLen
     myColor{i1} = [0 0 0];
   end
+else
+myColor = graph.prm.myColor;
 end
 %% set legend entry
 LGD = num2cell(reshape(env.useFrame,1,[]));
@@ -54,7 +57,10 @@ for id = F.from : F.to
   LGDT{id} = num2str(LGD{id});
 end
 %%col=hsv(F.to);
-
+med = median(CVLt(1:regFacLen,1,F.from:F.to));
+%ylim([0.9 1.1]*med) %@ real data. program started   : 2012-01-12-23:30:53:  
+ylim([0.8 1.1]*med) %@ real data.%program started   :  2012-01-13-13:05:21:       
+%ylim([1 2]) %@simulation
 
 [minVal idx] = min(CVLt);
 for i2 = F.from:F.to

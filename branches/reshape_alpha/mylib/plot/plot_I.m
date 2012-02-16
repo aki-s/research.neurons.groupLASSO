@@ -13,13 +13,18 @@ function plot_I(status,graph,env,I,title)
 %%
 DEBUG = 0;
 PRESEN = 0;
+PAPER  = 1;
 %%
 global envSummary
 
 Hz = env.Hz.video;
 xrange = graph.xrange;
 cnum = env.cnum;
-useNidx = status.usedNeuronIdx;
+if isfield(status,'usedNeuronIdx')
+  useNidx = status.usedNeuronIdx;
+else
+  useNidx = 1:cnum;
+end
 [FlameMax] = size(I,1);
 if status.DEBUG.level > 2
   warning('DEBUG:xrange','Full plot of I');
@@ -32,6 +37,11 @@ dh = floor(xrange/Lnum);  %dh: width of each tick. [frame]
 ddh = dh/Hz; % convert XTick unit from [frame] to [sec]
 TIMEL = cell(1,Lnum);
 
+if PAPER
+  %  set(0,'DefaultAxesLineWidth', 3);
+  [dum idx] = sort(sum(I,1),'descend');
+  I = I(:,idx);
+end
 if ~isempty(envSummary)
   for i1 = 1:Lnum+1
     if 1 == 1
@@ -44,12 +54,11 @@ if ~isempty(envSummary)
 end
 %% ==</convert XTick unit from [frame] to [sec] >==
 
-figure;
 for i1 = 1: cnum
   subplot( cnum, 1,i1)
   if i1 ~= useNidx
     bar(zeros(1,xrange));
-    legend('unsed spike train')
+    legend('Unused spike train')
     if DEBUG > 0
       fprintf('x_')
     end
@@ -57,19 +66,31 @@ for i1 = 1: cnum
     if DEBUG > 0
       fprintf('%d_',i1)
     end
-    grid off;
-    bar( I((end+1 -xrange):end,i1));
+    %    grid off;
+    bar( I((end+1 -xrange):end,i1),'k');
     set(gca,'XTick' , 1:dh:xrange);
-    if PRESEN == 1
+    if ( PRESEN == 1 ) || PAPER
       set(gca,'XTickLabel','');
+      set(gca,'XTick',[]);
     else
-      set(gca,'XTickLabel',TIMEL);
+      %      set(gca,'XTickLabel',TIMEL);
+      set(gca,'XTickLabel','');
       ylabel(sprintf('%d',i1));
     end
     set(gca,'YTick',[]);
   end
   ylim([0,1]);
+  box off
+  grid off
+  if PAPER % remove Yaxis
+    set(gca,'linewidth',3,'ytick',[])
+    set(gca,'YColor','w')
+  end
 end
+if ~PAPER 
+  set(gca,'XTickLabel',TIMEL);
+end
+
 if DEBUG > 0
   fprintf('\n')
 end
@@ -79,3 +100,4 @@ h = axes('Position',[0 0 1 1],'Visible','off');
 set(gcf,'CurrentAxes',h)
 text(.4,.95,title,'FontSize',12)
 %% ==</ set xlabel >==
+%set(0,'DefaultAxesLineWidth', 0.5);

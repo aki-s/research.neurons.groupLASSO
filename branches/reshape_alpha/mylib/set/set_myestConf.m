@@ -10,7 +10,8 @@ end
 
 %% Reading user custom configuration file
 %%  overrides all configurations previously set.
-switch 'aki_kimExt'
+%switch 'aki_kimExt'
+switch 'demo_'
   case 'demo'
     status.userDef = [rootdir_ '/conf/conf_user.m'];
   case 'aki'
@@ -25,6 +26,8 @@ switch 'aki_kimExt'
   case  'aki_kimExt'
     %    status.userDef = [rootdir_ '/conf/conf_user_aki_kimExt.m'];
     status.userDef = [rootdir_ '/conf/conf_user_aki_kimExt1.m'];
+  otherwise
+    status.userDef = '';
 end
 
 run(status.userDef);

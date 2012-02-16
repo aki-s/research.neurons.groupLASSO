@@ -9,6 +9,7 @@ function [my,mx] = plot_ROI( u, j0, Nx, Ny )
 % You can specify a set of neuron indices  j0,
 % for example j0 = [1,4,5,6,10]
 
+PAPER =1;
 if nargin == 2
   [Nx,Ny,K] = size(u);
   u = reshape(u, Nx*Ny, K );
@@ -44,19 +45,26 @@ end
 C( C>1 )=1;
 C( C<0 )=0;
 image(1-C)
+alpha(0.5);
 hold on
 for i = 1:length( j0 )
+if ~PAPER
   plot(my(i), mx(i),'*','Color', l{i})
+end
   c = 1-[1,0.8,0.8];
   if v(i)>25
     %    c=1-[1,0,0];
   end
   for j1=[-2:2]
     for j2=[-2:2]
-      text( my(i)+j1/5, mx(i)+j2/5, sprintf('Ch%d',j0(i) ), 'Color', [1,1,1],...
-            'FontSize',13,'FontWeight','bold' )
+      if ~PAPER
+        text( my(i)+j1/5, mx(i)+j2/5, sprintf('Ch%d',j0(i) ), 'Color', [1,1,1],...
+              'FontSize',13,'FontWeight','bold' )
+      end
     end
   end
-  text( my(i), mx(i), sprintf('Ch%d',j0(i) ), 'Color', c,...
-        'FontSize',13,'FontWeight','bold' )
+  if ~PAPER
+    text( my(i), mx(i), sprintf('Ch%d',j0(i) ), 'Color', c,...
+          'FontSize',13,'FontWeight','bold' )
+  end
 end

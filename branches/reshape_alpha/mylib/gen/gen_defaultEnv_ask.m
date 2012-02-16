@@ -8,7 +8,7 @@ run([rootdir_ '/mylib/gen/gen_defaultEnv_preset.m']);
 
 if exist('status') && ( status.GEN_TrueValues == 1 ) 
   %% For conf_user_aki_kimExt.m
-  if isempty(status.inStructFile)
+  if ~isfield(status,'inStructFile') || isempty(status.inStructFile)
     if isfield(env,'spar') && isfield(env.spar,'level') && isfield(env.spar.level,'from')
       spar.level.from = env.spar.level.from; % don't overwrite user defined env.spar.level.from
     else

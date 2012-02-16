@@ -20,12 +20,12 @@ function plot_AUC_CVL(env,status,graph,DAL,ansMat,CVL,varargin)
 nargin_NUM = 6;
 uR = length(DAL.regFac);
 cSET.to = length(env.inFiringUSE);
-
+PAPER = 1;
 %% ==<conf>==
 if nargin >= nargin_NUM +1
   FROM = varargin{1};
 else
-FROM =1;
+  FROM =1;
 end
 %% ==< set figure propertiy >==
 WIDTH = 550;
@@ -60,6 +60,9 @@ if strcmp('plot_monochrome','plot_monochrome')
     myColor{i1} = [0 0 0];
   end
 end
+%doc set. %% make figure's colors black
+%set(findobj('Type','line'),'Color','k')
+
 if isnumeric(ansMat)
   M_ans = ansMat;  
 else
@@ -108,14 +111,14 @@ elseif strcmp('leaveOut_calcAUC','leaveOut_calcAUC_')
     for i0 = 1:cSET.to
       for regFacIdx = 1:uR
         try
-        filename =sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{regFacIdx}, ...
-                          fFNAME, uFnum{j0}, inFiringUSE{i0});
-        load( [inRoot '/' filename], 'EResFunc');
+          filename =sprintf('%s-%s-%s-%s-%s.mat',status.method, regFac{regFacIdx}, ...
+                            fFNAME, uFnum{j0}, inFiringUSE{i0});
+          load( [inRoot '/' filename], 'EResFunc');
 
         catch err
           [inRoot]= strcat(inRoot,'/CV');
           filename =sprintf('%s-%s-%s-%s-%s-CV1.mat',status.method, regFac{regFacIdx}, ...
-                          fFNAME, uFnum{j0}, inFiringUSE{i0});
+                            fFNAME, uFnum{j0}, inFiringUSE{i0});
           load( [inRoot '/' filename], 'EResFunc');
         end
         RFIntensity = evalResponseFunc( EResFunc );
@@ -137,8 +140,13 @@ elseif strcmp('leaveOut_calcAUC','leaveOut_calcAUC_')
 end
 %%
 YRANGE_CVL = sum(median(CVL{1},1),2);
-CHECK_EACH_RATE = 1;
-CHECK_THRESHOLD = 1;
+if ~PAPER
+  CHECK_EACH_RATE = 1;
+  CHECK_THRESHOLD = 1;
+else
+  CHECK_EACH_RATE = 0;
+  CHECK_THRESHOLD = 0;
+end
 N = 2;
 if CHECK_THRESHOLD == 1
   N = N+1;

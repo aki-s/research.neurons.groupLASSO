@@ -1,7 +1,7 @@
-function [peak latency ] = evalResponseFunc_latency( A )
+function [ latency peak ] = evalResponseFunc_latency( A )
 %% usage)
 %load('outdir/23-Oct-2011-start-20_50/Aki-0000008-rec072b-0044976-020.mat');
-%[peak latency] = evalResponseFunc_latency(ResFunc);
+% [ latency peak ] = evalResponseFunc_latency(ResFunc);
 
 [N1, N2, M] = size( A );
 
@@ -9,8 +9,8 @@ peak = zeros(N1, N2);
 l = zeros(1,2);
 p = zeros(1,2);
 latency =zeros(N1, N2);
-for i=1:N1
-  for c=1:N2
+for i=1:N1 % to
+  for c=1:N2 % from
     b = reshape( A(i,c,:), 1, M );
     %% detect zero connection
     if b == 0
@@ -53,10 +53,8 @@ A=A+(evalResponseFunc_peak(ResFunc)>th);
 A=A-(evalResponseFunc_peak(ResFunc)<-th);
 A(logical(eye(cnum))) = 0;
 figure
-[mx, my] = plot_ROI( u, j0 ); % ( mx(i) , my(i) ) は、i番目ROIの中
-                              % 心座標
-                              % 図のサイズを再設定
-draw_connection( A, mx, my ); % A は接続行列
+[mx, my] = plot_ROI( u, j0 ); 
+draw_connection( A, mx, my );
 title(sprintf('%f',th));
 end
 %}

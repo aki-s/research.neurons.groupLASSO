@@ -74,6 +74,9 @@ switch ARGNUM
     for i1 = 1:hdl
       print(figHandles(i1),'-dpng',sprintf(['%s/' ...
                           'regFac=%05d'],savedirname,DAL.regFac(i1)) );
+fprintf('saveas\')
+      saveas(figHandles(i1),sprintf(['%s/' ...
+                          'regFac=%05d'],savedirname,DAL.regFac(i1)),'epsc2' )
     end
   case 3
     for i1 = 1:hdl

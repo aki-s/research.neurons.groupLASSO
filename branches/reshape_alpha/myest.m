@@ -41,7 +41,8 @@ try
   if status.estimateConnection == 1
     run estimateNetworkStruct
   end
-catch segfault 
+catch segfault_main__ 
+ segfault_main__ 
   %% cluster configuration or MATLAB-parfor error?
   warning('DEBGU:SEGFAULT','catchSEGFAULT, set status.clean =0  status.crossVal_rough=1')
   status.clean = 0;

@@ -19,6 +19,7 @@ end
 
 %%% ===== PLOT I(t) ===== START =====
 if 1 == graph.PLOT_T
+  figure;
   plot_I(status,graph,env,Iorg,'I(t): Spikes [sec]')
   %%% ===== PLOT I(t) ===== END =====
   if graph.PRINT_T == 1

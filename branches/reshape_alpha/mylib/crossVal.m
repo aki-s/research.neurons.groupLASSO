@@ -140,7 +140,7 @@ if (tmpEnv.genLoop < DAL.Drow)
   cost = nan(1,regFacLen);
 else
   parfor i1 = 1:k % crossValidation ( %++parallel)
-    %%for i1 = 1:k % crossValidation ( %++parallel)
+  %%for i1 = 1:k % crossValidation ( %++parallel)
     fprintf(1,'crossValidation index:%2d',i1);
     omit = zeros(1,Tlen);
     omit( (1 + (i1-1)*Width ) : (i1*Width) ) = ( (1 + (i1-1)*Width ) : (i1*Width) ) ;

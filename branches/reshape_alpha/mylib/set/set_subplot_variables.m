@@ -25,7 +25,6 @@ if size(ResFunc,3) > 1
   XRANGE = size(ResFunc,3);
   ResFuncH = sprintf('%s','shiftdim(ResFunc(i2to,i3from,:),2)');
 elseif iscell(ResFunc)
-disp('cell')%plot_EResFunc_subplot.m
   ResFunc = EResFuncCell2Mat(cnum,ResFunc,1);
      %++bug: ( hnum == NaN ) @conf_use_kim.m
   if exist('bases','var')
@@ -34,7 +33,7 @@ disp('cell')%plot_EResFunc_subplot.m
   XRANGE = hnum*hwind;
   ResFuncH = sprintf('%s','ResFunc((1:hnum)+(i3from-1)*hnum,i2to)');
 else % assume 2D matrix
-disp('2D')
+     %disp('2D')
      %++bug: ( hnum == NaN ) @conf_use_kim.m
 % $$$   if exist('bases','var')
 % $$$     hnum =  bases.ihbasprs.numFrame;

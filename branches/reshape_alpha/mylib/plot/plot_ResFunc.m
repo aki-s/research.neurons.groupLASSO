@@ -88,6 +88,7 @@ else
   pos = [ .5 (cnum) 0 0 ]/(cnum+2);
   for i1to = 1:cnum %++parallel
     for i2from = 1:cnum;
+      fprintf('%02d|',(i1to-1)*cnum+i2from)%++bug:show progress
       %% subplot() delete existing Axes property.
       subplot('position',pos + [i2from -i1to 1 1 ]/(cnum+3) );
       %% <  subplot background color >
@@ -133,7 +134,7 @@ else
         %        end
         zeroFlag = 0;
       else
-        plot( 1:hnum, 0, 'k','LineWidth',1); % emphasize 0.
+        plot( 1:hnum, 0, '-k','LineWidth',1); % emphasize 0.
         grid on;
 
 
@@ -154,8 +155,6 @@ else
         set(gca,'XTick' , 1:dh:hnum); %++bug?
         set(gca,'XAxisLocation','top');
         set(gca,'xticklabel',[]);
-        Y_LABEL = get(gca,'yTickLabel');
-
         if strcmp('sameYrange','sameYrange')
           ylim(newYrange);
           if zeroFlag == 1
@@ -168,19 +167,21 @@ else
             ylim(Yrange);
           end
         end
+        Y_LABEL = get(gca,'yTickLabel');
+        set(gca,'yticklabel',[]);
       end
       if  graph.TIGHT == 1;
         axis tight;
       end
       %% < from-to cell label >
-      if (i1to == 1)     % When in the topmost margin.
+      if (i1to == 1)  &&( LIM <=30 )   % When in the topmost margin.
         xlabel(i2from);
         set(gca,'XTickLabel',TIMEL);
       end
-      if (i2from == 1) % When in the leftmost margin.
+      if (i2from == 1)&&( LIM <=30 )% When in the leftmost margin.
         ylabel(i1to);
 
-
+        set(gca,'yticklabel',Y_LABEL);
 
       end
       %% </ from-to cell label >
@@ -192,11 +193,12 @@ else
     end
   end
 
-  %% h: description about outer x-y axis
-  h = axes('Position',[0 0 1 1],'Visible','off'); 
-  set(gcf,'CurrentAxes',h)
-  text(.4,.95,title,'FontSize',12,'LineWidth',4)
-
+  if LIM <=30
+    %% h: description about outer x-y axis
+    h = axes('Position',[0 0 1 1],'Visible','off'); 
+    set(gcf,'CurrentAxes',h)
+    text(.4,.95,title,'FontSize',12,'LineWidth',4)
+  end
 
 
 

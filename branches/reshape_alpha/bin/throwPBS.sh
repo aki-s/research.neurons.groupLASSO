@@ -7,10 +7,14 @@
 #PBS -M aki-s@sys.i.kyoto-u.ac.jp
 ####################################################################################
 ## set such as 'ROOT = `dirname myest.m`'
-#ROOT='/home/aki-s/svn.d/art_repo2/branches/reshape_alpha'
+if [ 1 = 1 ];then
+ROOT='/home/aki-s/svn.d/art_repo2/branches/reshape_alpha'
+else
 _ROOT_=`dirname $0`
 cd ${_ROOT_}
-ROOT=`pwd`
+export ROOT=`pwd`
+echo ${ROOT}:debug
+fi
 ####################################################################################
 BAR='===================================================================='
 LOG=${PBS_O_WORKDIR}/`date +"%y%m%d_%H%M%S"`.log;
@@ -22,7 +26,6 @@ cd $PBS_O_WORKDIR
 # 2. I recommend using option '-logfile' becase diary() is meaningless if there was a runtime error.
 /usr/local/bin/matlab  -logfile ${LOG} -nodisplay -nosplash  <<EOF
 fprintf('present working directory:%s\n',pwd())
-
 cd ${ROOT}
 run ./myest.m
 

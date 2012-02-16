@@ -34,7 +34,6 @@ status.READ_FIRING =0; % generate FIRING.
 status.estimateConnection = 1;
 status.mail = 1;
 status.DEBUG.plot = 1; %++bug: not yet implemented.
-status.DEBUG.level = 1;
 if strcmp('simulation','simulation')
   env.cnum = 11; % indispensible
   env.genLoop = 210000; % indispensible
